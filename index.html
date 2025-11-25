@@ -1,92 +1,18 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Incidenti Stradali Italia - Scrollytelling</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Navbar -->
-<nav id="navbar-left" class="navbar-top">
-  <ul>
-    <li data-section="intro" class="active">Intro</li>
-    <li data-section="incidenti">Incidenti</li>
-    <li data-section="responsabilita">Responsabilità</li>
-    <li data-section="circostanze">Circostanze</li>
-  </ul>
-</nav>
+    <title>Sketch</title>
 
-<nav id="navbar-right" class="navbar-top">
-  <ul>
-    <li><a href="chi-siamo.html">Chi siamo</a></li>
-    <li><a href="dati.html">I dati</a></li>
-  </ul>
-</nav>
+    <link rel="stylesheet" type="text/css" href="style.css">
 
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+  </head>
 
-  <main>
-
-    <!-- Sezione 1: Intro con testo typewriter -->
-    <section id="intro" class="section sticky-section">
-      <div class="typewriter-text" id="typewriter">
-        LA SITUAZIONE DEGLI INCIDENTI STRADALI IN ITALIA È PIÙ GRANDE DI CIÒ CHE PENSIAMO
-      </div>
-      <div class="scroll-down" id="scrollDown">&#x25BC;</div>
-    </section>
-
-    <!-- Sezione 2: Quadrato rappresenta 300 incidenti -->
-    <section id="incidenti" class="section">
-      <div class="square-300"></div>
-      <p>QUESTO QUADRATO RAPPRESENTA 300 INCIDENTI</p>
-    </section>
-
-    <!-- Sezione 3: Griglia quadratini e animazione -->
-    <section id="responsabilita" class="section">
-      <p id="intro-dots">MA SAI QUANTI SONO OGNI ANNO?</p>
-      <div id="dots-container"></div>
-      <p id="total-number" class="hidden">173.364</p>
-    </section>
-
-    <!-- Placeholder per la sezione circostanze -->
-    <section id="circostanze" class="section">
-      <p>Sezione Circostanze - contenuto da aggiungere</p>
-    </section>
-
-  </main>
-<!-- Sezione icone persone ferite -->
-  <section id="ogni-morto" class="section">
-  <p>E ognuno di questi morti...</p>
-  <div id="circles-container"></div>
-  </section>
-
-<!-- Sezione counter -->
-  <section id="solo-oggi" class="section">
-  <p>Pensa che solo oggi:</p>
-  <div id="counters-container">
-    <div class="counter-item">
-      <p class="number" data-target="320">0</p>
-      <p>Incidenti</p>
-    </div>
-    <div class="counter-item">
-      <p class="number" data-target="8">0</p>
-      <p>Morti</p>
-    </div>
-    <div class="counter-item">
-      <p class="number" data-target="650">0</p>
-      <p>Feriti</p>
-    </div>
-  </div>
-</section>
-
-<div id="fixed-counter"> <!-- Counter fisso in basso a destra -->
-  <span id="counter-total">173.364</span>
-  <span id="info-btn">&#9432;</span>
-</div>
-
-
-
-  <script src="sketch.js"></script>
-</body>
+  <body>
+    <script src="sketch.js"></script>
+  </body>
 </html>
