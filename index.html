@@ -13,6 +13,41 @@
   </head>
 
   <body>
+    <!-- ========================================
+         NAVBAR - Barra di navigazione in alto
+         ======================================== -->
+    <nav id="navbar">
+      <div class="nav-left">
+        <a href="#intro" class="nav-item active" data-section="0">Intro</a>
+        <a href="#incidenti" class="nav-item" data-section="1">Incidenti</a>
+        <a href="#responsabilita" class="nav-item" data-section="2">Responsabilità</a>
+      </div>
+      
+      <!-- Counter centrale che appare dopo la sezione 6 -->
+      <div id="navbar-counter" class="navbar-counter">
+        <div class="counter-item">
+          <span class="counter-number" id="nav-incidenti">0</span>
+          <span class="counter-label">Incidenti</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-number" id="nav-morti">0</span>
+          <span class="counter-label">Morti</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-number" id="nav-feriti">0</span>
+          <span class="counter-label">Feriti</span>
+        </div>
+        
+        <!-- Tooltip che appare in hover con data/ora dinamiche -->
+        <div class="counter-tooltip" id="counter-tooltip"></div>
+      </div>
+      
+      <div class="nav-right">
+        <button class="nav-button">Chi siamo</button>
+        <button class="nav-button">I dati</button>
+      </div>
+    </nav>
+    
     <script src="sketch.js"></script>
   </body>
 </html>

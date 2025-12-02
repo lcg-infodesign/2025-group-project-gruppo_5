@@ -51,6 +51,7 @@ let animFeriti = 0;
 let sestaSezioneOpacita = 0;
 let counterAnimazioneAutomatica = false;
 let counterAnimazioneInizio = 0;
+let navbarCounterAttivato = false; // Traccia se il counter navbar è già apparso
 
 // Sezione 7: Griglia responsabilità
 let animRegroupActive = false;
@@ -122,7 +123,8 @@ function draw() {
   
   // Disegna sezioni in ordine
   drawSezioneIntro();
-  drawNavbar(navbarOpacita, sezioneAttiva);
+  // NAVBAR: aggiornata tramite HTML/CSS (vedi index.html e style.css)
+  updateNavbarHTML(navbarOpacita, sezioneAttiva);
   drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita);
   drawSezioneTerza(terzaSezioneFadeOut);
   drawSezioneGrigliaIncidenti();
@@ -229,7 +231,7 @@ function calcNavbarOpacity() { // effetto opacità navbar
 
 function calcActiveSection() { // calcola dove sono e lo segna per la navbar
   if (scrollY < 1600) return 0;
-  else if (scrollY < 4300) return 1;
+  else if (scrollY < 4800) return 1;
   else return 2;
 }
 
@@ -280,14 +282,16 @@ function updateAnimations() {
   if (scrollY > 4100 && !counterAnimazioneAutomatica) {
     counterAnimazioneAutomatica = true;
     counterAnimazioneInizio = frameCount;
-  } else if (scrollY < 4100) {
+  } else if (scrollY < 4100 && !navbarCounterAttivato) {
+    // Reset solo se il counter navbar NON è ancora stato attivato
     counterAnimazioneAutomatica = false;
     animIncidenti = 0;
     animMorti = 0;
     animFeriti = 0;
   }
   
-  if (counterAnimazioneAutomatica) {
+  // Calcola e aggiorna i valori in tempo reale (sia per sezione 6 che navbar)
+  if (counterAnimazioneAutomatica || navbarCounterAttivato) {
     let now = new Date();
     let secondiOggi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     let secondiTotali = 24 * 3600;
@@ -297,11 +301,13 @@ function updateAnimations() {
     let targetMorti = mortiOggi * progress;
     let targetFeriti = feritiOggi * progress;
 
-    if (frameCount - counterAnimazioneInizio < 120) {
+    if (counterAnimazioneAutomatica && frameCount - counterAnimazioneInizio < 120) {
+      // Animazione smooth solo per la prima apparizione nella sezione 6
       animIncidenti += (targetIncidenti - animIncidenti) * 0.1;
       animMorti += (targetMorti - animMorti) * 0.1;
       animFeriti += (targetFeriti - animFeriti) * 0.1;
     } else {
+      // Aggiornamento diretto in tempo reale
       animIncidenti = targetIncidenti;
       animMorti = targetMorti;
       animFeriti = targetFeriti;
@@ -349,27 +355,86 @@ function drawSezioneIntro() {
   }
 }
 
-function drawNavbar(navbarOpacita, sezioneAttiva) {
-  if (navbarOpacita <= 0) return;
+// ========================================
+// NAVBAR HTML - Aggiorna visibilità e sezione attiva
+// ========================================
+function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
+  // Ottieni elemento navbar HTML
+  let navbar = document.getElementById('navbar');
+  if (!navbar) return;
   
-  push();
-  textFont('Helvetica');
-  textSize(14);
-  textAlign(CENTER, TOP);
+  // Mostra/nascondi navbar in base all'opacità
+  if (navbarOpacita > 50) {
+    navbar.classList.add('visible');
+  } else {
+    navbar.classList.remove('visible');
+  }
   
-  let spaziatura = width / 4;
-  let startX = width / 4;
-
-  fill(sezioneAttiva == 0 ? color(255, 122, 0, navbarOpacita) : color(255, 255, 255, navbarOpacita));
-  text('Intro', startX, 20);
-
-  fill(sezioneAttiva == 1 ? color(255, 122, 0, navbarOpacita) : color(255, 255, 255, navbarOpacita));
-  text('Incidenti', startX + spaziatura, 20);
-
-  fill(sezioneAttiva == 2 ? color(255, 122, 0, navbarOpacita) : color(255, 255, 255, navbarOpacita));
-  text('Responsabilità', startX + spaziatura * 2, 20);
-  pop();
+  // Aggiorna quale sezione è attiva
+  let navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach((item, index) => {
+    if (index === sezioneAttiva) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+  
+  // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4600)
+  let navbarCounter = document.getElementById('navbar-counter');
+  if (navbarCounter && scrollY >= 4600 && !navbarCounterAttivato) {
+    navbarCounterAttivato = true;
+    
+    // Mostra il counter con fade-in (senza animazione di conteggio)
+    setTimeout(() => {
+      navbarCounter.classList.add('visible');
+    }, 300);
+  }
+  
+  // Se il counter è stato attivato, aggiorna i valori in tempo reale
+  if (navbarCounterAttivato) {
+    updateNavbarCounterValues();
+  }
 }
+
+// NAVBAR COUNTER: Aggiorna i valori in tempo reale (senza animazione di conteggio)
+function updateNavbarCounterValues() {
+  document.getElementById('nav-incidenti').textContent = Math.floor(animIncidenti);
+  document.getElementById('nav-morti').textContent = Math.floor(animMorti);
+  document.getElementById('nav-feriti').textContent = Math.floor(animFeriti);
+  
+  // Aggiorna anche il tooltip con data e ora attuali
+  updateCounterTooltip();
+}
+
+// NAVBAR COUNTER TOOLTIP: Aggiorna con data e ora attuali
+function updateCounterTooltip() {
+  let tooltip = document.getElementById('counter-tooltip');
+  if (!tooltip) return;
+  
+  let now = new Date();
+  let giorno = String(now.getDate()).padStart(2, '0');
+  let mese = String(now.getMonth() + 1).padStart(2, '0');
+  let ore = String(now.getHours()).padStart(2, '0');
+  let minuti = String(now.getMinutes()).padStart(2, '0');
+  
+  tooltip.innerHTML = `Statistiche medie del<br>${giorno}/${mese}/2024 alle ore ${ore}:${minuti}`;
+}
+
+// NAVBAR: Gestione click sui link per scroll automatico
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      let section = parseInt(item.dataset.section);
+      
+      // Scroll automatico verso la sezione
+      if (section === 0) scrollTarget = 0;
+      else if (section === 1) scrollTarget = 1600;
+      else if (section === 2) scrollTarget = 4300;
+    });
+  });
+});
 
 function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
   // Quadrato bianco

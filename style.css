@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'LCD';
+  src: url('Assets/Fonts/LCD5x7VF.ttf') format('truetype');
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -8,4 +13,293 @@ html, body {
 
 canvas {
   display: block;
+}
+
+/* ========================================
+   NAVBAR - Stile barra di navigazione
+   ======================================== */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px 0 60px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+#navbar.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Lato sinistro: link sezioni */
+.nav-left {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav-item {
+  color: white;
+  text-decoration: none;
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  position: relative;
+  padding-bottom: 8px;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: #ff7a00;
+}
+
+/* Sottolineatura arancione per sezione attiva */
+.nav-item.active {
+  color: #ff7a00;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #ff7a00;
+}
+
+/* Lato destro: bottoni */
+.nav-right {
+  display: flex;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.nav-button {
+  background: transparent;
+  border: 1.5px solid white;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ff7a00;
+  color: #ff7a00;
+}
+
+/* ========================================
+   NAVBAR COUNTER - Counter centrale animato
+   ======================================== */
+.navbar-counter {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  padding: 12px 30px;
+  background: transparent;
+  border: 1.5px solid white;
+  border-radius: 30px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.navbar-counter.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.counter-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.counter-number {
+  font-family: 'LCD', monospace;
+  font-size: 20px;
+  font-weight: 400;
+  color: #ff7a00;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.counter-label {
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: white;
+  text-transform: capitalize;
+  line-height: 1;
+}
+
+/* Tooltip che appare in hover - copre tutto il counter */
+.counter-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(80, 80, 80, 0.95);
+  color: white;
+  border-radius: 30px;
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.navbar-counter:hover .counter-tooltip {
+  opacity: 1;
+}
+
+/* ========================================
+   RESPONSIVE - Adattamento per schermi piccoli
+   ======================================== */
+@media (max-width: 1024px) {
+  #navbar {
+    padding: 0 35px 0 40px;
+  }
+  
+  .nav-left {
+    gap: 30px;
+  }
+  
+  .nav-item {
+    font-size: 13px;
+  }
+  
+  .nav-right {
+    gap: 15px;
+  }
+  
+  .nav-button {
+    padding: 8px 18px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  #navbar {
+    padding: 0 30px;
+    height: 70px;
+  }
+  
+  .nav-left {
+    gap: 20px;
+  }
+  
+  .nav-item {
+    font-size: 13px;
+    padding-bottom: 6px;
+  }
+  
+  .nav-right {
+    gap: 12px;
+  }
+  
+  .nav-button {
+    padding: 7px 15px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navbar-counter {
+    gap: 20px;
+    padding: 10px 24px;
+  }
+  
+  .counter-number {
+    font-size: 16px;
+  }
+  
+  .counter-label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-counter {
+    gap: 15px;
+    padding: 8px 18px;
+  }
+  
+  .counter-number {
+    font-size: 14px;
+  }
+  
+  .counter-label {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 600px) {
+  #navbar {
+    padding: 0 20px;
+    height: 60px;
+  }
+  
+  .nav-left {
+    gap: 15px;
+  }
+  
+  .nav-item {
+    font-size: 12px;
+  }
+  
+  .nav-right {
+    gap: 10px;
+  }
+  
+  .nav-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .navbar-counter {
+    gap: 12px;
+    padding: 6px 15px;
+  }
+  
+  .counter-number {
+    font-size: 12px;
+  }
+  
+  .counter-label {
+    font-size: 8px;
+  }
 }
