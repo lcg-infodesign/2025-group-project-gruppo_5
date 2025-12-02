@@ -50,7 +50,7 @@ function getCSS(name){ return getComputedStyle(document.documentElement).getProp
 
 /* ---------- p5: preload/setup ---------- */
 function preload(){
-  tab = loadTable('./Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
+  tab = loadTable('../Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
 }
 
 function setup(){

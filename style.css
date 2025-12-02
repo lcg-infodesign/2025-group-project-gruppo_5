@@ -1,6 +1,24 @@
+/*font*/
 @font-face {
   font-family: 'LCD';
   src: url('Assets/Fonts/LCD5x7VF.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Transport";
+  src: url("Assets/Fonts/NewTransportAAWEBRegular.ttf");
+  font-style: normal;
+}
+
+/*palette*/
+:root{
+  --bg:#000;
+  --txt: #fff;
+
+  --orange:#ff6a00;
+  --blue:#18a7ff;
+  --green: #33BB44;
+  --pink: #FD73ED;
 }
 
 html, body {
@@ -8,7 +26,9 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* no scrollbar */
-  background: #000; /* fallback nero */
+  background: var(--bg); /* sfondo nero */
+
+  font-family: "Transport", Arial, Helvetica, sans-serif;
 }
 
 canvas {
