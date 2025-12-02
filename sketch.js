@@ -9,7 +9,6 @@ let csvData;
 let scrollY = 0;
 let scrollTarget = -1;
 let scrollVelocita = 15;
-let lastScrollY = 0;
 
 // Sezione 1: Intro
 let introCaratteriVisibili = 0;
@@ -318,7 +317,6 @@ function updateAnimations() {
   let speed = 0.07;
   animRegroupProgress += (animRegroupTarget - animRegroupProgress) * speed;
   animRegroupProgress = constrain(animRegroupProgress, 0, 1);
-  lastScrollY = scrollY;
 }
 
 // ========================================
@@ -699,14 +697,18 @@ function drawSezioneSettima() {
   
   // Estrai dati dal CSV
   let quadConducenti = 0, quadCauseEsterne = 0, quadNonConducenti = 0;
+  let incidentiConducenti = 0, incidentiCauseEsterne = 0, incidentiNonConducenti = 0;
   for (let i = 0; i < csvData.getRowCount(); i++) {
     let classe = csvData.getString(i, 'Classe').trim().toLowerCase();
     if (classe === 'conducenti') {
       quadConducenti = int(csvData.getString(i, 'I/300'));
+      incidentiConducenti = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
     } else if (classe === 'cause-esterne-concomitanti') {
       quadCauseEsterne = int(csvData.getString(i, 'I/300'));
+      incidentiCauseEsterne = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
     } else if (classe === 'non-conducenti') {
       quadNonConducenti = int(csvData.getString(i, 'I/300'));
+      incidentiNonConducenti = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
     }
   }
   const quadTotale = quadConducenti + quadCauseEsterne + quadNonConducenti;
@@ -812,6 +814,64 @@ function drawSezioneSettima() {
     fill(red(fillCol), green(fillCol), blue(fillCol), grigliaFadeIn);
     noStroke();
     rect(x, y, quadSize, quadSize);
+  }
+  
+  // Disegna i numeri sopra ogni gruppo (appaiono gradualmente con l'animazione di riordino)
+  if (animRegroupProgress > 0.3) { // Inizia a mostrare i numeri quando il riordino è al 30%
+    let numberOpacity = map(animRegroupProgress, 0.3, 1, 0, grigliaFadeIn);
+    numberOpacity = constrain(numberOpacity, 0, grigliaFadeIn);
+    
+    push();
+    textFont(lcdFont);
+    textAlign(CENTER, BOTTOM);
+    let txtSize = width * 0.025;
+    txtSize = constrain(txtSize, 18, 50);
+    textSize(txtSize);
+    
+    // Calcola i numeri animati (salgono gradualmente)
+    let animFactor = map(animRegroupProgress, 0.3, 1, 0, 1);
+    animFactor = constrain(animFactor, 0, 1);
+    
+    let currentConducenti = floor(incidentiConducenti * animFactor);
+    let currentCauseEsterne = floor(incidentiCauseEsterne * animFactor);
+    let currentNonConducenti = floor(incidentiNonConducenti * animFactor);
+    
+    // Numero gruppo BLU (Conducenti)
+    let blueCenterX = blueStartX + (blueDims.cols * (quadSize + quadSpacing)) / 2;
+    fill(0, 161, 241, numberOpacity);
+    text(currentConducenti.toLocaleString('it-IT'), blueCenterX, topY - 30);
+    
+    // Label sotto il numero
+    textFont('Helvetica');
+    textSize(txtSize * 0.4);
+    fill(255, 255, 255, numberOpacity);
+    text('Conducente', blueCenterX, topY - 10);
+    
+    // Numero gruppo VERDE (Cause esterne)
+    let greenCenterX = greenStartX + (greenDims.cols * (quadSize + quadSpacing)) / 2;
+    textFont(lcdFont);
+    textSize(txtSize);
+    fill(51, 187, 68, numberOpacity);
+    text(currentCauseEsterne.toLocaleString('it-IT'), greenCenterX, topY - 30);
+    
+    textFont('Helvetica');
+    textSize(txtSize * 0.4);
+    fill(255, 255, 255, numberOpacity);
+    text('Cause esterne', greenCenterX, topY - 10);
+    
+    // Numero gruppo ROSA (Non conducenti)
+    let pinkCenterX = pinkStartX + (pinkDims.cols * (quadSize + quadSpacing)) / 2;
+    textFont(lcdFont);
+    textSize(txtSize);
+    fill(253, 115, 237, numberOpacity);
+    text(currentNonConducenti.toLocaleString('it-IT'), pinkCenterX, topY - 30);
+    
+    textFont('Helvetica');
+    textSize(txtSize * 0.4);
+    fill(255, 255, 255, numberOpacity);
+    text('Non conducenti', pinkCenterX, topY - 10);
+    
+    pop();
   }
 }
 
