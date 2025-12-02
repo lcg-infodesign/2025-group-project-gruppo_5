@@ -2,7 +2,6 @@
 // VARIABILI GLOBALI
 // ========================================
 
-let lcdFont;
 let csvData;
 
 // Scroll
@@ -64,6 +63,7 @@ let animRegroupTarget = 0;
 
 function preload() {
   lcdFont = loadFont('Assets/Fonts/LCD5x7VF.ttf');
+  transportFont = loadFont('Assets/Fonts/NewTransportAAWEBRegular.ttf')
   csvData = loadTable('Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
 }
 
@@ -342,7 +342,7 @@ function drawSezioneIntro() {
   // Sottotitolo e freccia
   if (sottotitoloOpacita > 0) {
     push();
-    textFont('Helvetica');
+    textFont(transportFont);
     textSize(16);
     fill(255, 255, 255, min(sottotitoloOpacita, introOpacita));
     text('Scoprila analizzando i dati ISTAT del 2024', width / 2, height - 70);
@@ -490,7 +490,7 @@ function drawSezioneTerza(terzaSezioneFadeOut) {
   // Sottotitolo
   if (terzaSezioneSottotitoloOpacita > 0) {
     push();
-    textFont('Helvetica');
+    textFont(transportFont);
     textAlign(CENTER, CENTER);
     textSize(16);
     fill(255, 255, 255, min(terzaSezioneSottotitoloOpacita, terzaSezioneFadeOut));
@@ -907,7 +907,7 @@ function drawSezioneSettima() {
     text(currentConducenti.toLocaleString('it-IT'), blueCenterX, topY - 30);
     
     // Label sotto il numero
-    textFont('Helvetica');
+    textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, numberOpacity);
     text('Conducente', blueCenterX, topY - 10);
@@ -919,7 +919,7 @@ function drawSezioneSettima() {
     fill(51, 187, 68, numberOpacity);
     text(currentCauseEsterne.toLocaleString('it-IT'), greenCenterX, topY - 30);
     
-    textFont('Helvetica');
+    textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, numberOpacity);
     text('Cause esterne', greenCenterX, topY - 10);
@@ -931,7 +931,7 @@ function drawSezioneSettima() {
     fill(253, 115, 237, numberOpacity);
     text(currentNonConducenti.toLocaleString('it-IT'), pinkCenterX, topY - 30);
     
-    textFont('Helvetica');
+    textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, numberOpacity);
     text('Non conducenti', pinkCenterX, topY - 10);

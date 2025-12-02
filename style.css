@@ -1,38 +1,80 @@
-/*font*/
+/* ========================================
+   FONT
+   ======================================== */
 @font-face {
-  font-family: 'LCD';
-  src: url('Assets/Fonts/LCD5x7VF.ttf') format('truetype');
+  font-family: "LCD";
+  src: url("Assets/Fonts/LCD5x7VF.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Transport";
-  src: url("Assets/Fonts/NewTransportAAWEBRegular.ttf");
+  src: url("Assets/Fonts/NewTransportAAWEBRegular.ttf") format("truetype");
   font-style: normal;
 }
 
-/*palette*/
-:root{
-  --bg:#000;
+/* ========================================
+   PALETTE
+   ======================================== */
+:root {
+  --bg: #000;
   --txt: #fff;
 
-  --orange:#ff6a00;
-  --blue:#18a7ff;
-  --green: #33BB44;
-  --pink: #FD73ED;
+  --orange: #ff8b43;
+  --blue: #18a7ff;
+  --green: #33bb44;
+  --pink: #fd73ed;
+
+  --hover: rgba(255, 255, 255, 0.1);
+  
+  /*visualizzazione di dettaglio*/
+  --grid:#2c2c2c;
+  --muted:#bdbdbd;
 }
 
-html, body {
+/* ========================================
+   STILE GENERALE
+   ======================================== */
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden; /* no scrollbar */
-  background: var(--bg); /* sfondo nero */
+  
+  background: var(--bg);
+  color: var(--txt);
 
+  /*testi*/
   font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+
+.scroll{ /*pagina dei dati ha bisogno di scrollare*/
+  overflow: auto;
 }
 
 canvas {
   display: block;
+}
+
+p {
+  width: 60vw;
+  max-width: 50em;
+  padding: none;
+  margin: 1em 0 0.5em 2rem;
+}
+
+h1 {
+  font-family: "LCD", monospace;
+  color: var(--orange);
+  font-size: 40px;
+  margin: 2rem;
+}
+
+h2 {
+  font-family: "LCD", monospace;
+  font-size: 24px;
+  margin: 2em 0 0.5em 2rem;
 }
 
 /* ========================================
@@ -70,34 +112,27 @@ canvas {
 }
 
 .nav-item {
-  color: white;
+  color: var(--txt);
   text-decoration: none;
-  font-family: 'Helvetica', Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 400;
   position: relative;
   padding-bottom: 8px;
   transition: color 0.3s ease;
   white-space: nowrap;
 }
 
-.nav-item:hover {
-  color: #ff7a00;
-}
-
 /* Sottolineatura arancione per sezione attiva */
 .nav-item.active {
-  color: #ff7a00;
+  color: var(--orange);
 }
 
 .nav-item.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 2px;
-  background: #ff7a00;
+  background: var(--orange);
 }
 
 /* Lato destro: bottoni */
@@ -109,22 +144,20 @@ canvas {
 
 .nav-button {
   background: transparent;
-  border: 1.5px solid white;
-  color: white;
+  border: 1.5px solid var(--txt);
+  color: var(--txt);
   padding: 10px 24px;
   border-radius: 25px;
-  font-family: 'Helvetica', Arial, sans-serif;
-  font-size: 15px;
-  font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .nav-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #ff7a00;
-  color: #ff7a00;
+  background: var(--hover);
+  border-color: var(--orange);
+  color: var(--orange);
 }
 
 /* ========================================
@@ -140,7 +173,7 @@ canvas {
   align-items: center;
   padding: 12px 30px;
   background: transparent;
-  border: 1.5px solid white;
+  border: 1.5px solid var(--txt);
   border-radius: 30px;
   opacity: 0;
   transition: all 0.3s ease;
@@ -161,19 +194,18 @@ canvas {
 }
 
 .counter-number {
-  font-family: 'LCD', monospace;
+  font-family: "LCD", monospace;
   font-size: 20px;
   font-weight: 400;
-  color: #ff7a00;
+  color: var(--orange);
   line-height: 1;
   letter-spacing: 1px;
 }
 
 .counter-label {
-  font-family: 'Helvetica', Arial, sans-serif;
   font-size: 11px;
   font-weight: 400;
-  color: white;
+  color: var(--txt);
   text-transform: capitalize;
   line-height: 1;
 }
@@ -189,9 +221,8 @@ canvas {
   align-items: center;
   justify-content: center;
   background: rgba(80, 80, 80, 0.95);
-  color: white;
+  color: var(--txt);
   border-radius: 30px;
-  font-family: 'Helvetica', Arial, sans-serif;
   font-size: 11px;
   font-weight: 400;
   line-height: 1.4;
@@ -207,25 +238,80 @@ canvas {
 }
 
 /* ========================================
+   VIS. DETTAGLIO
+   ======================================== */
+  /*da capire ancora un attimo*/
+
+/* ========================================
+   PAGINA DEI DATI - tendine
+   ======================================== */
+.newCategory {
+  /*sfondo bottone*/
+  background-color: var(--bg);
+  width: 60vw;
+  max-width: 40em;
+  padding: 1em;
+  margin: 0.5em 0 0 2rem;
+  border-radius: 20px;
+  border: 0.1rem solid var(--txt);
+  cursor: pointer;
+  /*disposizione dei contenuti*/
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /*testo interno*/
+  color: var(--txt);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.newCategory:hover {
+  background-color: var(--hover);
+  transition: 0.1s;
+}
+
+/*rotazione freccia*/
+.newCategory span {
+  transition: transform 0.25s;
+}
+.newCategory.active span {
+  transform: rotate(-90deg);
+}
+
+.oldCategory {
+  display: none;
+}
+
+.oldCategory p {
+  margin-left: 3em;
+}
+
+.oldCategory li {
+  text-indent: 3em;
+  padding: 0.4rem;
+}
+
+/* ========================================
    RESPONSIVE - Adattamento per schermi piccoli
    ======================================== */
 @media (max-width: 1024px) {
   #navbar {
     padding: 0 35px 0 40px;
   }
-  
+
   .nav-left {
     gap: 30px;
   }
-  
+
   .nav-item {
     font-size: 13px;
   }
-  
+
   .nav-right {
     gap: 15px;
   }
-  
+
   .nav-button {
     padding: 8px 18px;
     font-size: 14px;
@@ -237,20 +323,20 @@ canvas {
     padding: 0 30px;
     height: 70px;
   }
-  
+
   .nav-left {
     gap: 20px;
   }
-  
+
   .nav-item {
     font-size: 13px;
     padding-bottom: 6px;
   }
-  
+
   .nav-right {
     gap: 12px;
   }
-  
+
   .nav-button {
     padding: 7px 15px;
     font-size: 13px;
@@ -262,11 +348,11 @@ canvas {
     gap: 20px;
     padding: 10px 24px;
   }
-  
+
   .counter-number {
     font-size: 16px;
   }
-  
+
   .counter-label {
     font-size: 10px;
   }
@@ -277,11 +363,11 @@ canvas {
     gap: 15px;
     padding: 8px 18px;
   }
-  
+
   .counter-number {
     font-size: 14px;
   }
-  
+
   .counter-label {
     font-size: 9px;
   }
@@ -292,33 +378,33 @@ canvas {
     padding: 0 20px;
     height: 60px;
   }
-  
+
   .nav-left {
     gap: 15px;
   }
-  
+
   .nav-item {
     font-size: 12px;
   }
-  
+
   .nav-right {
     gap: 10px;
   }
-  
+
   .nav-button {
     padding: 6px 12px;
     font-size: 12px;
   }
-  
+
   .navbar-counter {
     gap: 12px;
     padding: 6px 15px;
   }
-  
+
   .counter-number {
     font-size: 12px;
   }
-  
+
   .counter-label {
     font-size: 8px;
   }
