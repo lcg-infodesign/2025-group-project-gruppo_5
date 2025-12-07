@@ -3,6 +3,9 @@
 // ========================================
 
 let csvData;
+let csvConducenti;
+let csvCauseEsterne;
+let csvNonConducenti;
 
 // Scroll
 let scrollY = 0;
@@ -56,15 +59,29 @@ let navbarCounterAttivato = false; // Traccia se il counter navbar è già appar
 let animRegroupActive = false;
 let animRegroupProgress = 0;
 let animRegroupTarget = 0;
+let dimensioneQuadratino = 0; // Dimensione dei quadratini, calcolata in sezione 7
+
+// Overlay sezione 8: "canvas" visualizzazione di dettaglio
+let overlayOpen = false;
+let overlayHitboxes = [];
+let overlayCategoria = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
+const overlayCategorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
+let overlaySquareHitboxes = []; // hitbox per i quadrati
+let showBars = false; // false = quadrati, true = istogramma con barre
+let overlayTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
+let overlayTransTarget = 0; // target per l'animazione
 
 // ========================================
 // SETUP E PRELOAD
 // ========================================
 
 function preload() {
-  lcdFont = loadFont('Assets/Fonts/LCD5x7VF.ttf');
-  transportFont = loadFont('Assets/Fonts/NewTransportAAWEBRegular.ttf')
-  csvData = loadTable('Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
+  lcdFont = loadFont('../Assets/Fonts/LCD5x7VF.ttf');
+  transportFont = loadFont('../Assets/Fonts/NewTransportAAWEBRegular.ttf')
+  csvData = loadTable('../Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
+  csvConducenti = loadTable('../Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
+  csvCauseEsterne = loadTable('../Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header');
+  csvNonConducenti = loadTable('../Assets/Datasets/Incidenti-persone.csv', 'csv', 'header');
 }
 
 function setup() {
@@ -131,9 +148,11 @@ function draw() {
   drawSezioneQuinta();
   drawSezioneSesta();
   drawSezioneSettima();
+  drawSezioneOttava();
   
   // Aggiorna animazioni
   updateAnimations();
+  updateCursor();
   
   // Debug
   drawDebugInfo();
@@ -323,6 +342,53 @@ function updateAnimations() {
   let speed = 0.07;
   animRegroupProgress += (animRegroupTarget - animRegroupProgress) * speed;
   animRegroupProgress = constrain(animRegroupProgress, 0, 1);
+  
+  // Animazione overlay cubo
+  overlayTransTarget = showBars ? 1 : 0;
+  overlayTrans += (overlayTransTarget - overlayTrans) * 0.12;
+  overlayTrans = constrain(overlayTrans, 0, 1);
+}
+
+function isMouseOver(x, y, w, h) { // controllo hover generico
+  return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+}
+
+function changeOverlayCategory(delta) { // cambia categoria nell'overlay
+  let idx = overlayCategorie.indexOf(overlayCategoria);
+  if (idx === -1) idx = 0;
+  idx = (idx + delta + overlayCategorie.length) % overlayCategorie.length;
+  overlayCategoria = overlayCategorie[idx];
+}
+
+function getOverlayColor(cat) {
+  if (cat === 'conducenti') return color(0, 161, 241);
+  if (cat === 'cause-esterne-concomitanti') return color(51, 187, 68);
+  if (cat === 'non-conducenti') return color(253, 115, 237);
+  return color(255);
+}
+
+function getOverlayData(cat) {
+  if (cat === 'conducenti') return csvConducenti;
+  if (cat === 'cause-esterne-concomitanti') return csvCauseEsterne;
+  if (cat === 'non-conducenti') return csvNonConducenti;
+  return null;
+}
+
+function updateCursor() { // cursore mano sugli elementi cliccabili dell'overlay
+  if (overlayOpen) {
+    const backArea = { x: 20, y: 20, w: 60, h: 60 };
+    const leftArea = { x: 20, y: height / 2 - 40, w: 80, h: 80 };
+    const rightArea = { x: width - 100, y: height / 2 - 40, w: 80, h: 80 };
+    if (isMouseOver(backArea.x, backArea.y, backArea.w, backArea.h) ||
+        isMouseOver(leftArea.x, leftArea.y, leftArea.w, leftArea.h) ||
+        isMouseOver(rightArea.x, rightArea.y, rightArea.w, rightArea.h)) {
+      cursor(HAND);
+    } else {
+      cursor(ARROW);
+    }
+  } else {
+    cursor(ARROW);
+  }
 }
 
 // ========================================
@@ -666,6 +732,98 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   pop();
 }
 
+// Funzione per disegnare i cubi nell'istogramma (riutilizza la stessa logica di drawCubo)
+function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti) {
+  function easeOutCubic(t) {
+    return 1 - pow(1 - t, 3);
+  }
+  
+  let angle = (PI/4) * easeOutCubic(constrain((trans - 0.00) / 0.35, 0, 1));
+  let squash = lerp(1, 0.40, easeOutCubic(constrain((trans - 0.35) / 0.20, 0, 1)));
+  let grow = easeOutCubic(constrain((trans - 0.55) / 0.45, 0, 1));
+  
+  let baseY = -half;
+  let sideH = H * grow;
+  
+  // Calcola percentuale di incidenti mortali
+  let percIncMortali = (morti * 1000) / incidenti;
+  // Gradiente da bianco (255,255,255) ad arancione (#ff8b43 = 255,139,67)
+  let sideColor = lerpColor(color(255, 255, 255), color(255, 139, 67), percIncMortali / 100);
+  
+  let base = [
+    {x: -half, y: -half}, {x: +half, y: -half},
+    {x: +half, y: +half}, {x: -half, y: +half}
+  ];
+  
+  function rot(pt, lift) {
+    let c = cos(angle), s = sin(angle);
+    let rx = pt.x * c - pt.y * s;
+    let ry = (pt.x * s + pt.y * c) * squash;
+    return { x: rx, y: (baseY - lift) + ry };
+  }
+  
+  let p0 = rot(base[0], sideH);
+  let p1 = rot(base[1], sideH);
+  let p2 = rot(base[2], sideH);
+  let p3 = rot(base[3], sideH);
+  
+  let bL0 = rot(base[3], 0);
+  let bL1 = rot(base[0], 0);
+  let L0 = {x: bL0.x, y: 0};
+  let L1 = {x: bL1.x, y: 0};
+  let L2 = rot(base[0], sideH);
+  let L3 = rot(base[3], sideH);
+  let L = [L0, L1, L2, L3];
+  
+  let mirror = (pt) => ({x: -pt.x, y: pt.y});
+  let R = [mirror(L0), mirror(L1), mirror(L2), mirror(L3)];
+  
+  // Lati con gradiente bianco-arancione in base alla percentuale di incidenti mortali
+  if (sideH > 0) {
+    fill(sideColor);
+    noStroke();
+    quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
+    quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
+    
+    // Numero lesionati sopra
+    fill(255);
+    textFont(transportFont);
+    textSize(12);
+    textAlign(CENTER, BOTTOM);
+    let topY = min(p0.y, p1.y, p2.y, p3.y);
+    text(lesionati.toLocaleString('it-IT'), 0, topY - 5);
+  }
+  
+  // Top del cubo
+  if (isFilled) {
+    fill(categoryColor);
+    noStroke();
+    quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+  } else {
+    fill(0);
+    stroke(categoryColor);
+    strokeWeight(2);
+    quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+  }
+  
+  // Debug: numero incidenti sopra
+  fill(255, 0, 0);
+  noStroke();
+  textFont(transportFont);
+  textSize(10);
+  textAlign(CENTER, BOTTOM);
+  let debugY = min(p0.y, p1.y, p2.y, p3.y);
+  text(incidenti.toLocaleString('it-IT'), 0, debugY - 20);
+  
+  // Nome categoria sotto
+  fill(255);
+  noStroke();
+  textFont(transportFont);
+  textSize(9);
+  textAlign(CENTER, TOP);
+  text(nome, 0, 5);
+}
+
 function drawSezioneSesta() {
   // Fade-in sezione
   if (scrollY > 3900 && scrollY < 4100) {
@@ -784,7 +942,7 @@ function drawSezioneSettima() {
   const coloreRosa = color(253, 115, 237);
   
   // Layout
-  let dimensioneQuadratino = width * 0.008;
+  dimensioneQuadratino = width * 0.008;
   dimensioneQuadratino = constrain(dimensioneQuadratino, 8, 15);
   let spaziatura = dimensioneQuadratino * 0.5;
   let quadratiniPerRiga = floor(width * 0.4 / (dimensioneQuadratino + spaziatura));
@@ -838,6 +996,13 @@ function drawSezioneSettima() {
   let blueStartX = startX;
   let greenStartX = blueStartX + blueDims.cols * (quadSize + quadSpacing) + groupSpacing;
   let pinkStartX = greenStartX + greenDims.cols * (quadSize + quadSpacing) + groupSpacing;
+
+  // Hitbox per click su categorie -- dopo mi porta alla visualizzazione di dettaglio
+  overlayHitboxes = [
+    { x: blueStartX - quadSpacing, y: topY - 40, w: blueDims.cols * (quadSize + quadSpacing) + quadSpacing * 2, h: blueDims.rows * (quadSize + quadSpacing) + 80 },
+    { x: greenStartX - quadSpacing, y: topY - 40, w: greenDims.cols * (quadSize + quadSpacing) + quadSpacing * 2, h: greenDims.rows * (quadSize + quadSpacing) + 80 },
+    { x: pinkStartX - quadSpacing, y: topY - 40, w: pinkDims.cols * (quadSize + quadSpacing) + quadSpacing * 2, h: pinkDims.rows * (quadSize + quadSpacing) + 80 }
+  ];
   
   let blueIdx = 0, greenIdx = 0, pinkIdx = 0;
   for (let i = 0; i < quadTotale && i < animProgress; i++) {
@@ -940,6 +1105,126 @@ function drawSezioneSettima() {
   }
 }
 
+function drawSezioneOttava() { //visualizzazione di dettaglio
+  if (!overlayOpen) return; //crea un overlay sopra tutto (come se ci fosse un canvas nuovo sopra)
+  push();
+  noStroke();
+  fill(0, 0, 0, 255);
+  rect(0, 0, width, height);
+
+  // Mostra dati dal CSV corrispondente
+  let categoryData = getOverlayData(overlayCategoria);
+  if (categoryData) {
+    fill(255);
+    textFont(lcdFont);
+    textSize(40);
+    textAlign(LEFT, TOP);
+    let yPos = 100;
+    text(overlayCategoria.toUpperCase(), 100, yPos);
+    yPos += 80;
+    
+    // Disegna quadrati per ogni riga del dataset (escluso il totale)
+    let categoryColor = getOverlayColor(overlayCategoria);
+    let numRows = categoryData.getRowCount();
+    let baseQuadSize = dimensioneQuadratino; // Usa la variabile calcolata nella sezione 7
+    let quadSpacing = 40;
+    
+    // Calcola larghezza totale per centrare a destra
+    let totalWidth = 0;
+    for (let i = 0; i < numRows - 1; i++) {
+      let i300 = int(categoryData.getString(i, 'I/300'));
+      let area = baseQuadSize * baseQuadSize * i300;
+      let size = (i300 >= 1) ? sqrt(area) : baseQuadSize;
+      totalWidth += size + quadSpacing;
+    }
+    totalWidth -= quadSpacing;
+    
+    let xPos = width - 100 - totalWidth; // Inizia da destra
+    let baselineY = height - 100; // Linea di base in basso
+    
+    overlaySquareHitboxes = []; // Reset hitbox
+    
+    // Trova il massimo e minimo numero di lesionati per scalare l'altezza
+    let maxLesionati = 0;
+    let minLesionati = Infinity;
+    for (let i = 0; i < numRows - 1; i++) {
+      let lesionati = parseInt(categoryData.getString(i, 'Lesionati').replace(/[\s.]/g, ''));
+      if (lesionati > maxLesionati) maxLesionati = lesionati;
+      if (lesionati < minLesionati) minLesionati = lesionati;
+    }
+    
+    // Altezze minime e massime per le barre
+    let minBarHeight = 20;  // Altezza minima in pixel
+    let maxBarHeight = height * 0.4; // Altezza massima
+    
+    for (let i = 0; i < numRows - 1; i++) { // -1 per escludere l'ultima riga (che sarebbe il totale, quindi non ci interessa)
+      let i300 = int(categoryData.getString(i, 'I/300'));
+      let nome = categoryData.getString(i, 0); // Prima colonna: nome categoria
+      let lesionati = parseInt(categoryData.getString(i, 'Lesionati').replace(/[\s.]/g, ''));
+      let incidenti = parseInt(categoryData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
+      let morti = parseInt(categoryData.getString(i, 'Morti').replace(/[\s.]/g, ''));
+      
+      // Calcola dimensione del quadrato in base a I/300
+      let area = baseQuadSize * baseQuadSize * i300;
+      let quadSize = (i300 >= 1) ? sqrt(area) : baseQuadSize;
+      
+      // Calcola altezza in base ai lesionati
+      let H = map(lesionati, minLesionati, maxLesionati, minBarHeight, maxBarHeight);
+      
+      let half = quadSize / 2;
+      let cx = xPos + half;
+      
+      // Usa drawCubo per disegnare il parallelepipedo
+      push();
+      translate(cx, baselineY);
+      drawCuboOverlay(half, H, overlayTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti);
+      pop();
+      
+      // Salva hitbox
+      overlaySquareHitboxes.push({
+        x: xPos,
+        y: baselineY - quadSize - H * overlayTrans,
+        w: quadSize,
+        h: quadSize + H * overlayTrans,
+        index: i
+      });
+      
+      xPos += quadSize + quadSpacing;
+    }
+  }
+  
+  // Freccia per tornare indietro
+  fill(255, 255, 255);
+  textFont('Courier');
+  textSize(40);
+  textAlign(LEFT, TOP);
+  text('←', 60, 60);
+
+  // dimensioni frecce laterali per cambiare categoria
+  let midY = height / 2;
+  let offset = 50;
+  let size = 20;
+
+  // Calcola categorie precedenti/successive
+  let idx = overlayCategorie.indexOf(overlayCategoria);
+  if (idx === -1) idx = 0;
+  let prevCat = overlayCategorie[(idx - 1 + overlayCategorie.length) % overlayCategorie.length];
+  let nextCat = overlayCategorie[(idx + 1) % overlayCategorie.length];
+
+  // Freccia sinistra (categoria precedente)
+  noFill();
+  stroke(getOverlayColor(prevCat));
+  strokeWeight(2);
+  triangle(offset, midY, offset + size, midY - size, offset + size, midY + size);
+
+  // Freccia destra (categoria successiva)
+  let rightX = width - offset;
+  stroke(getOverlayColor(nextCat));
+  triangle(rightX, midY, rightX - size, midY - size, rightX - size, midY + size);
+
+  pop();
+}
+
 function drawDebugInfo() {
   push();
   textFont('Courier');
@@ -955,6 +1240,36 @@ function drawDebugInfo() {
 // ========================================
 
 function mouseClicked() {
+  // Se overlay di dettaglio è aperto
+  if (overlayOpen) {
+    // Freccia per tornare indietro
+    if (isMouseOver(20, 20, 60, 60)) {
+      overlayOpen = false;
+      showBars = false;
+      return;
+    }
+    // Freccia destra/sinistra per cambio categoria
+    if (isMouseOver(20, height / 2 - 40, 80, 80)) {
+      changeOverlayCategory(-1);
+      return;
+    }
+    if (isMouseOver(width - 100, height / 2 - 40, 80, 80)) {
+      changeOverlayCategory(1);
+      return;
+    }
+    
+    // Click su un qualsiasi quadrato: toggle tutte le barre
+    for (let hitbox of overlaySquareHitboxes) {
+      if (mouseX >= hitbox.x && mouseX <= hitbox.x + hitbox.w &&
+          mouseY >= hitbox.y && mouseY <= hitbox.y + hitbox.h) {
+        showBars = !showBars;
+        return;
+      }
+    }
+    
+    return;
+  }
+
   let frecciaY = height - 45;
   let distanza = dist(mouseX, mouseY, width / 2, frecciaY);
   
@@ -963,6 +1278,25 @@ function mouseClicked() {
       scrollTarget = 800;
     } else if (quadratoFrecciaOpacita > 100) {
       scrollTarget = 1400;
+    }
+  }
+
+  // Se click su hitbox, allora apri overlay
+  if (scrollY >= 5200 && overlayHitboxes.length) {
+    for (let i = 0; i < overlayHitboxes.length; i++) {
+      let hb = overlayHitboxes[i];
+      if (mouseX >= hb.x && mouseX <= hb.x + hb.w && mouseY >= hb.y && mouseY <= hb.y + hb.h) {
+        overlayOpen = true;
+        // Imposta la categoria in base all'indice: 0=conducenti, 1=cause-esterne, 2=non-conducenti
+        if (i === 0) {
+          overlayCategoria = 'conducenti';
+        } else if (i === 1) {
+          overlayCategoria = 'cause-esterne-concomitanti';
+        } else if (i === 2) {
+          overlayCategoria = 'non-conducenti';
+        }
+        break;
+      }
     }
   }
 }
