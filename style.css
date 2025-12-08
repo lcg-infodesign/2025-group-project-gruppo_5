@@ -247,6 +247,57 @@ h2 {
 }
 
 /* ========================================
+   SCROLL ARROW - Freccia fissa per navigazione
+   ======================================== */
+.scroll-arrow {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid var(--txt);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999;
+  opacity: 1;
+  pointer-events: all;
+  transition: all 0.3s ease;
+  animation: bounce 2s infinite;
+}
+
+.scroll-arrow:hover {
+  background: rgba(255, 139, 67, 0.2);
+  border-color: var(--orange);
+  transform: translateX(-50%) translateY(-3px);
+}
+
+.scroll-arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scroll-arrow:hover svg path {
+  stroke: var(--orange);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+/* ========================================
    VIS. DETTAGLIO
    ======================================== */
   /*da capire ancora un attimo*/
