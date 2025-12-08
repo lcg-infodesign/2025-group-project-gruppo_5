@@ -94,37 +94,131 @@ let overlayTransTarget = 0; // target per l'animazione
 // ========================================
 
 function preload() {
-  lcdFont = loadFont('../Assets/Fonts/LCD5x7VF.ttf');
-  transportFont = loadFont('../Assets/Fonts/NewTransportAAWEBRegular.ttf')
-  csvData = loadTable('../Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
-  csvConducenti = loadTable('../Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
-  csvCauseEsterne = loadTable('../Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header');
-  csvNonConducenti = loadTable('../Assets/Datasets/Incidenti-persone.csv', 'csv', 'header');
+  console.log('Preload started...');
+  
+  // Carica fonts con error handling
+  loadFont('assets/fonts/LCD5x7VF.ttf', 
+    (font) => { 
+      lcdFont = font; 
+      console.log('LCD font loaded'); 
+    },
+    (err) => { 
+      console.error('Error loading LCD font:', err);
+      lcdFont = null;
+    }
+  );
+  
+  loadFont('assets/fonts/NewTransportAAWEBRegular.ttf',
+    (font) => { 
+      transportFont = font; 
+      console.log('Transport font loaded'); 
+    },
+    (err) => { 
+      console.error('Error loading Transport font:', err);
+      transportFont = null;
+    }
+  );
+  
+  // Carica CSV con error handling
+  loadTable('assets/datasets/Incidenti-totale.csv', 'csv', 'header',
+    (table) => { 
+      csvData = table; 
+      console.log('Incidenti-totale.csv loaded:', csvData.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-totale.csv:', err);
+      csvData = null;
+    }
+  );
+  
+  loadTable('assets/datasets/Incidenti-conducenti.csv', 'csv', 'header',
+    (table) => { 
+      csvConducenti = table; 
+      console.log('Incidenti-conducenti.csv loaded:', csvConducenti.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-conducenti.csv:', err);
+      csvConducenti = null;
+    }
+  );
+  
+  loadTable('assets/datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header',
+    (table) => { 
+      csvCauseEsterne = table; 
+      console.log('Incidenti-esterne_concomitanti.csv loaded:', csvCauseEsterne.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-esterne_concomitanti.csv:', err);
+      csvCauseEsterne = null;
+    }
+  );
+  
+  loadTable('assets/datasets/Incidenti-persone.csv', 'csv', 'header',
+    (table) => { 
+      csvNonConducenti = table; 
+      console.log('Incidenti-persone.csv loaded:', csvNonConducenti.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-persone.csv:', err);
+      csvNonConducenti = null;
+    }
+  );
 }
 
 function setup() {
+  console.log('🎨 Setup started...');
+  
   createCanvas(windowWidth, windowHeight);
-  textFont(lcdFont);
+  
+  // Verifica che i file siano caricati
+  if (!lcdFont) {
+    console.warn('LCD font not loaded, using default font');
+  } else {
+    textFont(lcdFont);
+  }
+  
+  if (!transportFont) {
+    console.warn('Transport font not loaded');
+  }
+  
+  if (!csvData) {
+    console.error('CRITICAL: csvData not loaded! Animation will not work properly.');
+  }
+  
   textAlign(CENTER, CENTER);
   
-  // Carica dati dal CSV
-  for (let i = 0; i < csvData.getRowCount(); i++) {
-    let classe = csvData.getString(i, 'Classe').trim();
-    if (classe === 'Totale') {
-      numeroTotaleQuadratini = int(csvData.getString(i, 'I/300'));
-      let incidentiStringa = csvData.getString(i, 'Incidenti').replace(/\s/g, '').replace(/\./g, '');
-      numeroTotaleIncidenti = int(incidentiStringa);
-      
-      let incidentiTotali = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
-      let mortiTotali = parseInt(csvData.getString(i, 'Morti').replace(/[\s.]/g, ''));
-      let feritiTotali = parseInt(csvData.getString(i, 'Feriti').replace(/[\s.]/g, ''));
+  // Carica dati dal CSV (con protezione da errori)
+  if (csvData && csvData.getRowCount() > 0) {
+    for (let i = 0; i < csvData.getRowCount(); i++) {
+      let classe = csvData.getString(i, 'Classe').trim();
+      if (classe === 'Totale') {
+        numeroTotaleQuadratini = int(csvData.getString(i, 'I/300'));
+        let incidentiStringa = csvData.getString(i, 'Incidenti').replace(/\s/g, '').replace(/\./g, '');
+        numeroTotaleIncidenti = int(incidentiStringa);
+        
+        let incidentiTotali = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
+        let mortiTotali = parseInt(csvData.getString(i, 'Morti').replace(/[\s.]/g, ''));
+        let feritiTotali = parseInt(csvData.getString(i, 'Feriti').replace(/[\s.]/g, ''));
 
-      incidentiOggi = floor(incidentiTotali / 366);
-      mortiOggi = floor(mortiTotali / 366);
-      feritiOggi = floor(feritiTotali / 366);
-      break;
+        incidentiOggi = floor(incidentiTotali / 366);
+        mortiOggi = floor(mortiTotali / 366);
+        feritiOggi = floor(feritiTotali / 366);
+        
+        console.log('Dati caricati:', {
+          numeroTotaleIncidenti,
+          numeroTotaleQuadratini,
+          incidentiOggi,
+          mortiOggi,
+          feritiOggi
+        });
+        break;
+      }
     }
+  } else {
+    console.error('CRITICAL: Cannot process CSV data - file not loaded or empty!');
   }
+  
+  console.log('Setup completed!');
   
   document.body.style.height = '6000px';
   document.body.style.overflow = 'auto';

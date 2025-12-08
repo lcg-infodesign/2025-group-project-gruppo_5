@@ -50,7 +50,7 @@ function getCSS(name){ return getComputedStyle(document.documentElement).getProp
 
 /* ---------- p5: preload/setup ---------- */
 function preload(){
-  tab = loadTable('../Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
+  tab = loadTable('../assets/datasets/Incidenti-conducenti.csv', 'csv', 'header');
 }
 
 function setup(){
@@ -453,7 +453,7 @@ function drawTip(){
   }
 
   tip.style.fontFamily   = 'system-ui, Segoe UI, Roboto, Arial';
-  tip.style.fontSize     = '26px';
+  tip.style.fontsize     = '26px';
   tip.style.lineHeight   = '1.5';
   tip.style.padding      = '0';
   tip.style.borderRadius = '0';

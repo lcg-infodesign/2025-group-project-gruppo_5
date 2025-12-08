@@ -3,12 +3,12 @@
    ======================================== */
 @font-face {
   font-family: "LCD";
-  src: url("Assets/Fonts/LCD5x7VF.ttf") format("truetype");
+  src: url("assets/fonts/LCD5x7VF.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Transport";
-  src: url("Assets/Fonts/NewTransportAAWEBRegular.ttf") format("truetype");
+  src: url("assets/fonts/NewTransportAAWEBRegular.ttf") format("truetype");
   font-style: normal;
 }
 
