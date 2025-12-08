@@ -96,8 +96,8 @@ let overlayTransTarget = 0; // target per l'animazione
 function preload() {
   console.log('Preload started...');
   
-  // Carica fonts con error handling
-  loadFont('assets/fonts/LCD5x7VF.ttf', 
+  // Carica Fonts con error handling
+  loadFont('Assets/Fonts/LCD5x7VF.ttf', 
     (font) => { 
       lcdFont = font; 
       console.log('LCD font loaded'); 
@@ -108,7 +108,7 @@ function preload() {
     }
   );
   
-  loadFont('assets/fonts/NewTransportAAWEBRegular.ttf',
+  loadFont('Assets/Fonts/NewTransportAAWEBRegular.ttf',
     (font) => { 
       transportFont = font; 
       console.log('Transport font loaded'); 
@@ -120,7 +120,7 @@ function preload() {
   );
   
   // Carica CSV con error handling
-  loadTable('assets/datasets/Incidenti-totale.csv', 'csv', 'header',
+  loadTable('Assets/Datasets/Incidenti-totale.csv', 'csv', 'header',
     (table) => { 
       csvData = table; 
       console.log('Incidenti-totale.csv loaded:', csvData.getRowCount(), 'rows'); 
@@ -131,7 +131,7 @@ function preload() {
     }
   );
   
-  loadTable('assets/datasets/Incidenti-conducenti.csv', 'csv', 'header',
+  loadTable('Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header',
     (table) => { 
       csvConducenti = table; 
       console.log('Incidenti-conducenti.csv loaded:', csvConducenti.getRowCount(), 'rows'); 
@@ -142,7 +142,7 @@ function preload() {
     }
   );
   
-  loadTable('assets/datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header',
+  loadTable('Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header',
     (table) => { 
       csvCauseEsterne = table; 
       console.log('Incidenti-esterne_concomitanti.csv loaded:', csvCauseEsterne.getRowCount(), 'rows'); 
@@ -153,7 +153,7 @@ function preload() {
     }
   );
   
-  loadTable('assets/datasets/Incidenti-persone.csv', 'csv', 'header',
+  loadTable('Assets/Datasets/Incidenti-persone.csv', 'csv', 'header',
     (table) => { 
       csvNonConducenti = table; 
       console.log('Incidenti-persone.csv loaded:', csvNonConducenti.getRowCount(), 'rows'); 
