@@ -347,9 +347,13 @@ h2 {
   margin-left: 3em;
 }
 
+.oldCategory ul {
+  margin-left: 3em;
+  padding-left: 2em;
+}
+
 .oldCategory li {
-  text-indent: 3em;
-  padding: 0.4rem;
+  padding: 0.4rem 0;
 }
 
 /* ========================================

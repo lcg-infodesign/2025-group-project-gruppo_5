@@ -6,10 +6,10 @@
   <h1 class="main-title">I DATI</h1>
     <!--collego css-->
     <link rel="stylesheet" href="../style.css" />
-    <!--collego js-->
-    <script src="../javascript/dati.js" defer></script>
-    <script src="libraries/p5.min.js"></script>
-    <script src="libraries/p5.sound.min.js"></script>
+    <!--collego js - p5 PRIMA del file dati.js-->
+    <script src="../libraries/p5.min.js"></script>
+    <script src="../libraries/p5.sound.min.js"></script>
+    <script src="../javascript/dati.js"></script>
 
   </head>
   <body class="scroll">
@@ -78,6 +78,8 @@
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Procedeva senza rispettare lo stop</li>
           <li>Procedeva senza rispettare il segnale di dare precedenza</li>
           <li>
@@ -87,20 +89,22 @@
             Procedeva senza rispettare le segnalazioni semaforiche o dell'agente
           </li>
           <li>Attraversava imprudentemente il passaggio a livello</li>
-        </p>
+        </ul>
       </div>
       <button class="newCategory">In manovra<span>▼</span></button>
       <div class="oldCategory">
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Manovrava per immettersi nel flusso della circolazione</li>
           <li>
             Manovrava per svoltare a sinistra (passaggio privato, distributore)
           </li>
           <li>Manovrava in retrocessione o conversione</li>
           <li>Manovrava irregolarmente per fermarsi o sostare</li>
-        </p>
+        </ul>
       </div>
       <button class="newCategory">
         Mancata distanza di sicurezza<span>▼</span>
@@ -109,48 +113,59 @@
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Procedeva senza mantenere la distanza di sicurezza</li>
           <li>Si affiancava ad altri veicoli a due ruote irregolarmente</li>
-        </p>
+        </ul>
       </div>
       <button class="newCategory">Eccesso di velocità<span>▼</span></button>
       <div class="oldCategory">
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Procedeva con eccesso di velocità</li>
           <li>Procedeva senza rispettare i limiti di velocità</li>
-        </p>
+        </ul>
       </div>
       <button class="newCategory">Svolta irregolare<span>▼</span></button>
       <div class="oldCategory">
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Svolta a sinistra irregolarmente</li>
           <li>Svolta a destra irregolarmente</li>
-        </p>
+        </ul>
       </div>
       <button class="newCategory">Sorpasso regolare<span>▼</span></button>
       <div class="oldCategory">
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Sorpassava all'incrocio</li>
           <li>Sorpassava veicolo in marcia</li>
-        </p>
+        </ul>
       </div>
       <button class="newCategory">Sorpasso irregolare<span>▼</span></button>
       <div class="oldCategory">
-       <p>Questa categoria comprende, in ordine decrescente per numero di
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Sorpassava in curva, su dosso o con insufficiente visibilità</li>
           <li>Sorpassava irregolarmente a destra</li>
           <li>Sorpassava senza osservare l'apposito segnale di divieto</li>
           <li>Sorpassava un veicolo che ne stava sorpassando un altro</li>
           <li>Sorpassava un veicolo fermatosi per consentire l'attraversamento del pedone</li>
           <li>Superava irregolarmente un tram alla fermata</li>
-       </p>
+        </ul>
       </div>
     </div>
     
@@ -163,20 +178,23 @@
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Veicolo fermo in posizione irregolare (Circostanze riferibili ad ostacoli urtati)</li>
           <li>Veicolo (Circostanze riferibili ad ostacoli evitati)</li>
           <li>Veicolo fermo senza che sia stato collocato il prescritto apposito segnale (Circostanze riferibili ad ostacoli urtati)</li>
-          
+        </ul>
       </div>
       <button class="newCategory">Ostacolo accidentale<span>▼</span></button>
       <div class="oldCategory">
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
-          <li> Ostacolo accidentale (Circostanze riferibili ad ostacoli urtati)</li>
-          <li> Ostacolo accidentale (Circostanze riferibili ad ostacoli evitati) </li>
-          
         </p>
+        <ul>
+          <li>Ostacolo accidentale (Circostanze riferibili ad ostacoli urtati)</li>
+          <li>Ostacolo accidentale (Circostanze riferibili ad ostacoli evitati)</li>
+        </ul>
       </div>
       <button class="newCategory"> Circostanze imprecisate<span>▼</span>
       </button>
@@ -184,9 +202,11 @@
         <p>
           Questa categoria comprende, in ordine decrescente per numero di
           incidenti:
+        </p>
+        <ul>
           <li>Circostanze imprecisate</li>
           <li>Altre circostanze</li>
-        </p>
+        </ul>
       </div>
       
     </div>
@@ -201,9 +221,11 @@
           <p>
             Questa categoria comprende, in ordine decrescente per numero di
             incidenti:
+          </p>
+          <ul>
             <li>Discendeva dal veicolo in moto (circostanze riferibili alle persone trasportate)</li>
             <li>Discendeva dal veicolo con imprudenza (circostanze riferibili a pedoni)</li>
-          </p>
+          </ul>
         </div>
       </div>
   </body>
