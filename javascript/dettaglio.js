@@ -453,7 +453,7 @@ function drawTip(){
   }
 
   tip.style.fontFamily   = 'system-ui, Segoe UI, Roboto, Arial';
-  tip.style.fontSize     = '26px';
+  tip.style.Fontsize     = '26px';
   tip.style.lineHeight   = '1.5';
   tip.style.padding      = '0';
   tip.style.borderRadius = '0';

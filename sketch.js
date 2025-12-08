@@ -10,7 +10,25 @@ let csvNonConducenti;
 // Scroll
 let scrollY = 0;
 let scrollTarget = -1;
-let scrollVelocita = 15;
+let scrollVelocita = 8; // Ridotto da 15 a 8 per scroll più lento e fluido
+
+// Scroll Snap - Checkpoint per sezioni
+let scrollSnapEnabled = true;
+let scrollCheckpoints = [
+  0,      // Sezione 1: Intro
+  800,    // Sezione 2: Quadrato
+  1400,   // Sezione 3: "Ma sai quanti sono"
+  2900,   // Sezione 4: Griglia incidenti
+  3300,   // Sezione 5: Cubo feriti
+  3850,   // Sezione 6: Counter giornaliero (500px dopo sez 5)
+  4300,   // Dopo counter - "Ma di chi è la colpa?"
+  4900,    // Sezione 7: Griglia responsabilità
+  5200,   // Sezione 7: divisione per responsabilità
+];
+let currentCheckpointIndex = 0;
+let isScrolling = false;
+let scrollAccumulator = 0;
+let scrollThreshold = 100; // Quantità di scroll necessaria per cambiare checkpoint
 
 // Sezione 1: Intro
 let introCaratteriVisibili = 0;
@@ -23,7 +41,6 @@ let introOpacita = 255;
 let quadratoDimensione = 0;
 let quadratoCaratteriVisibili = 0;
 let quadratoTestoCompleto = 'QUESTO QUADRATO RAPPRESENTA\n300 INCIDENTI';
-let quadratoFrecciaOpacita = 0;
 
 // Sezione 3: "Ma sai quanti sono ogni anno?"
 let terzaSezioneTitoloOpacita = 0;
@@ -54,6 +71,7 @@ let sestaSezioneOpacita = 0;
 let counterAnimazioneAutomatica = false;
 let counterAnimazioneInizio = 0;
 let navbarCounterAttivato = false; // Traccia se il counter navbar è già apparso
+let counterAnimazioneCompletata = false; // Traccia se l'animazione iniziale è stata completata
 
 // Sezione 7: Griglia responsabilità
 let animRegroupActive = false;
@@ -72,53 +90,227 @@ let overlayTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
 let overlayTransTarget = 0; // target per l'animazione
 let hoveredOverlayItem = null; // traccia quale elemento è in hover
 
-// ========================================
+// =========================================
 // SETUP E PRELOAD
-// ========================================
+// =========================================
 
 function preload() {
-  lcdFont = loadFont('../Assets/Fonts/LCD5x7VF.ttf');
-  transportFont = loadFont('../Assets/Fonts/NewTransportAAWEBRegular.ttf')
-  csvData = loadTable('../Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
-  csvConducenti = loadTable('../Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
-  csvCauseEsterne = loadTable('../Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header');
-  csvNonConducenti = loadTable('../Assets/Datasets/Incidenti-persone.csv', 'csv', 'header');
+  console.log('Preload started...');
+  
+  // Carica Fonts con error handling
+  loadFont('Assets/Fonts/LCD5x7VF.ttf', 
+    (font) => { 
+      lcdFont = font; 
+      console.log('LCD font loaded'); 
+    },
+    (err) => { 
+      console.error('Error loading LCD font:', err);
+      lcdFont = null;
+    }
+  );
+  
+  loadFont('Assets/Fonts/NewTransportAAWEBRegular.ttf',
+    (font) => { 
+      transportFont = font; 
+      console.log('Transport font loaded'); 
+    },
+    (err) => { 
+      console.error('Error loading Transport font:', err);
+      transportFont = null;
+    }
+  );
+  
+  // Carica CSV con error handling
+  loadTable('Assets/Datasets/Incidenti-totale.csv', 'csv', 'header',
+    (table) => { 
+      csvData = table; 
+      console.log('Incidenti-totale.csv loaded:', csvData.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-totale.csv:', err);
+      csvData = null;
+    }
+  );
+  
+  loadTable('Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header',
+    (table) => { 
+      csvConducenti = table; 
+      console.log('Incidenti-conducenti.csv loaded:', csvConducenti.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-conducenti.csv:', err);
+      csvConducenti = null;
+    }
+  );
+  
+  loadTable('Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header',
+    (table) => { 
+      csvCauseEsterne = table; 
+      console.log('Incidenti-esterne_concomitanti.csv loaded:', csvCauseEsterne.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-esterne_concomitanti.csv:', err);
+      csvCauseEsterne = null;
+    }
+  );
+  
+  loadTable('Assets/Datasets/Incidenti-persone.csv', 'csv', 'header',
+    (table) => { 
+      csvNonConducenti = table; 
+      console.log('Incidenti-persone.csv loaded:', csvNonConducenti.getRowCount(), 'rows'); 
+    },
+    (err) => { 
+      console.error('Error loading Incidenti-persone.csv:', err);
+      csvNonConducenti = null;
+    }
+  );
 }
 
 function setup() {
+  console.log('🎨 Setup started...');
+  
   createCanvas(windowWidth, windowHeight);
-  textFont(lcdFont);
+  
+  // Verifica che i file siano caricati
+  if (!lcdFont) {
+    console.warn('LCD font not loaded, using default font');
+  } else {
+    textFont(lcdFont);
+  }
+  
+  if (!transportFont) {
+    console.warn('Transport font not loaded');
+  }
+  
+  if (!csvData) {
+    console.error('CRITICAL: csvData not loaded! Animation will not work properly.');
+  }
+  
   textAlign(CENTER, CENTER);
   
-  // Carica dati dal CSV
-  for (let i = 0; i < csvData.getRowCount(); i++) {
-    let classe = csvData.getString(i, 'Classe').trim();
-    if (classe === 'Totale') {
-      numeroTotaleQuadratini = int(csvData.getString(i, 'I/300'));
-      let incidentiStringa = csvData.getString(i, 'Incidenti').replace(/\s/g, '').replace(/\./g, '');
-      numeroTotaleIncidenti = int(incidentiStringa);
-      
-      let incidentiTotali = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
-      let mortiTotali = parseInt(csvData.getString(i, 'Morti').replace(/[\s.]/g, ''));
-      let feritiTotali = parseInt(csvData.getString(i, 'Feriti').replace(/[\s.]/g, ''));
+  // Carica dati dal CSV (con protezione da errori)
+  if (csvData && csvData.getRowCount() > 0) {
+    for (let i = 0; i < csvData.getRowCount(); i++) {
+      let classe = csvData.getString(i, 'Classe').trim();
+      if (classe === 'Totale') {
+        numeroTotaleQuadratini = int(csvData.getString(i, 'I/300'));
+        let incidentiStringa = csvData.getString(i, 'Incidenti').replace(/\s/g, '').replace(/\./g, '');
+        numeroTotaleIncidenti = int(incidentiStringa);
+        
+        let incidentiTotali = parseInt(csvData.getString(i, 'Incidenti').replace(/[\s.]/g, ''));
+        let mortiTotali = parseInt(csvData.getString(i, 'Morti').replace(/[\s.]/g, ''));
+        let feritiTotali = parseInt(csvData.getString(i, 'Feriti').replace(/[\s.]/g, ''));
 
-      incidentiOggi = floor(incidentiTotali / 366);
-      mortiOggi = floor(mortiTotali / 366);
-      feritiOggi = floor(feritiTotali / 366);
-      break;
+        incidentiOggi = floor(incidentiTotali / 366);
+        mortiOggi = floor(mortiTotali / 366);
+        feritiOggi = floor(feritiTotali / 366);
+        
+        console.log('Dati caricati:', {
+          numeroTotaleIncidenti,
+          numeroTotaleQuadratini,
+          incidentiOggi,
+          mortiOggi,
+          feritiOggi
+        });
+        break;
+      }
     }
+  } else {
+    console.error('CRITICAL: Cannot process CSV data - file not loaded or empty!');
   }
+  
+  console.log('Setup completed!');
   
   document.body.style.height = '6000px';
   document.body.style.overflow = 'auto';
   
   // Inizializza visibilità legende
   updateLegendVisibility();
+  
+  // Setup scroll arrow click handler
+  let scrollArrow = document.getElementById('scroll-arrow');
+  if (scrollArrow) {
+    scrollArrow.addEventListener('click', function() {
+      // Vai al prossimo checkpoint
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    });
+  }
+  
+  // Setup navbar navigation click handlers
+  let navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      let section = parseInt(item.getAttribute('data-section'));
+      
+      // Mappa sezione navbar a scrollY specifico:
+      // 0 = Intro → scrollY 800
+      // 1 = Incidenti → checkpoint 3 (scrollY 2900)
+      // 2 = Responsabilità → scrollY 5200
+      let targetScrollY = 0;
+      let targetCheckpoint = 0;
+      
+      if (section === 0) {
+        targetScrollY = 0;
+        targetCheckpoint = 0; // checkpoint 0 - intro iniziale
+        // Reset variabili intro per mostrare il testo iniziale
+        introCaratteriVisibili = introTestoCompleto.length;
+        sottotitoloOpacita = 255;
+        introOpacita = 255;
+        quadratoDimensione = 0;
+        quadratoCaratteriVisibili = 0;
+      } else if (section === 1) {
+        targetScrollY = 2900;
+        targetCheckpoint = 3; // checkpoint 2900 - griglia incidenti
+      } else if (section === 2) {
+        targetScrollY = 5200;
+        targetCheckpoint = 8; // checkpoint 5200 - griglia responsabilità
+      }
+      
+      // Salto diretto senza animazione
+      currentCheckpointIndex = targetCheckpoint;
+      scrollY = targetScrollY;
+      scrollTarget = -1;
+      isScrolling = false;
+      scrollAccumulator = 0;
+    });
+  });
 }
 
 function mouseWheel(event) {
-  scrollY += event.delta;
-  scrollY = constrain(scrollY, 0, 6000);
+  if (scrollTarget !== -1) {
+    // Se c'è già un'animazione in corso, ignora lo scroll
+    return false;
+  }
+  
+  // Accumula lo scroll
+  scrollAccumulator += event.delta;
+  
+  // Controlla se abbiamo superato la soglia per cambiare checkpoint
+  if (abs(scrollAccumulator) >= scrollThreshold) {
+    if (scrollAccumulator > 0) {
+      // Scroll verso il basso - vai al checkpoint successivo
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+      }
+    } else {
+      // Scroll verso l'alto - vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+      }
+    }
+    
+    // Reset dell'accumulatore dopo aver cambiato checkpoint
+    scrollAccumulator = 0;
+  }
+  
   return false;
 }
 
@@ -169,8 +361,9 @@ function draw() {
 // FUNZIONI DI UTILITÀ
 // ========================================
 
-function handleAutoScroll() { //scroll automatico 
+function handleAutoScroll() { //scroll automatico verso i checkpoint
   if (scrollTarget > -1) {
+    isScrolling = true;
     if (abs(scrollY - scrollTarget) > scrollVelocita) {
       if (scrollY < scrollTarget) {
         scrollY += scrollVelocita;
@@ -180,7 +373,19 @@ function handleAutoScroll() { //scroll automatico
     } else {
       scrollY = scrollTarget;
       scrollTarget = -1;
+      isScrolling = false;
+      scrollVelocita = 8; // Reset alla velocità normale
+      
+      // Aggiorna il checkpoint corrente basandosi sulla posizione finale
+      for (let i = 0; i < scrollCheckpoints.length; i++) {
+        if (abs(scrollY - scrollCheckpoints[i]) < 10) {
+          currentCheckpointIndex = i;
+          break;
+        }
+      }
     }
+  } else {
+    isScrolling = false;
   }
 }
 
@@ -208,12 +413,6 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
     }
   } else {
     quadratoCaratteriVisibili = 0;
-  }
-  
-  if (quadratoCaratteriVisibili >= quadratoTestoCompleto.length && quadratoFrecciaOpacita < 255) {
-    quadratoFrecciaOpacita += 3;
-  } else if (quadratoCaratteriVisibili < quadratoTestoCompleto.length) {
-    quadratoFrecciaOpacita = 0;
   }
   
   // Terza sezione
@@ -245,6 +444,9 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
     }
   } else if (scrollY >= 3600) {
     quintaSezioneCaratteriVisibili = quintaSezioneTestoCompleto.length;
+  } else if (scrollY > 3000 && quintaSezioneCaratteriVisibili > 0) {
+    // Mantieni il testo già scritto tra 3000-3200 per il fade out (non riscrivere)
+    // Non cambiare quintaSezioneCaratteriVisibili
   } else {
     quintaSezioneCaratteriVisibili = 0;
   }
@@ -313,7 +515,7 @@ function calcNavbarOpacity() { // effetto opacità navbar
 
 function calcActiveSection() { // calcola dove sono e lo segna per la navbar
   if (scrollY < 1600) return 0;
-  else if (scrollY < 4800) return 1;
+  else if (scrollY < 4300) return 1;
   else return 2;
 }
 
@@ -361,19 +563,15 @@ function updateAnimations() {
   }
   
   // Animazione counter giornaliero
-  if (scrollY > 4100 && !counterAnimazioneAutomatica) {
-    counterAnimazioneAutomatica = true;
-    counterAnimazioneInizio = frameCount;
-  } else if (scrollY < 4100 && !navbarCounterAttivato) {
-    // Reset solo se il counter navbar NON è ancora stato attivato
-    counterAnimazioneAutomatica = false;
-    animIncidenti = 0;
-    animMorti = 0;
-    animFeriti = 0;
+  if (scrollY > 3700 && !counterAnimazioneCompletata) {
+    if (!counterAnimazioneAutomatica) {
+      counterAnimazioneAutomatica = true;
+      counterAnimazioneInizio = frameCount;
+    }
   }
   
   // Calcola e aggiorna i valori in tempo reale (sia per sezione 6 che navbar)
-  if (counterAnimazioneAutomatica || navbarCounterAttivato) {
+  if (counterAnimazioneAutomatica || counterAnimazioneCompletata || navbarCounterAttivato) {
     let now = new Date();
     let secondiOggi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     let secondiTotali = 24 * 3600;
@@ -383,13 +581,18 @@ function updateAnimations() {
     let targetMorti = mortiOggi * progress;
     let targetFeriti = feritiOggi * progress;
 
-    if (counterAnimazioneAutomatica && frameCount - counterAnimazioneInizio < 120) {
-      // Animazione smooth solo per la prima apparizione nella sezione 6
-      animIncidenti += (targetIncidenti - animIncidenti) * 0.1;
-      animMorti += (targetMorti - animMorti) * 0.1;
-      animFeriti += (targetFeriti - animFeriti) * 0.1;
+    if (counterAnimazioneAutomatica && !counterAnimazioneCompletata && frameCount - counterAnimazioneInizio < 240) {
+      // Animazione smooth più lenta solo per la PRIMA apparizione nella sezione 6
+      animIncidenti += (targetIncidenti - animIncidenti) * 0.03;
+      animMorti += (targetMorti - animMorti) * 0.03;
+      animFeriti += (targetFeriti - animFeriti) * 0.03;
     } else {
-      // Aggiornamento diretto in tempo reale
+      // Segna l'animazione come completata
+      if (counterAnimazioneAutomatica && !counterAnimazioneCompletata) {
+        counterAnimazioneCompletata = true;
+      }
+      
+      // Aggiornamento diretto in tempo reale (mantiene sempre i valori)
       animIncidenti = targetIncidenti;
       animMorti = targetMorti;
       animFeriti = targetFeriti;
@@ -397,7 +600,7 @@ function updateAnimations() {
   }
   
   // Animazione regroup
-  if (scrollY > 5600) {
+  if (scrollY > 5100) {
     animRegroupTarget = 1;
   } else {
     animRegroupTarget = 0;
@@ -468,18 +671,13 @@ function drawSezioneIntro() {
   textLeading(txtSize * 1.4);
   text(testoMostrato, width / 2, height / 2);
   
-  // Sottotitolo e freccia
+  // Sottotitolo
   if (sottotitoloOpacita > 0) {
     push();
     textFont(transportFont);
     textSize(16);
     fill(255, 255, 255, min(sottotitoloOpacita, introOpacita));
     text('Scoprila analizzando i dati ISTAT del 2024', width / 2, height - 70);
-    
-    let oscillazione = sin(frameCount * 0.05) * 5;
-    let frecciaY = height - 45 + oscillazione;
-    fill(255, 255, 255, min(sottotitoloOpacita, introOpacita));
-    triangle(width / 2, frecciaY + 10, width / 2 - 8, frecciaY, width / 2 + 8, frecciaY);
     pop();
   }
 }
@@ -509,9 +707,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     }
   });
   
-  // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4600)
+  // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
   let navbarCounter = document.getElementById('navbar-counter');
-  if (navbarCounter && scrollY >= 4600 && !navbarCounterAttivato) {
+  if (navbarCounter && scrollY >= 4100 && !navbarCounterAttivato) {
     navbarCounterAttivato = true;
     
     // Mostra il counter con fade-in (senza animazione di conteggio)
@@ -523,6 +721,25 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   // Se il counter è stato attivato, aggiorna i valori in tempo reale
   if (navbarCounterAttivato) {
     updateNavbarCounterValues();
+  }
+  
+  // SCROLL ARROW: Nascondi quando sei all'ultimo checkpoint
+  let scrollArrow = document.getElementById('scroll-arrow');
+  if (scrollArrow) {
+    if (currentCheckpointIndex >= scrollCheckpoints.length - 1) {
+      scrollArrow.style.opacity = '0';
+      scrollArrow.style.pointerEvents = 'none';
+    } else {
+      scrollArrow.style.opacity = '1';
+      scrollArrow.style.pointerEvents = 'all';
+    }
+    
+    // Attiva/disattiva animazione bounce: solo quando NON si sta scrollando
+    if (isScrolling) {
+      scrollArrow.style.animationPlayState = 'paused';
+    } else {
+      scrollArrow.style.animationPlayState = 'running';
+    }
   }
 }
 
@@ -587,16 +804,6 @@ function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
     fill(255, 122, 0, min(quadratoTestoOpacita, quadratoFadeOut));
     let testoMostrato = quadratoTestoCompleto.substring(0, quadratoCaratteriVisibili);
     text(testoMostrato, width / 2, height / 2 + quadratoDimensione / 2 + 20);
-    pop();
-  }
-  
-  // Freccia
-  if (quadratoFrecciaOpacita > 0) {
-    push();
-    let oscillazione = sin(frameCount * 0.05) * 5;
-    let frecciaY = height - 45 + oscillazione;
-    fill(255, 255, 255, min(quadratoFrecciaOpacita, quadratoTestoOpacita, quadratoFadeOut));
-    triangle(width / 2, frecciaY + 10, width / 2 - 8, frecciaY, width / 2 + 8, frecciaY);
     pop();
   }
 }
@@ -705,15 +912,15 @@ function drawSezioneQuinta() {
     quintaSezioneOpacita = 255;
   }
   
-  // Fade out
+  // Fade out (veloce come il testo)
   let quintaSezioneFadeOut = 255;
-  if (scrollY > 3700) {
-    quintaSezioneFadeOut = map(scrollY, 3700, 3800, 255, 0);
+  if (scrollY > 3350) {
+    quintaSezioneFadeOut = map(scrollY, 3350, 3400, 255, 0);
     quintaSezioneFadeOut = constrain(quintaSezioneFadeOut, 0, 255);
   }
   
-  // Cubo
-  if (cuboRotazione > 0) {
+  // Cubo (mostra solo quando ha iniziato l'animazione 3D per evitare flash)
+  if (cuboRotazione > 0.02) {
     drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut);
   }
   
@@ -762,8 +969,8 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   let puntoBassoDestro = applicaRotazioneESchiacciamento(puntiBaseQuadrato[2]);
   let puntoBassoSinistra = applicaRotazioneESchiacciamento(puntiBaseQuadrato[3]);
   
-  // Facce arancioni
-  if (altezzaLatiVerticali > 0) {
+  // Facce arancioni (mostra solo se hanno un'altezza significativa)
+  if (altezzaLatiVerticali > 5) {
     fill(255, 122, 0, quintaSezioneFadeOut);
     
     // Faccia sinistra
@@ -783,8 +990,8 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
     );
   }
   
-  // Top bianco
-  fill(255, 255, 255, min(quintaSezioneOpacita, quintaSezioneFadeOut));
+  // Top bianco (con stesso fadeOut delle facce laterali)
+  fill(255, 255, 255, quintaSezioneFadeOut);
   quad(
     puntoAltoSinistra.x, puntoAltoSinistra.y,
     puntoAltoDestra.x, puntoAltoDestra.y,
@@ -889,10 +1096,10 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
 
 function drawSezioneSesta() {
   // Fade-in sezione
-  if (scrollY > 3900 && scrollY < 4100) {
-    sestaSezioneOpacita = map(scrollY, 3900, 4100, 0, 255);
+  if (scrollY > 3400 && scrollY < 3600) {
+    sestaSezioneOpacita = map(scrollY, 3400, 3600, 0, 255);
     sestaSezioneOpacita = constrain(sestaSezioneOpacita, 0, 255);
-  } else if (scrollY >= 4100) {
+  } else if (scrollY >= 3600) {
     sestaSezioneOpacita = 255;
   } else {
     sestaSezioneOpacita = 0;
@@ -900,10 +1107,10 @@ function drawSezioneSesta() {
   
   // Fade out counter
   let counterFadeOut = 255;
-  if (scrollY > 4300 && scrollY < 4600) {
-    counterFadeOut = map(scrollY, 4300, 4600, 255, 0);
+  if (scrollY > 3800 && scrollY < 4100) {
+    counterFadeOut = map(scrollY, 3800, 4100, 255, 0);
     counterFadeOut = constrain(counterFadeOut, 0, 255);
-  } else if (scrollY >= 4600) {
+  } else if (scrollY >= 4100) {
     counterFadeOut = 0;
   } else {
     counterFadeOut = sestaSezioneOpacita;
@@ -935,19 +1142,19 @@ function drawSezioneSesta() {
   
   // Fade in "MA DI CHI È LA COLPA?"
   let colpaFadeIn = 0;
-  if (scrollY >= 4600 && scrollY < 4800) {
-    colpaFadeIn = map(scrollY, 4600, 4800, 0, 255);
+  if (scrollY >= 4100 && scrollY < 4300) {
+    colpaFadeIn = map(scrollY, 4100, 4300, 0, 255);
     colpaFadeIn = constrain(colpaFadeIn, 0, 255);
-  } else if (scrollY >= 4800) {
+  } else if (scrollY >= 4300) {
     colpaFadeIn = 255;
   }
   
   // Fade out "MA DI CHI È LA COLPA?"
   let colpaFadeOut = 255;
-  if (scrollY > 4900 && scrollY < 5200) {
-    colpaFadeOut = map(scrollY, 4900, 5200, 255, 0);
+  if (scrollY > 4600 && scrollY < 4750) {
+    colpaFadeOut = map(scrollY, 4600, 4750, 255, 0);
     colpaFadeOut = constrain(colpaFadeOut, 0, 255);
-  } else if (scrollY >= 5200) {
+  } else if (scrollY >= 4750) {
     colpaFadeOut = 0;
   } else {
     colpaFadeOut = colpaFadeIn;
@@ -967,11 +1174,11 @@ function drawSezioneSesta() {
 function drawSezioneSettima() {
   // Fade in griglia
   let grigliaFadeIn = 0;
-  if (scrollY > 5200 && scrollY < 5400) {
-    grigliaFadeIn = map(scrollY, 5200, 5400, 0, 255);
+  if (scrollY > 4700 && scrollY < 4850) {
+    grigliaFadeIn = map(scrollY, 4700, 4850, 0, 255);
     grigliaFadeIn = constrain(grigliaFadeIn, 0, 255);
     animRegroupActive = true;
-  } else if (scrollY >= 5400) {
+  } else if (scrollY >= 4850) {
     grigliaFadeIn = 255;
     animRegroupActive = true;
   } else {
@@ -980,6 +1187,8 @@ function drawSezioneSettima() {
   }
   
   if (grigliaFadeIn <= 0) return;
+  
+  push(); // Isolamento stile per sezione 7
   
   // Estrai dati dal CSV
   let quadConducenti = 0, quadCauseEsterne = 0, quadNonConducenti = 0;
@@ -1016,8 +1225,8 @@ function drawSezioneSettima() {
   const quadSize = dimensioneQuadratino;
   const quadSpacing = spaziatura;
   
-  // Crea array colori mischiati
-  if (typeof window.coloriQuadratiniMischiati === 'undefined' || scrollY < 5200) {
+  // Crea array colori mischiati (solo una volta)
+  if (typeof window.coloriQuadratiniMischiati === 'undefined') {
     let arr = [];
     for (let i = 0; i < quadConducenti; i++) arr.push(coloreBlu);
     for (let i = 0; i < quadCauseEsterne; i++) arr.push(coloreVerde);
@@ -1166,6 +1375,8 @@ function drawSezioneSettima() {
     
     pop();
   }
+  
+  pop(); // Fine isolamento stile sezione 7
 }
 
 function drawSezioneOttava() { //visualizzazione di dettaglio
@@ -1389,7 +1600,7 @@ function mouseClicked() {
   }
 
   // Se click su hitbox, allora apri overlay
-  if (scrollY >= 5200 && overlayHitboxes.length) {
+  if (scrollY >= 4900 && overlayHitboxes.length) {
     for (let i = 0; i < overlayHitboxes.length; i++) {
       let hb = overlayHitboxes[i];
       if (mouseX >= hb.x && mouseX <= hb.x + hb.w && mouseY >= hb.y && mouseY <= hb.y + hb.h) {

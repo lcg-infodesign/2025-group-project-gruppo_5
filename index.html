@@ -45,9 +45,8 @@
       </div>
 
       <div class="nav-right">
-        <button class="nav-button">Chi siamo</button>
-        <!--una volta che abbiamo la pagina va cambiato da button ad <a href> -->
-        <a class="nav-button" href="./pages/dati.html">I dati</a>
+        <button class="nav-button">Chi siamo</button> <!--una volta che abbiamo la pagina va cambiato da button ad <a href> -->
+        <a class="nav-button" href="/pages/dati.html">I dati</a>
       </div>
     </nav>
 
@@ -79,9 +78,15 @@
     </div>
 
     <!--posizionamento testi dei dati della categoria specifica-->
-    <div class="catCausa" id="catCausaContainer">
+    <div class="catCausa" id="catCausaContainer"></div>
+ 
+    <!-- Freccia fissa per navigazione checkpoint -->
+    <div id="scroll-arrow" class="scroll-arrow">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
-
-    <script src="javascript/sketch.js"></script>
+    
+    <script src="sketch.js"></script>
   </body>
 </html>
