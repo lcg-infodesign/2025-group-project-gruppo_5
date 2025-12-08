@@ -89,9 +89,9 @@ let showBars = false; // false = quadrati, true = istogramma con barre
 let overlayTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
 let overlayTransTarget = 0; // target per l'animazione
 
-// ========================================
+// =========================================
 // SETUP E PRELOAD
-// ========================================
+// =========================================
 
 function preload() {
   console.log('Preload started...');
