@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    
+  <h1 class="main-title">I DATI</h1>
+    <!--collego css-->
+    <link rel="stylesheet" href="../style.css" />
+    <!--collego js-->
+    <script src="../javascript/dati.js" defer></script>
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+
+  </head>
+  <body class="scroll">
+    <!--!!!!!!!!!!!!! navbar da sistemare, non compare!!!!!!!-->
+    <nav id="navbar" class="visible">
+      <div class="nav-left">
+        <a href="#intro" class="nav-item active" data-section="0">Intro</a>
+        <a href="#incidenti" class="nav-item" data-section="1">Incidenti</a>
+        <a href="#responsabilita" class="nav-item" data-section="2">Responsabilità</a>
+      </div>
+      
+      <!-- Counter centrale che appare dopo la sezione 6 -->
+      <div id="navbar-counter" class="navbar-counter">
+        <div class="counter-item">
+          <span class="counter-number" id="nav-incidenti">0</span>
+          <span class="counter-label">Incidenti</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-number" id="nav-morti">0</span>
+          <span class="counter-label">Morti</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-number" id="nav-feriti">0</span>
+          <span class="counter-label">Feriti</span>
+        </div>
+        
+        <!-- Tooltip che appare in hover con data/ora dinamiche -->
+        <div class="counter-tooltip" id="counter-tooltip"></div>
+      </div>
+      
+      <div class="nav-right">
+        <button class="nav-button">Chi siamo</button> <!--una volta che abbiamo la pagina va cambiato da button ad <a href> -->
+        <a class="nav-button" href="./pages/dati.html">I dati</a>
+      </div>
+    </nav>
+    
+    <p>
+      L'<i>ISTAT</i> ogni anno raccoglie i dati riguardanti <b>l'insieme degli incidenti
+      stradali</b> verbalizzati da un'autorità di polizia, avvenuti su strade aperte
+      alla pubblica circolazione, che hanno causato lesioni alle persone. Questa
+      è una rilevazione statistica di interesse pubblico volta a informare gli
+      organi nazionali e locali per comprendere come predisporre al meglio dei
+      piani di prevenzione e sicurezza stradale.
+    </p>
+    <p>
+      Il nostro lavoro riguarda esclusivamente <b>l'anno solare 2024</b>, con specifico
+      interesse verso le circostanze scatenanti, accertate o presunte, degli
+      incidenti. Le condizioni dei soggetti trattati si distinguono in morti,
+      sia al momento dell'incidente che entro e non oltre i 30 giorni
+      dall'avvenimento, e feriti. Per la realizzazione del sito è stata presa in
+      esame la <b>tavola 2.13</b>, non tenendo conto della suddivisione per tipo di
+      strada.
+    </p>
+    <p>
+      Di seguito la rielaborazione delle differenti categorie per tipo di
+      responsabilità:
+    </p>
+    
+<!--CONDUCENTI-->  
+    <h2>CONDUCENTI</h2>
+    <div class="catList">
+      <button class="newCategory">
+        Mancata precedenza/semaforo<span>▼</span>
+      </button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Procedeva senza rispettare lo stop</li>
+          <li>Procedeva senza rispettare il segnale di dare precedenza</li>
+          <li>
+            Procedeva senza dare precedenza al veicolo proveniente da destra
+          </li>
+          <li>
+            Procedeva senza rispettare le segnalazioni semaforiche o dell'agente
+          </li>
+          <li>Attraversava imprudentemente il passaggio a livello</li>
+        </p>
+      </div>
+      <button class="newCategory">In manovra<span>▼</span></button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Manovrava per immettersi nel flusso della circolazione</li>
+          <li>
+            Manovrava per svoltare a sinistra (passaggio privato, distributore)
+          </li>
+          <li>Manovrava in retrocessione o conversione</li>
+          <li>Manovrava irregolarmente per fermarsi o sostare</li>
+        </p>
+      </div>
+      <button class="newCategory">
+        Mancata distanza di sicurezza<span>▼</span>
+      </button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Procedeva senza mantenere la distanza di sicurezza</li>
+          <li>Si affiancava ad altri veicoli a due ruote irregolarmente</li>
+        </p>
+      </div>
+      <button class="newCategory">Eccesso di velocità<span>▼</span></button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Procedeva con eccesso di velocità</li>
+          <li>Procedeva senza rispettare i limiti di velocità</li>
+        </p>
+      </div>
+      <button class="newCategory">Svolta irregolare<span>▼</span></button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Svolta a sinistra irregolarmente</li>
+          <li>Svolta a destra irregolarmente</li>
+        </p>
+      </div>
+      <button class="newCategory">Sorpasso regolare<span>▼</span></button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Sorpassava all'incrocio</li>
+          <li>Sorpassava veicolo in marcia</li>
+        </p>
+      </div>
+      <button class="newCategory">Sorpasso irregolare<span>▼</span></button>
+      <div class="oldCategory">
+       <p>Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Sorpassava in curva, su dosso o con insufficiente visibilità</li>
+          <li>Sorpassava irregolarmente a destra</li>
+          <li>Sorpassava senza osservare l'apposito segnale di divieto</li>
+          <li>Sorpassava un veicolo che ne stava sorpassando un altro</li>
+          <li>Sorpassava un veicolo fermatosi per consentire l'attraversamento del pedone</li>
+          <li>Superava irregolarmente un tram alla fermata</li>
+       </p>
+      </div>
+    </div>
+    
+<!--CAUSE ESTERNE E CONCOMITANTI-->  
+    <h2>CAUSE ESTERNE E CONCOMITANTI</h2>
+    <div><div class="catList">
+      <button class="newCategory">Veicolo fermo<span>▼</span>
+      </button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Veicolo fermo in posizione irregolare (Circostanze riferibili ad ostacoli urtati)</li>
+          <li>Veicolo (Circostanze riferibili ad ostacoli evitati)</li>
+          <li>Veicolo fermo senza che sia stato collocato il prescritto apposito segnale (Circostanze riferibili ad ostacoli urtati)</li>
+          
+      </div>
+      <button class="newCategory">Ostacolo accidentale<span>▼</span></button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li> Ostacolo accidentale (Circostanze riferibili ad ostacoli urtati)</li>
+          <li> Ostacolo accidentale (Circostanze riferibili ad ostacoli evitati) </li>
+          
+        </p>
+      </div>
+      <button class="newCategory"> Circostanze imprecisate<span>▼</span>
+      </button>
+      <div class="oldCategory">
+        <p>
+          Questa categoria comprende, in ordine decrescente per numero di
+          incidenti:
+          <li>Circostanze imprecisate</li>
+          <li>Altre circostanze</li>
+        </p>
+      </div>
+      
+    </div>
+
+<!--NON CONDUCENTI-->  
+    <h2>NON CONDUCENTI</h2>
+    <div>
+      <div class="catList">
+        <button class="newCategory">Discesa da veicolo con imprudenza<span>▼</span>
+        </button>
+        <div class="oldCategory">
+          <p>
+            Questa categoria comprende, in ordine decrescente per numero di
+            incidenti:
+            <li>Discendeva dal veicolo in moto (circostanze riferibili alle persone trasportate)</li>
+            <li>Discendeva dal veicolo con imprudenza (circostanze riferibili a pedoni)</li>
+          </p>
+        </div>
+      </div>
+  </body>
+</html>
