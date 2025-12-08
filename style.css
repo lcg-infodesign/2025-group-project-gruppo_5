@@ -25,10 +25,11 @@
   --pink: #fd73ed;
 
   --hover: rgba(255, 255, 255, 0.1);
-  
+
   /*visualizzazione di dettaglio*/
-  --grid:#2c2c2c;
-  --muted:#bdbdbd;
+  --grid: #2c2c2c;
+  --muted: #bdbdbd;
+  --ovGray: #d9d9d920;
 }
 
 /* ========================================
@@ -40,7 +41,7 @@ body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* no scrollbar */
-  
+
   background: var(--bg);
   color: var(--txt);
 
@@ -49,7 +50,8 @@ body {
   font-size: 16px;
 }
 
-.scroll{ /*pagina dei dati ha bisogno di scrollare*/
+.scroll {
+  /*pagina dei dati ha bisogno di scrollare*/
   overflow: auto;
 }
 
@@ -74,6 +76,12 @@ h1 {
 h2 {
   font-family: "LCD", monospace;
   font-size: 24px;
+  margin: 2em 0 0.5em 2rem;
+}
+
+h3{
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 20px;
   margin: 2em 0 0.5em 2rem;
 }
 
@@ -240,7 +248,73 @@ h2 {
 /* ========================================
    VIS. DETTAGLIO
    ======================================== */
-  /*da capire ancora un attimo*/
+
+/* legende */
+.container {
+  /*box e sfondo*/
+  background-color: var(--ovGray);
+  width: 300px;
+  padding: 1.5em;
+  border-radius: 20px;
+  /*disposizione contenuti*/
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  gap: 1em;
+
+  position: fixed;
+  top: 10em;
+  left: 5em;
+}
+
+.riga { /*le singole righe di contenuto*/
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  max-width: 30vw;
+  gap: 1em;
+}
+
+.rect{
+  width: 2em;
+  height: 2em;
+  background-color: var(--txt);
+}
+
+.emptyRect{
+  width: 0.5em;
+  height: 0.5em;
+  border: 2px solid var(--txt);
+}
+
+.gradiente{
+  width: 10em;
+  height: 0.5em;
+  border-radius: 20px;
+  background: linear-gradient(to right, var(--txt), var(--orange));
+}
+
+/*nome e dati causa*/
+.catCausa p, .catCausa h3{
+  margin: 0;
+}
+
+.catCausa{
+  width: 400px;
+  padding: 1.5em;
+  /**/
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  gap: 1em;
+  /**/
+  position: fixed;
+  top: 10em;
+  left: 30em;
+}
+
+
 
 /* ========================================
    PAGINA DEI DATI - tendine

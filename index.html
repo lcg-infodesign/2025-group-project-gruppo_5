@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Incidenti stradali</title>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
 
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
@@ -20,9 +20,11 @@
       <div class="nav-left">
         <a href="#intro" class="nav-item active" data-section="0">Intro</a>
         <a href="#incidenti" class="nav-item" data-section="1">Incidenti</a>
-        <a href="#responsabilita" class="nav-item" data-section="2">Responsabilità</a>
+        <a href="#responsabilita" class="nav-item" data-section="2"
+          >Responsabilità</a
+        >
       </div>
-      
+
       <!-- Counter centrale che appare dopo la sezione 6 -->
       <div id="navbar-counter" class="navbar-counter">
         <div class="counter-item">
@@ -37,17 +39,49 @@
           <span class="counter-number" id="nav-feriti">0</span>
           <span class="counter-label">Feriti</span>
         </div>
-        
+
         <!-- Tooltip che appare in hover con data/ora dinamiche -->
         <div class="counter-tooltip" id="counter-tooltip"></div>
       </div>
-      
+
       <div class="nav-right">
-        <button class="nav-button">Chi siamo</button> <!--una volta che abbiamo la pagina va cambiato da button ad <a href> -->
+        <button class="nav-button">Chi siamo</button>
+        <!--una volta che abbiamo la pagina va cambiato da button ad <a href> -->
         <a class="nav-button" href="./pages/dati.html">I dati</a>
       </div>
     </nav>
-    
+
+    <!-- =================
+      VIS. DETTTAGLIO
+    ======================-->
+    <!--Legenda incidenti-->
+    <div class="container" id="legIncidenti">
+      <div class="riga">
+        <span class="rect"></span>
+        area proporzionale al numero di incidenti
+      </div>
+      <div class="riga">
+        <span class="emptyRect"></span>
+        numero di incidenti inferiore a 300
+      </div>
+    </div>
+
+    <!--Legenda lesionati-->
+    <div class="container" id="legLesionati">
+      <div class="riga">
+        <div></div>
+        altezza proporzionale al numero di lesionati
+      </div>
+      <div class="riga">
+        <span class="gradiente"></span>
+        opacità proporzionale alla percentuale di incidenti mortali
+      </div>
+    </div>
+
+    <!--posizionamento testi dei dati della categoria specifica-->
+    <div class="catCausa" id="catCausaContainer">
+    </div>
+
     <script src="javascript/sketch.js"></script>
   </body>
 </html>
