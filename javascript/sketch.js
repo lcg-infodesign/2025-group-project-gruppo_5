@@ -94,12 +94,12 @@ let overlayTransTarget = 0; // target per l'animazione
 // ========================================
 
 function preload() {
-  lcdFont = loadFont('Assets/Fonts/LCD5x7VF.ttf');
-  transportFont = loadFont('Assets/Fonts/NewTransportAAWEBRegular.ttf')
-  csvData = loadTable('Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
-  csvConducenti = loadTable('Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
-  csvCauseEsterne = loadTable('Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header');
-  csvNonConducenti = loadTable('Assets/Datasets/Incidenti-persone.csv', 'csv', 'header');
+  lcdFont = loadFont('../Assets/Fonts/LCD5x7VF.ttf');
+  transportFont = loadFont('../Assets/Fonts/NewTransportAAWEBRegular.ttf')
+  csvData = loadTable('../Assets/Datasets/Incidenti-totale.csv', 'csv', 'header');
+  csvConducenti = loadTable('../Assets/Datasets/Incidenti-conducenti.csv', 'csv', 'header');
+  csvCauseEsterne = loadTable('../Assets/Datasets/Incidenti-esterne_concomitanti.csv', 'csv', 'header');
+  csvNonConducenti = loadTable('../Assets/Datasets/Incidenti-persone.csv', 'csv', 'header');
 }
 
 function setup() {
