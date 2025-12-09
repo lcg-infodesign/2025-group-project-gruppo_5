@@ -1003,7 +1003,7 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
 }
 
 // Funzione per disegnare i cubi nell'istogramma (riutilizza la stessa logica di drawCubo)
-function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti, cubeOpacity) {
+function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent) {
   function easeOutCubic(t) {
     return 1 - pow(1 - t, 3);
   }
@@ -1016,9 +1016,14 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   let sideH = H * grow;
   
   // Calcola percentuale di incidenti mortali
-  let percIncMortali = (morti * 1000) / incidenti;
-  // Gradiente da bianco (255,255,255) ad arancione (#ff8b43 = 255,139,67)
-  let sideColor = lerpColor(color(255, 255, 255), color(255, 139, 67), percIncMortali / 100);
+  let percIncMortali = (incidenti > 0) ? (morti * 100) / incidenti : 0;
+  // Normalizza rispetto al range min-max della categoria
+  let normalizedPercent = (maxMortPercent > minMortPercent) 
+    ? map(percIncMortali, minMortPercent, maxMortPercent, 0, 1)
+    : 0.5; // Default a 50% se non c'è range
+  normalizedPercent = constrain(normalizedPercent, 0, 1);
+  // Gradiente da bianco (255,255,255) a minimo, ad arancione (255,139,67) a massimo
+  let sideColor = lerpColor(color(255, 255, 255), color(255, 139, 67), normalizedPercent);
   
   let base = [
     {x: -half, y: -half}, {x: +half, y: -half},
@@ -1050,7 +1055,7 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   
   // Lati con gradiente bianco-arancione in base alla percentuale di incidenti mortali
   if (sideH > 0) {
-    fill(red(sideColor), green(sideColor), blue(sideColor), blue(sideColor) * cubeOpacity);
+    fill(red(sideColor), green(sideColor), blue(sideColor), 255 * cubeOpacity);
     noStroke();
     quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
     quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
@@ -1431,6 +1436,17 @@ function drawSezioneOttava() { //visualizzazione di dettaglio
     let minBarHeight = 20;  // Altezza minima in pixel
     let maxBarHeight = height * 0.4; // Altezza massima
     
+    // Calcola min e max percentuale di morti per il gradiente
+    let minMortPercent = Infinity;
+    let maxMortPercent = 0;
+    for (let i = 0; i < numRows - 1; i++) {
+      let morti = parseInt(categoryData.getString(i, 'Morti').replace(/[\s.]/g, '')) || 0;
+      let incidenti = parseInt(categoryData.getString(i, 'Incidenti').replace(/[\s.]/g, '')) || 0;
+      let mortPercent = (incidenti > 0) ? (morti * 100) / incidenti : 0;
+      if (mortPercent < minMortPercent) minMortPercent = mortPercent;
+      if (mortPercent > maxMortPercent) maxMortPercent = mortPercent;
+    }
+    
     // Prima passata: traccia quale elemento è hovato
     for (let i = 0; i < numRows - 1; i++) { // -1 per escludere l'ultima riga (che sarebbe quella di totale, quindi non ci interessa)
       let i300 = int(categoryData.getString(i, 'I/300'));
@@ -1482,13 +1498,13 @@ function drawSezioneOttava() { //visualizzazione di dettaglio
       // Determina opacità: 100% se hovato, 20% se altri sono hovati, 100% se nessuno è hovato
       let cubeOpacity = 1.0;
       if (hoveredOverlayItem !== null && hoveredOverlayItem !== nome) {
-        cubeOpacity = 0.2;
+        cubeOpacity = 0.3;
       }
       
       // Usa drawCubo per disegnare il parallelepipedo
       push();
       translate(cx, baselineY);
-      drawCuboOverlay(half, H, overlayTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti, cubeOpacity);
+      drawCuboOverlay(half, H, overlayTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent);
       pop();
       
       if (nome === hoveredOverlayItem) {
