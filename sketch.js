@@ -34,7 +34,7 @@ let scrollThreshold = 100; // Quantità di scroll necessaria per cambiare checkp
 // Sezione 1: Intro
 let introCaratteriVisibili = 0;
 //testo nelle variabili perchè deve avere l'animazione di comparsa lettera per lettera
-let introTestoCompleto = 'LA SITUAZIONE DEGLI INCIDENTI STRADALI\nIN ITALIA È PIÚ GRANDE DI CIÒ CHE PENSIAMO';
+let introTestoCompleto = 'LA REALTÀ DEGLI INCIDENTI STRADALI\nIN ITALIA È PIÚ GRAVE DI QUANTO IMMAGINI';
 let sottotitoloOpacita = 0;
 let introOpacita = 255;
 
@@ -51,12 +51,13 @@ let terzaSezioneTestoCompleto = 'MA SAI QUANTI SONO OGNI ANNO?';
 
 // Sezione 4: Griglia incidenti
 let numeroTotaleQuadratini = 0;
+let grigliaIncidentiSottotitoloOpacita = 0; // Opacità sottotitolo finale incidenti
 let numeroTotaleIncidenti = 0;
 let counterAttuale = 0;
 
 // Sezione 5: Cubo feriti
 let quintaSezioneCaratteriVisibili = 0;
-let quintaSezioneTestoCompleto = 'E PER OGNI 300 INCIDENTI\n 790 LESIONATI';
+let quintaSezioneTestoCompleto = 'E OGNUNO DI QUESTI \n HA PROVOCATO MORTI E FERITI';
 let cuboRotazione = 0;
 let cuboAnimazioneAutomatica = false;
 let cuboAnimazioneInizio = 0;
@@ -425,20 +426,28 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
   }
   
   // Terza sezione
-  if (scrollY > 1100 && scrollY < 1300) {
-    terzaSezioneTitoloOpacita = map(scrollY, 1100, 1300, 0, 255);
+  if (scrollY > 1100 && scrollY < 1400) {
+    terzaSezioneTitoloOpacita = map(scrollY, 1100, 1400, 0, 255);
     terzaSezioneTitoloOpacita = constrain(terzaSezioneTitoloOpacita, 0, 255);
-    
-    if (frameCount % 2 === 0 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
+    // Animazione testo come intro
+    if (frameCount % 2 == 0 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
       terzaSezioneCaratteriVisibili++;
     }
-    
     terzaSezioneSottotitoloOpacita = map(scrollY, 1200, 1400, 0, 255);
     terzaSezioneSottotitoloOpacita = constrain(terzaSezioneSottotitoloOpacita, 0, 255);
-  } else if (scrollY >= 1300) {
+  } else if (scrollY >= 1400 && scrollY < 1600) {
+    // Mantieni opacità massima, continua animazione se non completata
     terzaSezioneTitoloOpacita = 255;
-    terzaSezioneCaratteriVisibili = terzaSezioneTestoCompleto.length;
+    if (frameCount % 2 == 0 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
+      terzaSezioneCaratteriVisibili++;
+    }
     terzaSezioneSottotitoloOpacita = map(scrollY, 1200, 1400, 0, 255);
+    terzaSezioneSottotitoloOpacita = constrain(terzaSezioneSottotitoloOpacita, 0, 255);
+  } else if (scrollY >= 1600) {
+    // Fade out
+    terzaSezioneTitoloOpacita = map(scrollY, 1600, 1700, 255, 0);
+    terzaSezioneTitoloOpacita = constrain(terzaSezioneTitoloOpacita, 0, 255);
+    terzaSezioneSottotitoloOpacita = map(scrollY, 1600, 1700, 255, 0);
     terzaSezioneSottotitoloOpacita = constrain(terzaSezioneSottotitoloOpacita, 0, 255);
   } else {
     terzaSezioneTitoloOpacita = 0;
@@ -941,9 +950,15 @@ function drawSezioneGrigliaIncidenti() {
   } else if (scrollY >= 2800) {
     numeroQuadratiniVisibili = numeroTotaleQuadratini;
     counterAttuale = numeroTotaleIncidenti;
+    // Attiva sottotitolo finale solo quando animazione è completata
+    if (grigliaIncidentiSottotitoloOpacita < 255) {
+      grigliaIncidentiSottotitoloOpacita += 3; // fade-in veloce
+      grigliaIncidentiSottotitoloOpacita = constrain(grigliaIncidentiSottotitoloOpacita, 0, 255);
+    }
   } else {
     numeroQuadratiniVisibili = 0;
     counterAttuale = 0;
+    grigliaIncidentiSottotitoloOpacita = 0;
   }
   
   // Layout griglia
@@ -957,7 +972,7 @@ function drawSezioneGrigliaIncidenti() {
   let larghezzaGriglia = quadratiniPerRiga * (dimensioneQuadratino + spaziatura);
   let altezzaGriglia = numeroRighe * (dimensioneQuadratino + spaziatura);
   let startX = (width - larghezzaGriglia) / 2;
-  let startY = (height - altezzaGriglia) / 2;
+  let startY = (height - altezzaGriglia) / 2 + 70;
   
   // Fade out
   let grigliaFadeOut = 255;
@@ -965,8 +980,20 @@ function drawSezioneGrigliaIncidenti() {
     grigliaFadeOut = map(scrollY, 2900, 3000, 255, 0);
     grigliaFadeOut = constrain(grigliaFadeOut, 0, 255);
   }
+
+  // Sottotitolo finale incidenti
+  if (grigliaIncidentiSottotitoloOpacita > 0) {
+    push();
+    textFont(transportFont);
+    textAlign(CENTER, TOP);
+    textSize(18);
+    fill(255, 255, 255, min(grigliaIncidentiSottotitoloOpacita, grigliaFadeOut));
+    // Il numero viene disegnato a startY - 20, quindi il testo va subito sotto
+    text('Sono stati gli incidenti in Italia nel 2024', width / 2, startY - 40);
+    pop();
+  }
   
-  // Counter
+  // Counter numero totale incidenti
   if (counterAttuale > 0) {
     push();
     textFont(lcdFont);
@@ -976,7 +1003,7 @@ function drawSezioneGrigliaIncidenti() {
     textSize(txtSize);
     fill(255, 122, 0, grigliaFadeOut);
     let numeroFormattato = counterAttuale.toLocaleString('it-IT');
-    text(numeroFormattato, width / 2, startY - 20);
+    text(numeroFormattato, width / 2, startY - 60);
     pop();
   }
   
@@ -1568,7 +1595,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     let maxLesionati = 0;
     let minLesionati = Infinity;
     for (let i = 0; i < numRows - 1; i++) {
-      let lesionati = parseInt(categoryData.getString(i, 'Lesionati').replace(/[\s.]/g, ''));
+      let lesionati = parseInt(categoryData.getString(i, 'Lesionati').replace(/[\s.]/g, '')) || 0;
       if (lesionati > maxLesionati) maxLesionati = lesionati;
       if (lesionati < minLesionati) minLesionati = lesionati;
     }
