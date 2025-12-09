@@ -224,7 +224,8 @@ function setup() {
   document.body.style.height = '6000px';
   document.body.style.overflow = 'auto';
   
-  // Inizializza visibilità legende
+  // Crea le legende via JS e inizializza la visibilità
+  createLegends();
   updateLegendVisibility();
   
   // Setup scroll arrow click handler
@@ -485,10 +486,67 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   `;
 }
 
-function updateLegendVisibility() { //visualizzare la legenda e i dati specifici solo in sezioneOttava
-  const legIncidenti = document.getElementById('legIncidenti');
-  const legLesionati = document.getElementById('legLesionati');
-  const catCausa = document.querySelector('.catCausa');
+function createLegends() {
+  // legenda incidenti
+  if (!document.getElementById('legIncidenti')) {
+    let legIncidenti = document.createElement('div');
+    legIncidenti.className = 'container';
+    legIncidenti.id = 'legIncidenti';
+    legIncidenti.style.display = 'none';
+
+    // riga 1: quadrato pieno
+    let r1 = document.createElement('div');
+    r1.className = 'riga';
+    let rect = document.createElement('span');
+    rect.className = 'rect';
+    r1.appendChild(rect);
+    r1.appendChild(document.createTextNode(' area proporzionale al numero di incidenti'));
+    legIncidenti.appendChild(r1);
+
+    // riga 2: quadrato vuoto
+    let r2 = document.createElement('div');
+    r2.className = 'riga';
+    let empty = document.createElement('span');
+    empty.className = 'emptyRect';
+    r2.appendChild(empty);
+    r2.appendChild(document.createTextNode(' numero di incidenti inferiore a 300'));
+    legIncidenti.appendChild(r2);
+
+    document.body.appendChild(legIncidenti);
+  }
+
+  // legenda lesionati
+  if (!document.getElementById('legLesionati')) {
+    let legLesionati = document.createElement('div');
+    legLesionati.className = 'container';
+    legLesionati.id = 'legLesionati';
+    legLesionati.style.display = 'none';
+
+    // riga 1: cubo
+    let r1 = document.createElement('div');
+    r1.className = 'riga';
+    let cube = document.createElement('div');
+    r1.appendChild(cube);
+    r1.appendChild(document.createTextNode(' altezza proporzionale al numero di lesionati'));
+    legLesionati.appendChild(r1);
+
+    // riga 2: gradiente
+    let r2 = document.createElement('div');
+    r2.className = 'riga';
+    let grad = document.createElement('span');
+    grad.className = 'gradiente';
+    r2.appendChild(grad);
+    r2.appendChild(document.createTextNode(' opacità proporzionale alla percentuale di incidenti mortali'));
+    legLesionati.appendChild(r2);
+
+    document.body.appendChild(legLesionati);
+  }
+}
+
+function updateLegendVisibility() {
+  let legIncidenti = document.getElementById('legIncidenti');
+  let legLesionati = document.getElementById('legLesionati');
+  let catCausa = document.querySelector('.catCausa');
   
   if (overlayOpen && !showBars) {
     // Mostra legenda incidenti, nascondi lesionati
