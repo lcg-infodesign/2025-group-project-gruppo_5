@@ -24,7 +24,7 @@ let scrollCheckpoints = [
   4300,   // Dopo counter - "Ma di chi è la colpa?"
   4900,    // Sezione 7: Griglia responsabilità
   5200,   // Sezione 7: divisione per responsabilità
-  5700,   // Sezione 8: Dettaglio categoria selezionata
+  6500,   // Sezione 8: Dettaglio categoria selezionata (dopo animazione completa)
 ];
 let currentCheckpointIndex = 0;
 let isScrolling = false;
@@ -98,6 +98,11 @@ let frecceSezioneOttava = {
   destra: { x: 0, y: 0, size: 40, hover: false }
 };
 let categorieArray = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
+
+// Animazione transizione sezione 7 -> 8 (tra scroll 5200 e 6500)
+let transizioneAttiva = false; // true quando è in corso la transizione
+let transizioneProgress = 0; // 0 = inizio (5200), 1 = fine (6500)
+let quadratiniTransizione = []; // array con posizioni iniziali e finali di ogni quadratino
 
 // =========================================
 // SETUP E PRELOAD
@@ -230,7 +235,7 @@ function setup() {
   
   console.log('Setup completed!');
   
-  document.body.style.height = '6500px'; // Include sezione 8
+  document.body.style.height = '7000px'; // Include sezione 8 con transizione più lunga
   document.body.style.overflow = 'auto';
   
   // Crea le legende via JS e inizializza la visibilità
@@ -357,6 +362,7 @@ function draw() {
   drawSezioneQuinta();
   drawSezioneSesta();
   drawSezioneSettima();
+  drawTransizioneSezioneOttava(); // Transizione animata tra 5200 e 6500
   drawSezioneOttava();
   
   // Aggiorna animazioni
@@ -566,7 +572,7 @@ function updateLegendVisibility() {
   let catCausa = document.querySelector('.catCausa');
   
   // Mostra leggende solo nella sezione 8
-  if (scrollY >= 5700 && scrollY < 6200 && categoriaSelezionata !== null) {
+  if (scrollY >= 6500 && scrollY < 6700 && categoriaSelezionata !== null) {
     if (!showBars) {
       // Mostra legenda incidenti, nascondi lesionati
       if (legIncidenti) legIncidenti.style.display = 'flex';
@@ -713,7 +719,7 @@ function getCategoriaData(cat) {
 
 function updateCursor() { // cursore mano sugli elementi cliccabili
   // Sezione 7: hover sulle categorie cliccabili
-  if (scrollY >= 4850 && scrollY < 5700 && sezioneOttavaHitboxes.length > 0) {
+  if (scrollY >= 4850 && scrollY < 6500 && sezioneOttavaHitboxes.length > 0) {
     for (let hitbox of sezioneOttavaHitboxes) {
       if (isMouseOver(hitbox.x, hitbox.y, hitbox.w, hitbox.h)) {
         cursor(HAND);
@@ -723,7 +729,7 @@ function updateCursor() { // cursore mano sugli elementi cliccabili
   }
   
   // Sezione 8: hover sulle frecce e sui cubi
-  if (scrollY >= 5700 && scrollY < 6200) {
+  if (scrollY >= 6500 && scrollY < 6700) {
     let arrowSize = frecceSezioneOttava.sinistra.size;
     
     // Check hover freccia sinistra
@@ -1324,8 +1330,9 @@ function drawSezioneSesta() {
 }
 
 function drawSezioneSettima() {
-  // Non disegnare se siamo nella sezione 8
-  if (scrollY >= 5700) return;
+  // Non disegnare se siamo nella sezione 8 o in transizione attiva oltre 5200
+  if (scrollY >= 6500) return;
+  if (transizioneAttiva && scrollY > 5200) return;
   
   // Fade in griglia
   let grigliaFadeIn = 0;
@@ -1541,12 +1548,275 @@ function drawSezioneSettima() {
   pop(); // Fine isolamento stile sezione 7
 }
 
+function drawTransizioneSezioneOttava() {
+  // Mostra la transizione solo tra scroll 5200 e 6500 quando transizioneAttiva è true
+  if (!transizioneAttiva) return;
+  if (scrollY < 5200 || scrollY >= 6500) {
+    transizioneAttiva = false;
+    return;
+  }
+  
+  // Calcola progress dell'animazione basato su scrollY
+  // Dividiamo in 2 fasi: amalgama (5200-6200) e posizionamento (6200-6500)
+  transizioneProgress = map(scrollY, 5200, 6500, 0, 1);
+  transizioneProgress = constrain(transizioneProgress, 0, 1);
+  
+  // Fase amalgama: scroll 5200-6200
+  let amalgamaProgress = map(scrollY, 5200, 6200, 0, 1);
+  amalgamaProgress = constrain(amalgamaProgress, 0, 1);
+  amalgamaProgress = amalgamaProgress * amalgamaProgress * (3 - 2 * amalgamaProgress); // smoothstep
+  
+  // Fase posizionamento: scroll 6200-6500
+  let posizionamentoProgress = map(scrollY, 6200, 6500, 0, 1);
+  posizionamentoProgress = constrain(posizionamentoProgress, 0, 1);
+  
+  push();
+  background(0); // Sfondo nero
+  
+  // Ottieni dati della categoria selezionata
+  let categoryData = getCategoriaData(categoriaSelezionata);
+  if (!categoryData || !csvData) {
+    pop();
+    return;
+  }
+  
+  // Ottieni info categoria dalla sezione 7
+  let quadConducenti = 0, quadCauseEsterne = 0, quadNonConducenti = 0;
+  for (let i = 0; i < csvData.getRowCount(); i++) {
+    let classe = csvData.getString(i, 'Classe').trim().toLowerCase();
+    if (classe === 'conducenti') quadConducenti = int(csvData.getString(i, 'I/300'));
+    else if (classe === 'cause-esterne-concomitanti') quadCauseEsterne = int(csvData.getString(i, 'I/300'));
+    else if (classe === 'non-conducenti') quadNonConducenti = int(csvData.getString(i, 'I/300'));
+  }
+  
+  // Determina quanti quadratini appartengono alla categoria selezionata
+  let numQuadratiniCategoria = 0;
+  if (categoriaSelezionata === 'conducenti') numQuadratiniCategoria = quadConducenti;
+  else if (categoriaSelezionata === 'cause-esterne-concomitanti') numQuadratiniCategoria = quadCauseEsterne;
+  else if (categoriaSelezionata === 'non-conducenti') numQuadratiniCategoria = quadNonConducenti;
+  
+  // Layout sezione 7 (ricrea lo stesso layout)
+  let quadSize = dimensioneQuadratino;
+  let quadSpacing = quadSize * 0.5;
+  let quadPerRiga = floor(width * 0.4 / (quadSize + quadSpacing));
+  quadPerRiga = constrain(quadPerRiga, 30, 60);
+  
+  // Colore categoria
+  let categoryColor = getOverlayColor(categoriaSelezionata);
+  
+  // Fase 1: Fade out degli altri elementi (numeri, labels, quadratini delle altre categorie)
+  let fadeOutOthers = map(amalgamaProgress, 0, 0.2, 255, 0);
+  fadeOutOthers = constrain(fadeOutOthers, 0, 255);
+  
+  // Posizioni iniziali dei quadratini nella sezione 7
+  // Calcola dove sono nella griglia delle 3 categorie
+  function getWideGridDims(count) {
+    let cols = min(15, count);
+    let rows = ceil(count / cols);
+    return { cols, rows };
+  }
+  
+  let blueDims = getWideGridDims(quadConducenti);
+  let greenDims = getWideGridDims(quadCauseEsterne);
+  let pinkDims = getWideGridDims(quadNonConducenti);
+  
+  let groupSpacing = quadSize * 8;
+  let totalGroupWidth = blueDims.cols * (quadSize + quadSpacing) - quadSpacing +
+                        greenDims.cols * (quadSize + quadSpacing) - quadSpacing +
+                        pinkDims.cols * (quadSize + quadSpacing) - quadSpacing +
+                        groupSpacing * 2;
+  
+  let blueStartX = (width - totalGroupWidth) / 2;
+  let greenStartX = blueStartX + blueDims.cols * (quadSize + quadSpacing) - quadSpacing + groupSpacing;
+  let pinkStartX = greenStartX + greenDims.cols * (quadSize + quadSpacing) - quadSpacing + groupSpacing;
+  let topY = height * 0.35;
+  
+  // Determina posizioni iniziali in base alla categoria
+  let startX, startDims;
+  if (categoriaSelezionata === 'conducenti') {
+    startX = blueStartX;
+    startDims = blueDims;
+  } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+    startX = greenStartX;
+    startDims = greenDims;
+  } else {
+    startX = pinkStartX;
+    startDims = pinkDims;
+  }
+  
+  // Calcola posizioni finali nell'istogramma (sezione 8) - IDENTICHE alla sezione 8
+  let numRows = categoryData.getRowCount();
+  let baseQuadSize = quadSize;
+  let finalQuadSpacing = 40;
+  
+  // Calcola larghezza totale istogramma per centrare a destra (stesso calcolo della sezione 8)
+  let totalWidth = 0;
+  for (let i = 0; i < numRows - 1; i++) {
+    let i300 = int(categoryData.getString(i, 'I/300'));
+    let area = baseQuadSize * baseQuadSize * i300;
+    let size = (i300 >= 1) ? sqrt(area) : baseQuadSize;
+    totalWidth += size + finalQuadSpacing;
+  }
+  totalWidth -= finalQuadSpacing;
+  
+  let finalXStart = width - 100 - totalWidth;
+  let baselineY = height - 100;
+  
+  // Fase 3: Fade in elementi UI (titolo, frecce, etc) durante posizionamento (6200-6500)
+  let fadeInUI = map(scrollY, 6200, 6500, 0, 255);
+  fadeInUI = constrain(fadeInUI, 0, 255);
+  
+  // Disegna titolo con fade in
+  if (fadeInUI > 0) {
+    push();
+    fill(255, 255, 255, fadeInUI);
+    textFont(lcdFont);
+    textSize(40);
+    textAlign(LEFT, TOP);
+    text(categoriaSelezionata.toUpperCase(), 100, 100);
+    pop();
+  }
+  
+  // Disegna frecce laterali con fade in
+  if (fadeInUI > 0) {
+    drawFrecceNavigazioneTransizione(fadeInUI);
+  }
+  
+  // Calcola xPos corrente per disegnare i quadrati finali
+  let xPos = finalXStart;
+  
+  // Disegna l'animazione dei quadratini che si fondono nei quadrati finali
+  let quadIndex = 0;
+  for (let causeIdx = 0; causeIdx < numRows - 1; causeIdx++) {
+    let i300 = int(categoryData.getString(causeIdx, 'I/300'));
+    let area = baseQuadSize * baseQuadSize * i300;
+    let finalSize = (i300 >= 1) ? sqrt(area) : baseQuadSize;
+    
+    // Posizione finale ESATTA del quadrato (angolo in basso a sinistra)
+    let finalX = xPos;
+    let finalY = baselineY - finalSize;
+    let finalCenterX = finalX + finalSize / 2;
+    let finalCenterY = finalY + finalSize / 2;
+    
+    // Disegna i singoli quadratini che si amalgamano gradualmente nel quadrato finale
+    let numQuadsForCause = floor(i300);
+    
+    // I quadratini si posizionano in una griglia che compone il quadrato finale
+    let gridCols = ceil(sqrt(numQuadsForCause));
+    let gridRows = ceil(numQuadsForCause / gridCols);
+    let cellSize = finalSize / max(gridCols, gridRows);
+    
+    // FASE 1: Amalgama (scroll 5200-6100) - i quadratini si fondono al centro schermo
+    // Posizione centro schermo per l'amalgama
+    let amalgamaCenterX = width / 2 + (causeIdx - (numRows - 2) / 2) * (finalSize + finalQuadSpacing);
+    let amalgamaCenterY = height / 2;
+    
+    // Disegna sempre i quadratini che si uniscono
+    for (let q = 0; q < numQuadsForCause && quadIndex < numQuadratiniCategoria; q++) {
+      // Posizione iniziale nella griglia della categoria
+      let startRow = floor(quadIndex / startDims.cols);
+      let startCol = quadIndex % startDims.cols;
+      let startXPos = startX + startCol * (quadSize + quadSpacing);
+      let startYPos = topY + startRow * (quadSize + quadSpacing);
+      
+      // Posizione di amalgama: griglia compatta al centro
+      let amalgamaRow = floor(q / gridCols);
+      let amalgamaCol = q % gridCols;
+      let amalgamaXPos = amalgamaCenterX - finalSize/2 + amalgamaCol * cellSize;
+      let amalgamaYPos = amalgamaCenterY - finalSize/2 + amalgamaRow * cellSize;
+      
+      // Posizione finale nell'istogramma
+      let finalXPos = finalX + amalgamaCol * cellSize;
+      let finalYPos = finalY + amalgamaRow * cellSize;
+      
+      // FASE 1: Convergono verso centro schermo e si espandono
+      let phase1X = lerp(startXPos, amalgamaXPos, amalgamaProgress);
+      let phase1Y = lerp(startYPos, amalgamaYPos, amalgamaProgress);
+      let phase1Size = lerp(quadSize, cellSize, amalgamaProgress);
+      
+      // FASE 2: Si spostano dal centro all'istogramma (mantenendo dimensione finale)
+      let currentX = lerp(phase1X, finalXPos, posizionamentoProgress);
+      let currentY = lerp(phase1Y, finalYPos, posizionamentoProgress);
+      let currentSize = phase1Size; // Mantiene la dimensione raggiunta nella fase 1
+      
+      fill(red(categoryColor), green(categoryColor), blue(categoryColor), 255);
+      noStroke();
+      rectMode(CORNER);
+      rect(currentX, currentY, currentSize, currentSize);
+      
+      quadIndex++;
+    }
+    
+    xPos += finalSize + finalQuadSpacing;
+  }
+  
+  pop();
+}
+
+function drawFrecceNavigazioneTransizione(alpha) {
+  // Versione delle frecce con alpha controllato per fade in durante transizione
+  frecceSezioneOttava.sinistra.y = height / 2;
+  frecceSezioneOttava.destra.x = width - 50;
+  frecceSezioneOttava.destra.y = height / 2;
+  
+  let circleSize = frecceSezioneOttava.sinistra.size;
+  let arrowWidth = circleSize * 0.65;
+  let arrowHeight = circleSize * 0.35;
+  
+  let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+  let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
+  let nextIndex = (currentIndex + 1) % categorieArray.length;
+  
+  let prevColor = getOverlayColor(categorieArray[prevIndex]);
+  let nextColor = getOverlayColor(categorieArray[nextIndex]);
+  
+  // Freccia sinistra
+  push();
+  stroke(red(prevColor), green(prevColor), blue(prevColor), alpha);
+  strokeWeight(3);
+  noFill();
+  ellipse(frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y, circleSize, circleSize);
+  
+  fill(red(prevColor), green(prevColor), blue(prevColor), alpha);
+  noStroke();
+  beginShape();
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/2, frecceSezioneOttava.sinistra.y);
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/2);
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/4);
+  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y - arrowHeight/4);
+  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y + arrowHeight/4);
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/4);
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/2);
+  endShape(CLOSE);
+  pop();
+  
+  // Freccia destra
+  push();
+  stroke(red(nextColor), green(nextColor), blue(nextColor), alpha);
+  strokeWeight(3);
+  noFill();
+  ellipse(frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y, circleSize, circleSize);
+  
+  fill(red(nextColor), green(nextColor), blue(nextColor), alpha);
+  noStroke();
+  beginShape();
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/2, frecceSezioneOttava.destra.y);
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/2);
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/4);
+  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y - arrowHeight/4);
+  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y + arrowHeight/4);
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/4);
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/2);
+  endShape(CLOSE);
+  pop();
+}
+
 function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione normale
-  // Fade in sezione
-  if (scrollY > 5600 && scrollY < 5800) {
-    sezioneOttavaFadeIn = map(scrollY, 5600, 5800, 0, 255);
+  // Fade in sezione - inizia dopo il posizionamento
+  if (scrollY > 6400 && scrollY < 6600) {
+    sezioneOttavaFadeIn = map(scrollY, 6400, 6600, 0, 255);
     sezioneOttavaFadeIn = constrain(sezioneOttavaFadeIn, 0, 255);
-  } else if (scrollY >= 5800) {
+  } else if (scrollY >= 6600) {
     sezioneOttavaFadeIn = 255;
   } else {
     sezioneOttavaFadeIn = 0;
@@ -1794,7 +2064,7 @@ function drawDebugInfo() {
 
 function mouseClicked() {
   // Gestione click nella sezione 8
-  if (scrollY >= 5700 && scrollY < 6200) {
+  if (scrollY >= 6500 && scrollY < 6700) {
     // Click sulle frecce laterali per navigare tra categorie
     let arrowSize = frecceSezioneOttava.sinistra.size;
     
@@ -1804,6 +2074,7 @@ function mouseClicked() {
       let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
       categoriaSelezionata = categorieArray[prevIndex];
       sezioneOttavaTrans = 0; // Reset animazione barre
+      transizioneAttiva = false; // Disattiva transizione
       return;
     }
     
@@ -1813,6 +2084,7 @@ function mouseClicked() {
       let nextIndex = (currentIndex + 1) % categorieArray.length;
       categoriaSelezionata = categorieArray[nextIndex];
       sezioneOttavaTrans = 0; // Reset animazione barre
+      transizioneAttiva = false; // Disattiva transizione
       return;
     }
     
@@ -1838,7 +2110,7 @@ function mouseClicked() {
   }
 
   // Se click su hitbox nella sezione 7, scrolla alla sezione 8 con la categoria selezionata
-  if (scrollY >= 4850 && scrollY < 5700 && sezioneOttavaHitboxes.length) {
+  if (scrollY >= 4850 && scrollY < 6500 && sezioneOttavaHitboxes.length) {
     for (let i = 0; i < sezioneOttavaHitboxes.length; i++) {
       let hb = sezioneOttavaHitboxes[i];
       if (mouseX >= hb.x && mouseX <= hb.x + hb.w && mouseY >= hb.y && mouseY <= hb.y + hb.h) {
@@ -1850,8 +2122,11 @@ function mouseClicked() {
         } else if (i === 2) {
           categoriaSelezionata = 'non-conducenti';
         }
+        // Attiva la transizione animata
+        transizioneAttiva = true;
+        transizioneProgress = 0;
         // Scrolla alla sezione 8
-        scrollTarget = 5700;
+        scrollTarget = 6500;
         break;
       }
     }
@@ -1860,6 +2135,6 @@ function mouseClicked() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  // Aumenta altezza per includere sezione 8 (fino a ~6200px)
-  document.body.style.height = (windowHeight * 3.5) + 'px';
+  // Aumenta altezza per includere sezione 8 con transizione più lunga (fino a ~6700px)
+  document.body.style.height = (windowHeight * 4) + 'px';
 }
