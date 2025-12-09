@@ -91,6 +91,8 @@ let sezioneOttavaTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
 let sezioneOttavaTransTarget = 0; // target per l'animazione
 let hoveredSezioneOttavaItem = null; // traccia quale elemento è in hover
 let sezioneOttavaFadeIn = 0; // fade in della sezione 8
+// Margine usato per il layout interno della sezione 8 e per le legende
+const SEZIONE_MARGIN = 150;
 
 // Frecce navigazione sezione 8
 let frecceSezioneOttava = {
@@ -516,6 +518,9 @@ function createLegends() {
     legIncidenti.className = 'container';
     legIncidenti.id = 'legIncidenti';
     legIncidenti.style.display = 'none';
+    // posizione iniziale rispettando il margin della sezione 8
+    legIncidenti.style.left = SEZIONE_MARGIN + 'px';
+    legIncidenti.style.top = (SEZIONE_MARGIN + 60) + 'px';
 
     // riga 1: quadrato pieno
     let r1 = document.createElement('div');
@@ -544,6 +549,9 @@ function createLegends() {
     legLesionati.className = 'container';
     legLesionati.id = 'legLesionati';
     legLesionati.style.display = 'none';
+    // posiziona la legenda lesionati leggermente a destra della prima
+    legLesionati.style.left = (SEZIONE_MARGIN + 340) + 'px';
+    legLesionati.style.top = (SEZIONE_MARGIN + 60) + 'px';
 
     // riga 1: cubo
     let r1 = document.createElement('div');
@@ -575,13 +583,21 @@ function updateLegendVisibility() {
   if (scrollY >= 6500 && scrollY < 6700 && categoriaSelezionata !== null) {
     if (!showBars) {
       // Mostra legenda incidenti, nascondi lesionati
-      if (legIncidenti) legIncidenti.style.display = 'flex';
+      if (legIncidenti) {
+        legIncidenti.style.display = 'flex';
+        legIncidenti.style.left = SEZIONE_MARGIN + 'px';
+        legIncidenti.style.top = (SEZIONE_MARGIN + 60) + 'px';
+      }
       if (legLesionati) legLesionati.style.display = 'none';
       if (catCausa) catCausa.style.display = 'block';
     } else {
       // Mostra legenda lesionati, nascondi incidenti
       if (legIncidenti) legIncidenti.style.display = 'none';
-      if (legLesionati) legLesionati.style.display = 'flex';
+      if (legLesionati) {
+        legLesionati.style.display = 'flex';
+        legLesionati.style.left = (SEZIONE_MARGIN + 340) + 'px';
+        legLesionati.style.top = (SEZIONE_MARGIN + 60) + 'px';
+      }
       if (catCausa) catCausa.style.display = 'block';
     }
   } else {
@@ -1234,6 +1250,35 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
   pop();
   
+  // Se l'elemento rappresenta meno di 300 incidenti, disegna
+  // un secondo "top" più piccolo, riempito di rosso e con bordo
+  // del colore della categoria (rispetta cubeOpacity sull'alpha)
+  if (incidenti < 300) {
+    push();
+    // calcola centro del top
+    let cx_small = (p0.x + p1.x + p2.x + p3.x) / 4.0;
+    let cy_small = (p0.y + p1.y + p2.y + p3.y) / 4.0;
+    let shrink = 0.65;
+    let sp0x = cx_small + (p0.x - cx_small) * shrink;
+    let sp0y = cy_small + (p0.y - cy_small) * shrink;
+    let sp1x = cx_small + (p1.x - cx_small) * shrink;
+    let sp1y = cy_small + (p1.y - cy_small) * shrink;
+    let sp2x = cx_small + (p2.x - cx_small) * shrink;
+    let sp2y = cy_small + (p2.y - cy_small) * shrink;
+    let sp3x = cx_small + (p3.x - cx_small) * shrink;
+    let sp3y = cy_small + (p3.y - cy_small) * shrink;
+
+    noFill();
+    stroke(red(categoryColor), green(categoryColor), blue(categoryColor), 255 * cubeOpacity);
+    strokeWeight(1.5);
+    // bordo esterno per il top interno
+    quad(sp0x, sp0y, sp1x, sp1y, sp2x, sp2y, sp3x, sp3y);
+
+
+    pop();
+  }
+
+
   // Debug: numero incidenti sopra
   fill(255, 0, 0, 255 * cubeOpacity);
   noStroke();
@@ -1242,14 +1287,7 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   textAlign(CENTER, BOTTOM);
   let debugY = min(p0.y, p1.y, p2.y, p3.y);
   text(incidenti.toLocaleString('it-IT'), 0, debugY - 20);
-  
-  // Nome categoria sotto
-  fill(255, 255, 255, 255 * cubeOpacity);
-  noStroke();
-  textFont(transportFont);
-  textSize(9);
-  textAlign(CENTER, TOP);
-  text(nome, 0, 5);
+
 }
 
 function drawSezioneSesta() {
@@ -1832,12 +1870,13 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   // Mostra dati dal CSV corrispondente
   let categoryData = getCategoriaData(categoriaSelezionata);
   if (categoryData) {
+    const margin = SEZIONE_MARGIN; // spazio interno su tutti i lati
     fill(255, 255, 255, 255);
     textFont(lcdFont);
     textSize(40);
     textAlign(LEFT, TOP);
-    let yPos = 100;
-    text(categoriaSelezionata.toUpperCase(), 100, yPos);
+    let yPos = margin;
+    text(categoriaSelezionata.toUpperCase(), margin, yPos);
     yPos += 80;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
@@ -1856,8 +1895,8 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     }
     totalWidth -= quadSpacing;
     
-    let xPos = width - 100 - totalWidth; // Inizia da destra
-    let baselineY = height - 100; // Linea di base in basso
+    let xPos = width - margin - totalWidth; // Inizia da destra con margine
+    let baselineY = height - margin; // Linea di base in basso con margine
     
     sezioneOttavaSquareHitboxes = []; // Reset hitbox
     
@@ -1913,7 +1952,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     }
     
     // Reset xPos per la seconda passata
-    xPos = width - 100 - totalWidth;
+    xPos = width - margin - totalWidth;
     
     // Seconda passata: disegna tutti i cubi con opacità corretta
     for (let i = 0; i < numRows - 1; i++) {
@@ -1973,6 +2012,8 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
 
 function drawFrecceNavigazione() {
   // Posiziona le frecce a metà altezza dello schermo
+  // Le frecce in overlay/transizione devono restare come prima (non usare il margin)
+  frecceSezioneOttava.sinistra.x = 50;
   frecceSezioneOttava.sinistra.y = height / 2;
   frecceSezioneOttava.destra.x = width - 50;
   frecceSezioneOttava.destra.y = height / 2;
