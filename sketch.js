@@ -1046,16 +1046,29 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
       puntoAltoDestra.x, puntoAltoDestra.y + altezzaLatiVerticali,
       puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali
     );
+    // Linea sottile nera lungo la giunzione tra le due facce (replica dell'effetto)
+    push();
+    stroke(0); // nero semi-trasparente
+    strokeWeight(2);
+    strokeJoin(ROUND);
+    // linea verticale che segue l'edge tra le due facce
+    line(puntoBassoDestro.x, puntoBassoDestro.y, puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali);
+    pop();
   }
   
   // Top bianco (con stesso fadeOut delle facce laterali)
   fill(255, 255, 255, quintaSezioneFadeOut);
+  // Aggiungi un bordo sottile al top per coerenza con la giunzione
+  stroke(0, quintaSezioneFadeOut);
+  strokeWeight(2);
+  strokeJoin(ROUND);
   quad(
     puntoAltoSinistra.x, puntoAltoSinistra.y,
     puntoAltoDestra.x, puntoAltoDestra.y,
     puntoBassoDestro.x, puntoBassoDestro.y,
     puntoBassoSinistra.x, puntoBassoSinistra.y
   );
+  noStroke();
   
   pop();
 }
@@ -1114,9 +1127,19 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   // Lati con gradiente bianco-arancione in base alla percentuale di incidenti mortali
   if (sideH > 0) {
     fill(red(sideColor), green(sideColor), blue(sideColor), 255 * cubeOpacity);
+    // draw filled sides
     noStroke();
     quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
     quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
+    // outline the side faces with a thin black stroke to reproduce seam effect
+    push();
+    stroke(0, 140 * cubeOpacity); // nero semi-trasparente scaled by cubeOpacity
+    strokeWeight(1.2);
+    strokeJoin(ROUND);
+    noFill();
+    quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
+    quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
+    pop();
     
     // Numero lesionati sopra
     fill(255, 255, 255, 255 * cubeOpacity);
@@ -1128,16 +1151,18 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   }
   
   // Top del cubo
+  // Draw top with a thin black outline (consistent with main drawCubo)
+  push();
   if (isFilled) {
     fill(red(categoryColor), green(categoryColor), blue(categoryColor), 255 * cubeOpacity);
-    noStroke();
-    quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
   } else {
     fill(0, 0, 0, 255 * cubeOpacity);
-    stroke(red(categoryColor), green(categoryColor), blue(categoryColor), 255 * cubeOpacity);
-    strokeWeight(2);
-    quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
   }
+  stroke(0, 255 * cubeOpacity);
+  strokeWeight(1.2);
+  strokeJoin(ROUND);
+  quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+  pop();
   
   // Debug: numero incidenti sopra
   fill(255, 0, 0, 255 * cubeOpacity);
