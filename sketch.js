@@ -24,6 +24,7 @@ let scrollCheckpoints = [
   4300,   // Dopo counter - "Ma di chi è la colpa?"
   4900,    // Sezione 7: Griglia responsabilità
   5200,   // Sezione 7: divisione per responsabilità
+  5700,   // Sezione 8: Dettaglio categoria selezionata
 ];
 let currentCheckpointIndex = 0;
 let isScrolling = false;
@@ -79,16 +80,23 @@ let animRegroupProgress = 0;
 let animRegroupTarget = 0;
 let dimensioneQuadratino = 0; // Dimensione dei quadratini, calcolata in sezione 7
 
-// Overlay sezione 8: "canvas" visualizzazione di dettaglio
-let overlayOpen = false;
-let overlayHitboxes = [];
-let overlayCategoria = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
-const overlayCategorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
-let overlaySquareHitboxes = []; // hitbox per i quadrati
+// Sezione 8: visualizzazione di dettaglio (NON più overlay)
+let sezioneOttavaHitboxes = [];
+let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
+const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
+let sezioneOttavaSquareHitboxes = []; // hitbox per i quadrati
 let showBars = false; // false = quadrati, true = istogramma con barre
-let overlayTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
-let overlayTransTarget = 0; // target per l'animazione
-let hoveredOverlayItem = null; // traccia quale elemento è in hover
+let sezioneOttavaTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
+let sezioneOttavaTransTarget = 0; // target per l'animazione
+let hoveredSezioneOttavaItem = null; // traccia quale elemento è in hover
+let sezioneOttavaFadeIn = 0; // fade in della sezione 8
+
+// Frecce navigazione sezione 8
+let frecceSezioneOttava = {
+  sinistra: { x: 50, y: 0, size: 40, hover: false },
+  destra: { x: 0, y: 0, size: 40, hover: false }
+};
+let categorieArray = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
 
 // =========================================
 // SETUP E PRELOAD
@@ -221,7 +229,7 @@ function setup() {
   
   console.log('Setup completed!');
   
-  document.body.style.height = '6000px';
+  document.body.style.height = '6500px'; // Include sezione 8
   document.body.style.overflow = 'auto';
   
   // Crea le legende via JS e inizializza la visibilità
@@ -459,11 +467,11 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   
   // Determina il colore hex della categoria
   let categoryHex = '#ffffff';
-  if (overlayCategoria === 'conducenti') {
+  if (categoriaSelezionata === 'conducenti') {
     categoryHex = '#00a1f1';
-  } else if (overlayCategoria === 'cause-esterne-concomitanti') {
+  } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
     categoryHex = '#33bb44';
-  } else if (overlayCategoria === 'non-conducenti') {
+  } else if (categoriaSelezionata === 'non-conducenti') {
     categoryHex = '#fd73ed';
   }
   
@@ -548,16 +556,19 @@ function updateLegendVisibility() {
   let legLesionati = document.getElementById('legLesionati');
   let catCausa = document.querySelector('.catCausa');
   
-  if (overlayOpen && !showBars) {
-    // Mostra legenda incidenti, nascondi lesionati
-    if (legIncidenti) legIncidenti.style.display = 'flex';
-    if (legLesionati) legLesionati.style.display = 'none';
-    if (catCausa) catCausa.style.display = 'block';
-  } else if (overlayOpen && showBars) {
-    // Mostra legenda lesionati, nascondi incidenti
-    if (legIncidenti) legIncidenti.style.display = 'none';
-    if (legLesionati) legLesionati.style.display = 'flex';
-    if (catCausa) catCausa.style.display = 'block';
+  // Mostra leggende solo nella sezione 8
+  if (scrollY >= 5700 && scrollY < 6200 && categoriaSelezionata !== null) {
+    if (!showBars) {
+      // Mostra legenda incidenti, nascondi lesionati
+      if (legIncidenti) legIncidenti.style.display = 'flex';
+      if (legLesionati) legLesionati.style.display = 'none';
+      if (catCausa) catCausa.style.display = 'block';
+    } else {
+      // Mostra legenda lesionati, nascondi incidenti
+      if (legIncidenti) legIncidenti.style.display = 'none';
+      if (legLesionati) legLesionati.style.display = 'flex';
+      if (catCausa) catCausa.style.display = 'block';
+    }
   } else {
     // Nascondi entrambe
     if (legIncidenti) legIncidenti.style.display = 'none';
@@ -667,21 +678,14 @@ function updateAnimations() {
   animRegroupProgress += (animRegroupTarget - animRegroupProgress) * speed;
   animRegroupProgress = constrain(animRegroupProgress, 0, 1);
   
-  // Animazione overlay cubo
-  overlayTransTarget = showBars ? 1 : 0;
-  overlayTrans += (overlayTransTarget - overlayTrans) * 0.12;
-  overlayTrans = constrain(overlayTrans, 0, 1);
+  // Animazione sezione 8 cubo
+  sezioneOttavaTransTarget = showBars ? 1 : 0;
+  sezioneOttavaTrans += (sezioneOttavaTransTarget - sezioneOttavaTrans) * 0.12;
+  sezioneOttavaTrans = constrain(sezioneOttavaTrans, 0, 1);
 }
 
 function isMouseOver(x, y, w, h) { // controllo hover generico
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
-}
-
-function changeOverlayCategory(delta) { // cambia categoria nell'overlay
-  let idx = overlayCategorie.indexOf(overlayCategoria);
-  if (idx === -1) idx = 0;
-  idx = (idx + delta + overlayCategorie.length) % overlayCategorie.length;
-  overlayCategoria = overlayCategorie[idx];
 }
 
 function getOverlayColor(cat) {
@@ -691,28 +695,61 @@ function getOverlayColor(cat) {
   return color(255);
 }
 
-function getOverlayData(cat) {
+function getCategoriaData(cat) {
   if (cat === 'conducenti') return csvConducenti;
   if (cat === 'cause-esterne-concomitanti') return csvCauseEsterne;
   if (cat === 'non-conducenti') return csvNonConducenti;
   return null;
 }
 
-function updateCursor() { // cursore mano sugli elementi cliccabili dell'overlay
-  if (overlayOpen) {
-    const backArea = { x: 20, y: 20, w: 120, h: 100 };
-    const leftArea = { x: 20, y: height / 2 - 40, w: 80, h: 80 };
-    const rightArea = { x: width - 100, y: height / 2 - 40, w: 80, h: 80 };
-    if (isMouseOver(backArea.x, backArea.y, backArea.w, backArea.h) ||
-        isMouseOver(leftArea.x, leftArea.y, leftArea.w, leftArea.h) ||
-        isMouseOver(rightArea.x, rightArea.y, rightArea.w, rightArea.h)) {
+function updateCursor() { // cursore mano sugli elementi cliccabili
+  // Sezione 7: hover sulle categorie cliccabili
+  if (scrollY >= 4850 && scrollY < 5700 && sezioneOttavaHitboxes.length > 0) {
+    for (let hitbox of sezioneOttavaHitboxes) {
+      if (isMouseOver(hitbox.x, hitbox.y, hitbox.w, hitbox.h)) {
+        cursor(HAND);
+        return;
+      }
+    }
+  }
+  
+  // Sezione 8: hover sulle frecce e sui cubi
+  if (scrollY >= 5700 && scrollY < 6200) {
+    let arrowSize = frecceSezioneOttava.sinistra.size;
+    
+    // Check hover freccia sinistra
+    if (dist(mouseX, mouseY, frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y) < arrowSize) {
+      frecceSezioneOttava.sinistra.hover = true;
       cursor(HAND);
+      return;
     } else {
-      cursor(ARROW);
+      frecceSezioneOttava.sinistra.hover = false;
+    }
+    
+    // Check hover freccia destra
+    if (dist(mouseX, mouseY, frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y) < arrowSize) {
+      frecceSezioneOttava.destra.hover = true;
+      cursor(HAND);
+      return;
+    } else {
+      frecceSezioneOttava.destra.hover = false;
+    }
+    
+    // Check hover sui cubi
+    if (sezioneOttavaSquareHitboxes.length > 0) {
+      for (let hitbox of sezioneOttavaSquareHitboxes) {
+        if (isMouseOver(hitbox.x, hitbox.y, hitbox.w, hitbox.h)) {
+          cursor(HAND);
+          return;
+        }
+      }
     }
   } else {
-    cursor(ARROW);
+    frecceSezioneOttava.sinistra.hover = false;
+    frecceSezioneOttava.destra.hover = false;
   }
+  
+  cursor(ARROW);
 }
 
 // ========================================
@@ -1260,6 +1297,9 @@ function drawSezioneSesta() {
 }
 
 function drawSezioneSettima() {
+  // Non disegnare se siamo nella sezione 8
+  if (scrollY >= 5700) return;
+  
   // Fade in griglia
   let grigliaFadeIn = 0;
   if (scrollY > 4700 && scrollY < 4850) {
@@ -1357,11 +1397,18 @@ function drawSezioneSettima() {
   let greenStartX = blueStartX + blueDims.cols * (quadSize + quadSpacing) + groupSpacing;
   let pinkStartX = greenStartX + greenDims.cols * (quadSize + quadSpacing) + groupSpacing;
 
-  // Hitbox per click su categorie -- dopo mi porta alla visualizzazione di dettaglio
-  overlayHitboxes = [
-    { x: blueStartX - quadSpacing, y: topY - 40, w: blueDims.cols * (quadSize + quadSpacing) + quadSpacing * 2, h: blueDims.rows * (quadSize + quadSpacing) + 80 },
-    { x: greenStartX - quadSpacing, y: topY - 40, w: greenDims.cols * (quadSize + quadSpacing) + quadSpacing * 2, h: greenDims.rows * (quadSize + quadSpacing) + 80 },
-    { x: pinkStartX - quadSpacing, y: topY - 40, w: pinkDims.cols * (quadSize + quadSpacing) + quadSpacing * 2, h: pinkDims.rows * (quadSize + quadSpacing) + 80 }
+  // Hitbox per click su categorie -- esattamente le dimensioni delle griglie
+  let blueWidth = blueDims.cols * (quadSize + quadSpacing) - quadSpacing;
+  let blueHeight = blueDims.rows * (quadSize + quadSpacing) - quadSpacing;
+  let greenWidth = greenDims.cols * (quadSize + quadSpacing) - quadSpacing;
+  let greenHeight = greenDims.rows * (quadSize + quadSpacing) - quadSpacing;
+  let pinkWidth = pinkDims.cols * (quadSize + quadSpacing) - quadSpacing;
+  let pinkHeight = pinkDims.rows * (quadSize + quadSpacing) - quadSpacing;
+  
+  sezioneOttavaHitboxes = [
+    { x: blueStartX, y: topY, w: blueWidth, h: blueHeight },
+    { x: greenStartX, y: topY, w: greenWidth, h: greenHeight },
+    { x: pinkStartX, y: topY, w: pinkWidth, h: pinkHeight }
   ];
   
   let blueIdx = 0, greenIdx = 0, pinkIdx = 0;
@@ -1467,26 +1514,37 @@ function drawSezioneSettima() {
   pop(); // Fine isolamento stile sezione 7
 }
 
-function drawSezioneOttava() { //visualizzazione di dettaglio
-  if (!overlayOpen) return; //crea un overlay sopra tutto (come se ci fosse un canvas nuovo sopra)
+function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione normale
+  // Fade in sezione
+  if (scrollY > 5600 && scrollY < 5800) {
+    sezioneOttavaFadeIn = map(scrollY, 5600, 5800, 0, 255);
+    sezioneOttavaFadeIn = constrain(sezioneOttavaFadeIn, 0, 255);
+  } else if (scrollY >= 5800) {
+    sezioneOttavaFadeIn = 255;
+  } else {
+    sezioneOttavaFadeIn = 0;
+  }
+  
+  if (sezioneOttavaFadeIn <= 0 || categoriaSelezionata === null) return;
+  
   push();
-  noStroke();
-  fill(0, 0, 0, 255);
-  rect(0, 0, width, height);
+  
+  // Background nero completamente opaco (non più overlay)
+  background(0);
 
   // Mostra dati dal CSV corrispondente
-  let categoryData = getOverlayData(overlayCategoria);
+  let categoryData = getCategoriaData(categoriaSelezionata);
   if (categoryData) {
-    fill(255);
+    fill(255, 255, 255, 255);
     textFont(lcdFont);
     textSize(40);
     textAlign(LEFT, TOP);
     let yPos = 100;
-    text(overlayCategoria.toUpperCase(), 100, yPos);
+    text(categoriaSelezionata.toUpperCase(), 100, yPos);
     yPos += 80;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
-    let categoryColor = getOverlayColor(overlayCategoria);
+    let categoryColor = getOverlayColor(categoriaSelezionata);
     let numRows = categoryData.getRowCount();
     let baseQuadSize = dimensioneQuadratino; // Usa la variabile calcolata nella sezione 7
     let quadSpacing = 40;
@@ -1504,7 +1562,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio
     let xPos = width - 100 - totalWidth; // Inizia da destra
     let baselineY = height - 100; // Linea di base in basso
     
-    overlaySquareHitboxes = []; // Reset hitbox
+    sezioneOttavaSquareHitboxes = []; // Reset hitbox
     
     // Trova il massimo e minimo numero di lesionati per scalare l'altezza
     let maxLesionati = 0;
@@ -1546,12 +1604,12 @@ function drawSezioneOttava() { //visualizzazione di dettaglio
       // Hitbox esteso: larghezza del cubo, altezza totale della colonna
       let hitboxLeft = cx - half;
       let hitboxRight = cx + half;
-      let hitboxTop = baselineY - quadSize - H * overlayTrans;
+      let hitboxTop = baselineY - quadSize - H * sezioneOttavaTrans;
       let hitboxBottom = baselineY;
       
       if (mouseX >= hitboxLeft && mouseX <= hitboxRight && 
           mouseY >= hitboxTop && mouseY <= hitboxBottom) {
-        hoveredOverlayItem = nome;
+        hoveredSezioneOttavaItem = nome;
       }
       
       xPos += quadSize + quadSpacing;
@@ -1579,27 +1637,27 @@ function drawSezioneOttava() { //visualizzazione di dettaglio
       let cx = xPos + half;
       
       // Determina opacità: 100% se hovato, 20% se altri sono hovati, 100% se nessuno è hovato
-      let cubeOpacity = 1.0;
-      if (hoveredOverlayItem !== null && hoveredOverlayItem !== nome) {
+      let cubeOpacity = 1.0; // Opacità piena
+      if (hoveredSezioneOttavaItem !== null && hoveredSezioneOttavaItem !== nome) {
         cubeOpacity = 0.3;
       }
       
       // Usa drawCubo per disegnare il parallelepipedo
       push();
       translate(cx, baselineY);
-      drawCuboOverlay(half, H, overlayTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent);
+      drawCuboOverlay(half, H, sezioneOttavaTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent);
       pop();
       
-      if (nome === hoveredOverlayItem) {
+      if (nome === hoveredSezioneOttavaItem) {
         updateCatCausaInfo(nome, incidenti, lesionati, morti);
       }
       
       // Salva hitbox
-      overlaySquareHitboxes.push({
+      sezioneOttavaSquareHitboxes.push({
         x: xPos,
-        y: baselineY - quadSize - H * overlayTrans,
+        y: baselineY - quadSize - H * sezioneOttavaTrans,
         w: quadSize,
-        h: quadSize + H * overlayTrans,
+        h: quadSize + H * sezioneOttavaTrans,
         index: i
       });
       
@@ -1607,38 +1665,89 @@ function drawSezioneOttava() { //visualizzazione di dettaglio
     }
     
     // Reset hover per il prossimo frame
-    hoveredOverlayItem = null;
+    hoveredSezioneOttavaItem = null;
   }
   
-  // Freccia per tornare indietro
-  fill(255, 255, 255);
-  textFont('Courier');
-  textSize(40);
-  textAlign(LEFT, TOP);
-  text('←', 60, 60);
+  // Disegna frecce di navigazione laterali
+  drawFrecceNavigazione();
 
-  // dimensioni frecce laterali per cambiare categoria
-  let midY = height / 2;
-  let offset = 50;
-  let size = 20;
+  pop();
+}
 
-  // Calcola categorie precedenti/successive
-  let idx = overlayCategorie.indexOf(overlayCategoria);
-  if (idx === -1) idx = 0;
-  let prevCat = overlayCategorie[(idx - 1 + overlayCategorie.length) % overlayCategorie.length];
-  let nextCat = overlayCategorie[(idx + 1) % overlayCategorie.length];
-
+function drawFrecceNavigazione() {
+  // Posiziona le frecce a metà altezza dello schermo
+  frecceSezioneOttava.sinistra.y = height / 2;
+  frecceSezioneOttava.destra.x = width - 50;
+  frecceSezioneOttava.destra.y = height / 2;
+  
+  let circleSize = frecceSezioneOttava.sinistra.size;
+  let arrowWidth = circleSize * 0.65; // Larghezza della freccia
+  let arrowHeight = circleSize * 0.35; // Altezza della freccia
+  
+  // Determina categoria precedente e successiva
+  let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+  let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
+  let nextIndex = (currentIndex + 1) % categorieArray.length;
+  
+  let prevColor = getOverlayColor(categorieArray[prevIndex]);
+  let nextColor = getOverlayColor(categorieArray[nextIndex]);
+  
   // Freccia sinistra (categoria precedente)
+  push();
+  let leftAlpha = frecceSezioneOttava.sinistra.hover ? 255 : 200;
+  
+  // Cerchio vuoto con bordo del colore della categoria precedente
+  stroke(red(prevColor), green(prevColor), blue(prevColor), leftAlpha);
+  strokeWeight(3);
   noFill();
-  stroke(getOverlayColor(prevCat));
-  strokeWeight(2);
-  triangle(offset, midY, offset + size, midY - size, offset + size, midY + size);
-
+  ellipse(frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y, circleSize, circleSize);
+  
+  // Freccia del colore della categoria precedente (verso sinistra)
+  fill(red(prevColor), green(prevColor), blue(prevColor), leftAlpha);
+  noStroke();
+  beginShape();
+  // Punta della freccia (sinistra)
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/2, frecceSezioneOttava.sinistra.y);
+  // Lato superiore della punta
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/2);
+  // Parte alta del corpo
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/6);
+  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y - arrowHeight/6);
+  // Parte bassa del corpo
+  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y + arrowHeight/6);
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/6);
+  // Lato inferiore della punta
+  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/2);
+  endShape(CLOSE);
+  pop();
+  
   // Freccia destra (categoria successiva)
-  let rightX = width - offset;
-  stroke(getOverlayColor(nextCat));
-  triangle(rightX, midY, rightX - size, midY - size, rightX - size, midY + size);
-
+  push();
+  let rightAlpha = frecceSezioneOttava.destra.hover ? 255 : 200;
+  
+  // Cerchio vuoto con bordo del colore della categoria successiva
+  stroke(red(nextColor), green(nextColor), blue(nextColor), rightAlpha);
+  strokeWeight(3);
+  noFill();
+  ellipse(frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y, circleSize, circleSize);
+  
+  // Freccia del colore della categoria successiva (verso destra)
+  fill(red(nextColor), green(nextColor), blue(nextColor), rightAlpha);
+  noStroke();
+  beginShape();
+  // Punta della freccia (destra)
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/2, frecceSezioneOttava.destra.y);
+  // Lato superiore della punta
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/2);
+  // Parte alta del corpo
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/6);
+  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y - arrowHeight/6);
+  // Parte bassa del corpo
+  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y + arrowHeight/6);
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/6);
+  // Lato inferiore della punta
+  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/2);
+  endShape(CLOSE);
   pop();
 }
 
@@ -1657,34 +1766,37 @@ function drawDebugInfo() {
 // ========================================
 
 function mouseClicked() {
-  // Se overlay di dettaglio è aperto
-  if (overlayOpen) {
-    // Freccia per tornare indietro - area ampia
-    if (isMouseOver(20, 20, 120, 100)) {
-      overlayOpen = false;
-      showBars = false;
+  // Gestione click nella sezione 8
+  if (scrollY >= 5700 && scrollY < 6200) {
+    // Click sulle frecce laterali per navigare tra categorie
+    let arrowSize = frecceSezioneOttava.sinistra.size;
+    
+    // Freccia sinistra
+    if (dist(mouseX, mouseY, frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y) < arrowSize) {
+      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+      let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
+      categoriaSelezionata = categorieArray[prevIndex];
+      sezioneOttavaTrans = 0; // Reset animazione barre
       return;
     }
-    // Freccia destra/sinistra per cambio categoria
-    if (isMouseOver(20, height / 2 - 40, 80, 80)) {
-      changeOverlayCategory(-1);
-      return;
-    }
-    if (isMouseOver(width - 100, height / 2 - 40, 80, 80)) {
-      changeOverlayCategory(1);
+    
+    // Freccia destra
+    if (dist(mouseX, mouseY, frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y) < arrowSize) {
+      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+      let nextIndex = (currentIndex + 1) % categorieArray.length;
+      categoriaSelezionata = categorieArray[nextIndex];
+      sezioneOttavaTrans = 0; // Reset animazione barre
       return;
     }
     
     // Click su un qualsiasi quadrato: toggle tutte le barre
-    for (let hitbox of overlaySquareHitboxes) {
+    for (let hitbox of sezioneOttavaSquareHitboxes) {
       if (mouseX >= hitbox.x && mouseX <= hitbox.x + hitbox.w &&
           mouseY >= hitbox.y && mouseY <= hitbox.y + hitbox.h) {
         showBars = !showBars;
         return;
       }
     }
-    
-    return;
   }
 
   let frecciaY = height - 45;
@@ -1698,20 +1810,21 @@ function mouseClicked() {
     }
   }
 
-  // Se click su hitbox, allora apri overlay
-  if (scrollY >= 4900 && overlayHitboxes.length) {
-    for (let i = 0; i < overlayHitboxes.length; i++) {
-      let hb = overlayHitboxes[i];
+  // Se click su hitbox nella sezione 7, scrolla alla sezione 8 con la categoria selezionata
+  if (scrollY >= 4850 && scrollY < 5700 && sezioneOttavaHitboxes.length) {
+    for (let i = 0; i < sezioneOttavaHitboxes.length; i++) {
+      let hb = sezioneOttavaHitboxes[i];
       if (mouseX >= hb.x && mouseX <= hb.x + hb.w && mouseY >= hb.y && mouseY <= hb.y + hb.h) {
-        overlayOpen = true;
         // Imposta la categoria in base all'indice: 0=conducenti, 1=cause-esterne, 2=non-conducenti
         if (i === 0) {
-          overlayCategoria = 'conducenti';
+          categoriaSelezionata = 'conducenti';
         } else if (i === 1) {
-          overlayCategoria = 'cause-esterne-concomitanti';
+          categoriaSelezionata = 'cause-esterne-concomitanti';
         } else if (i === 2) {
-          overlayCategoria = 'non-conducenti';
+          categoriaSelezionata = 'non-conducenti';
         }
+        // Scrolla alla sezione 8
+        scrollTarget = 5700;
         break;
       }
     }
@@ -1720,5 +1833,6 @@ function mouseClicked() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  document.body.style.height = (windowHeight * 3) + 'px';
+  // Aumenta altezza per includere sezione 8 (fino a ~6200px)
+  document.body.style.height = (windowHeight * 3.5) + 'px';
 }
