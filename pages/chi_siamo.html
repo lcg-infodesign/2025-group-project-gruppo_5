@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Siamo - Incidenti Stradali</title>
+  <link rel="stylesheet" href="../style.css">
+  <!-- p5 PRIMA del file chi_siamo.js -->
+  <script src="../libraries/p5.min.js"></script>
+  <script src="../libraries/p5.sound.min.js"></script>
+  <script src="../javascript/chi_siamo.js"></script>
+</head>
+<body class="scroll">
+  <!-- Navbar -->
+  <nav id="navbar" class="visible">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-item">Intro</a>
+      <a href="../index.html#incidenti" class="nav-item">Incidenti</a>
+      <a href="../index.html#responsabilita" class="nav-item">Responsabilità</a>
+    </div>
+    
+    <div id="navbar-counter" class="navbar-counter">
+      <div class="counter-item">
+        <span class="counter-number" id="nav-incidenti">0</span>
+        <span class="counter-label">Incidenti</span>
+      </div>
+      <div class="counter-item">
+        <span class="counter-number" id="nav-morti">0</span>
+        <span class="counter-label">Morti</span>
+      </div>
+      <div class="counter-item">
+        <span class="counter-number" id="nav-feriti">0</span>
+        <span class="counter-label">Feriti</span>
+      </div>
+      <div class="counter-tooltip" id="counter-tooltip"></div>
+    </div>
+    
+    <div class="nav-right">
+      <a class="nav-button" href="chi_siamo.html">Chi siamo</a>
+      <a class="nav-button" href="dati.html">I dati</a>
+    </div>
+  </nav>
+
+  <!-- Section 1: Chi Siamo -->
+  <section id="chi-siamo" class="section">
+    <div class="section-content">
+      <h1 class="team-title">CHI SIAMO</h1>
+      <p class="description">
+        Siamo un gruppo di studenti del Politecnico di Milano, frequentanti il corso di laurea in Design della Comunicazione.
+      </p>
+      <p class="description">
+        Il progetto nasce dall'analisi del dataset ISTAT sugli incidenti stradali e dall'integrazione di visualizzazioni interattive sviluppate con strumenti di data analysis.
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 2: Team -->
+  <section id="team" class="section">
+    <h2 class="team-title">IL TEAM:</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="card-canvas" id="canvas-1"></div>
+        <div class="card-name">
+          <span>Giorgia</span>
+          <span>Barbetta</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="card-canvas" id="canvas-2"></div>
+        <div class="card-name">
+          <span>Letizia</span>
+          <span>Dell'Oro</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="card-canvas" id="canvas-3"></div>
+        <div class="card-name">
+          <span>Marta</span>
+          <span>Fontana</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="card-canvas" id="canvas-4"></div>
+        <div class="card-name">
+          <span>Viola</span>
+          <span>Sabbatini</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="card-canvas" id="canvas-5"></div>
+        <div class="card-name">
+          <span>Luca</span>
+          <span>Golinelli</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="card-canvas" id="canvas-6"></div>
+        <div class="card-name">
+          <span>Giacomo</span>
+          <span>Rosa</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
