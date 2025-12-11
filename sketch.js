@@ -479,8 +479,7 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
 }
 
 function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i dati specidici per categoria
-  const container = document.getElementById('catCausaContainer');
-  if (!container) return;
+  const container = placeCatCausaContainer();
   
   // Determina il colore hex della categoria
   let categoryHex = '#ffffff';
@@ -512,98 +511,192 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
 }
 
 function createLegends() {
-  // legenda incidenti
-  if (!document.getElementById('legIncidenti')) {
-    let legIncidenti = document.createElement('div');
-    legIncidenti.className = 'container';
-    legIncidenti.id = 'legIncidenti';
-    legIncidenti.style.display = 'none';
-    // posizione iniziale rispettando il margin della sezione 8
-    legIncidenti.style.left = SEZIONE_MARGIN + 'px';
-    legIncidenti.style.top = (SEZIONE_MARGIN + 60) + 'px';
-
-    // riga 1: quadrato pieno
-    let r1 = document.createElement('div');
-    r1.className = 'riga';
-    let rect = document.createElement('span');
-    rect.className = 'rect';
-    r1.appendChild(rect);
-    r1.appendChild(document.createTextNode(' area proporzionale al numero di incidenti'));
-    legIncidenti.appendChild(r1);
-
-    // riga 2: quadrato vuoto
-    let r2 = document.createElement('div');
-    r2.className = 'riga';
-    let empty = document.createElement('span');
-    empty.className = 'emptyRect';
-    r2.appendChild(empty);
-    r2.appendChild(document.createTextNode(' numero di incidenti inferiore a 300'));
-    legIncidenti.appendChild(r2);
-
-    document.body.appendChild(legIncidenti);
+  // Crea un singolo contenitore legenda che verrà aggiornato dinamicamente
+  if (!document.getElementById('legend')) {
+    let legend = document.createElement('div');
+    legend.id = 'legend';
+    // Applichiamo gli stessi stili della classe `.container` via JS inline
+    legend.style.display = 'none';
+    legend.style.position = 'fixed';
+    legend.style.backgroundColor = 'rgba(217,217,217,0.125)';
+    legend.style.width = '300px';
+    legend.style.padding = '1.5em';
+    legend.style.borderRadius = '20px';
+    legend.style.display = 'flex';
+    legend.style.flexDirection = 'column';
+    legend.style.justifyContent = 'left';
+    legend.style.gap = '1em';
+    legend.style.left = SEZIONE_MARGIN + 'px';
+    legend.style.top = (SEZIONE_MARGIN + 50) + 'px';
+    legend.style.boxSizing = 'border-box';
+    legend.style.zIndex = '999';
+    document.body.appendChild(legend);
   }
 
-  // legenda lesionati
-  if (!document.getElementById('legLesionati')) {
-    let legLesionati = document.createElement('div');
-    legLesionati.className = 'container';
-    legLesionati.id = 'legLesionati';
-    legLesionati.style.display = 'none';
-    // posiziona la legenda lesionati leggermente a destra della prima
-    legLesionati.style.left = (SEZIONE_MARGIN + 340) + 'px';
-    legLesionati.style.top = (SEZIONE_MARGIN + 60) + 'px';
-
-    // riga 1: cubo
-    let r1 = document.createElement('div');
-    r1.className = 'riga';
-    let cube = document.createElement('div');
-    r1.appendChild(cube);
-    r1.appendChild(document.createTextNode(' altezza proporzionale al numero di lesionati'));
-    legLesionati.appendChild(r1);
-
-    // riga 2: gradiente
-    let r2 = document.createElement('div');
-    r2.className = 'riga';
-    let grad = document.createElement('span');
-    grad.className = 'gradiente';
-    r2.appendChild(grad);
-    r2.appendChild(document.createTextNode(' opacità proporzionale alla percentuale di incidenti mortali'));
-    legLesionati.appendChild(r2);
-
-    document.body.appendChild(legLesionati);
+  // Crea anche il contenitore per le informazioni di categoria (catCausa) interamente via JS
+  if (!document.getElementById('catCausaContainer')) {
+    let cat = document.createElement('div');
+    cat.id = 'catCausaContainer';
+    // Applichiamo inline gli stessi stili di `.catCausa`
+    cat.style.display = 'none';
+    cat.style.position = 'fixed';
+    cat.style.width = '400px';
+    cat.style.padding = '1.5em';
+    cat.style.display = 'flex';
+    cat.style.flexDirection = 'column';
+    cat.style.justifyContent = 'left';
+    cat.style.gap = '1em';
+    cat.style.left = (SEZIONE_MARGIN + 320) + 'px';
+    cat.style.top = (SEZIONE_MARGIN + 50) + 'px';
+    cat.style.color = 'white';
+    cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
+    cat.style.fontSize = '14px';
+    cat.style.lineHeight = '1.2';
+    cat.style.maxWidth = '320px';
+    cat.style.pointerEvents = 'none';
+    cat.style.boxSizing = 'border-box';
+    cat.style.zIndex = '999';
+    document.body.appendChild(cat);
   }
 }
 
+// Ensure the category detail container exists and return it.
+function placeCatCausaContainer() {
+  let container = document.getElementById('catCausaContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'catCausaContainer';
+    // Applichiamo inline gli stessi stili di `.catCausa`
+    container.style.display = 'none';
+    container.style.position = 'fixed';
+    container.style.width = '400px';
+    container.style.padding = '1.5em';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.justifyContent = 'left';
+    container.style.gap = '1em';
+    container.style.left = (SEZIONE_MARGIN + 320) + 'px';
+    container.style.top = (SEZIONE_MARGIN + 50) + 'px';
+    container.style.color = 'white';
+    container.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
+    container.style.fontSize = '14px';
+    container.style.lineHeight = '1.2';
+    container.style.maxWidth = '320px';
+    container.style.pointerEvents = 'none';
+    container.style.boxSizing = 'border-box';
+    container.style.zIndex = '999';
+    document.body.appendChild(container);
+  }
+  return container;
+}
+
 function updateLegendVisibility() {
-  let legIncidenti = document.getElementById('legIncidenti');
-  let legLesionati = document.getElementById('legLesionati');
-  let catCausa = document.querySelector('.catCausa');
-  
-  // Mostra leggende solo nella sezione 8
+  let legend = document.getElementById('legend');
+  let catCausa = document.getElementById('catCausaContainer');
+
+  // Mostra la legenda dinamicamente solo nella sezione 8
   if (scrollY >= 6500 && scrollY < 6700 && categoriaSelezionata !== null) {
-    if (!showBars) {
-      // Mostra legenda incidenti, nascondi lesionati
-      if (legIncidenti) {
-        legIncidenti.style.display = 'flex';
-        legIncidenti.style.left = SEZIONE_MARGIN + 'px';
-        legIncidenti.style.top = (SEZIONE_MARGIN + 60) + 'px';
+    if (legend) {
+      legend.style.display = 'flex';
+      legend.style.left = SEZIONE_MARGIN + 'px';
+      legend.style.top = (SEZIONE_MARGIN + 50) + 'px';
+
+      // Imposta il contenuto in base al tipo di visualizzazione
+      if (!showBars) {
+        // Contenuto per 'incidenti' creato interamente via JS con inline styles
+        legend.innerHTML = '';
+        let h = document.createElement('h3');
+        h.style.color = 'white';
+        h.style.margin = '0';
+        h.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
+        h.style.fontSize = '18px';
+        h.textContent = 'Legenda';
+        legend.appendChild(h);
+
+        // riga 1: rect pieno + testo
+        let r1 = document.createElement('div');
+        r1.style.display = 'flex';
+        r1.style.flexDirection = 'row';
+        r1.style.alignItems = 'center';
+        r1.style.gap = '1em';
+        let rect = document.createElement('div');
+        rect.style.width = '2em';
+        rect.style.height = '2em';
+        rect.style.backgroundColor = '#ffffff';
+        r1.appendChild(rect);
+        let t1 = document.createElement('div');
+        t1.style.color = 'white';
+        t1.textContent = 'area proporzionale al numero di incidenti';
+        r1.appendChild(t1);
+        legend.appendChild(r1);
+
+        // riga 2: empty rect + testo
+        let r2 = document.createElement('div');
+        r2.style.display = 'flex';
+        r2.style.flexDirection = 'row';
+        r2.style.alignItems = 'center';
+        r2.style.gap = '1em';
+        let empty = document.createElement('div');
+        empty.style.width = '0.5em';
+        empty.style.height = '0.5em';
+        empty.style.border = '2px solid #ffffff';
+        r2.appendChild(empty);
+        let t2 = document.createElement('div');
+        t2.style.color = 'white';
+        t2.textContent = 'numero di incidenti inferiore a 300';
+        r2.appendChild(t2);
+        legend.appendChild(r2);
+      } else {
+        // Contenuto per 'lesionati'
+        legend.innerHTML = '';
+        let h = document.createElement('h3');
+        h.style.color = 'white';
+        h.style.margin = '0';
+        h.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
+        h.style.fontSize = '18px';
+        h.textContent = 'Legenda';
+        legend.appendChild(h);
+
+        let r1 = document.createElement('div');
+        r1.style.display = 'flex';
+        r1.style.flexDirection = 'row';
+        r1.style.alignItems = 'center';
+        r1.style.gap = '1em';
+        let square = document.createElement('div');
+        square.style.width = '18px';
+        square.style.height = '18px';
+        square.style.background = '#ff8b43';
+        square.style.marginRight = '8px';
+        square.style.borderRadius = '2px';
+        r1.appendChild(square);
+        let t1 = document.createElement('div');
+        t1.style.color = 'white';
+        t1.textContent = 'altezza proporzionale al numero di lesionati';
+        r1.appendChild(t1);
+        legend.appendChild(r1);
+
+        let r2 = document.createElement('div');
+        r2.style.display = 'flex';
+        r2.style.flexDirection = 'row';
+        r2.style.alignItems = 'center';
+        r2.style.gap = '1em';
+        let grad = document.createElement('div');
+        grad.style.width = '10em';
+        grad.style.height = '0.5em';
+        grad.style.borderRadius = '20px';
+        grad.style.background = 'linear-gradient(to right, #ffffff, #ff8b43)';
+        r2.appendChild(grad);
+        let t2 = document.createElement('div');
+        t2.style.color = 'white';
+        t2.textContent = 'opacità proporzionale alla percentuale di incidenti mortali';
+        r2.appendChild(t2);
+        legend.appendChild(r2);
       }
-      if (legLesionati) legLesionati.style.display = 'none';
-      if (catCausa) catCausa.style.display = 'block';
-    } else {
-      // Mostra legenda lesionati, nascondi incidenti
-      if (legIncidenti) legIncidenti.style.display = 'none';
-      if (legLesionati) {
-        legLesionati.style.display = 'flex';
-        legLesionati.style.left = (SEZIONE_MARGIN + 340) + 'px';
-        legLesionati.style.top = (SEZIONE_MARGIN + 60) + 'px';
-      }
-      if (catCausa) catCausa.style.display = 'block';
     }
+
+    if (catCausa) catCausa.style.display = 'block';
   } else {
-    // Nascondi entrambe
-    if (legIncidenti) legIncidenti.style.display = 'none';
-    if (legLesionati) legLesionati.style.display = 'none';
+    if (legend) legend.style.display = 'none';
     if (catCausa) catCausa.style.display = 'none';
   }
 }
@@ -1159,8 +1252,8 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   pop();
 }
 
-// Funzione per disegnare i cubi nell'istogramma (riutilizza la stessa logica di drawCubo)
-function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent) {
+// Funzione per disegnare i cubi nell'istogramma (simile a drawCubo, senza troncamento alla base)
+function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent) {
   function easeOutCubic(t) {
     return 1 - pow(1 - t, 3);
   }
@@ -1177,9 +1270,9 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   // Normalizza rispetto al range min-max della categoria
   let normalizedPercent = (maxMortPercent > minMortPercent) 
     ? map(percIncMortali, minMortPercent, maxMortPercent, 0, 1)
-    : 0.5; // Default a 50% se non c'è range
+    : 0.5;
   normalizedPercent = constrain(normalizedPercent, 0, 1);
-  // Gradiente da bianco (255,255,255) a minimo, ad arancione (255,139,67) a massimo
+  // Gradiente da bianco a arancione
   let sideColor = lerpColor(color(255, 255, 255), color(255, 139, 67), normalizedPercent);
   
   let base = [
@@ -1194,11 +1287,13 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
     return { x: rx, y: (baseY - lift) + ry };
   }
   
+  // Punti del top (in alto)
   let p0 = rot(base[0], sideH);
   let p1 = rot(base[1], sideH);
   let p2 = rot(base[2], sideH);
   let p3 = rot(base[3], sideH);
   
+  // Punti della base (in basso, senza troncamento)
   let bL0 = rot(base[3], 0);
   let bL1 = rot(base[0], 0);
   let L0 = {x: bL0.x, y: 0};
@@ -1210,34 +1305,24 @@ function drawCuboOverlay(half, H, trans, categoryColor, isFilled, lesionati, inc
   let mirror = (pt) => ({x: -pt.x, y: pt.y});
   let R = [mirror(L0), mirror(L1), mirror(L2), mirror(L3)];
   
-  // Lati con gradiente bianco-arancione in base alla percentuale di incidenti mortali
+  // Lati con gradiente bianco-arancione
   if (sideH > 0) {
     fill(red(sideColor), green(sideColor), blue(sideColor), 255 * cubeOpacity);
-    // draw filled sides
     noStroke();
     quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
     quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
-    // outline the side faces with a thin black stroke to reproduce seam effect
+    // Outline nero per effetto giuntura
     push();
-    stroke(0, 140 * cubeOpacity); // nero semi-trasparente scaled by cubeOpacity
+    stroke(0, 140 * cubeOpacity);
     strokeWeight(1.2);
     strokeJoin(ROUND);
     noFill();
     quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
     quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
     pop();
-    
-    // Numero lesionati sopra
-    fill(255, 255, 255, 255 * cubeOpacity);
-    textFont(transportFont);
-    textSize(12);
-    textAlign(CENTER, BOTTOM);
-    let topY = min(p0.y, p1.y, p2.y, p3.y);
-    text(lesionati.toLocaleString('it-IT'), 0, topY - 5);
   }
   
   // Top del cubo
-  // Draw top with a thin black outline (consistent with main drawCubo)
   push();
   if (isFilled) {
     fill(red(categoryColor), green(categoryColor), blue(categoryColor), 255 * cubeOpacity);
@@ -1863,9 +1948,6 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   if (sezioneOttavaFadeIn <= 0 || categoriaSelezionata === null) return;
   
   push();
-  
-  // Background nero completamente opaco (non più overlay)
-  background(0);
 
   // Mostra dati dal CSV corrispondente
   let categoryData = getCategoriaData(categoriaSelezionata);
@@ -1883,19 +1965,42 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     let categoryColor = getOverlayColor(categoriaSelezionata);
     let numRows = categoryData.getRowCount();
     let baseQuadSize = dimensioneQuadratino; // Usa la variabile calcolata nella sezione 7
-    let quadSpacing = 40;
-    
-    // Calcola larghezza totale per centrare a destra
-    let totalWidth = 0;
+
+    // Desired spacing between squares; we'll reduce it if total width overflows the available area
+    const DESIRED_SPACING = 80;
+
+    // Pre-calcola le dimensioni dei quadratini e la somma delle larghezze
+    let sizes = [];
+    let sumSizes = 0;
     for (let i = 0; i < numRows - 1; i++) {
       let i300 = int(categoryData.getString(i, 'I/300'));
       let area = baseQuadSize * baseQuadSize * i300;
       let size = (i300 >= 1) ? sqrt(area) : baseQuadSize;
-      totalWidth += size + quadSpacing;
+      sizes.push(size);
+      sumSizes += size;
     }
-    totalWidth -= quadSpacing;
-    
-    let xPos = width - margin - totalWidth; // Inizia da destra con margine
+
+    let count = sizes.length;
+    let availableWidth = width - 2 * SEZIONE_MARGIN;
+
+    // Compute spacing: try DESIRED_SPACING, but if it overflows reduce spacing so all items fit
+    let quadSpacing = 0;
+    if (count <= 1) {
+      quadSpacing = 0;
+    } else {
+      let totalWithDesired = sumSizes + DESIRED_SPACING * (count - 1);
+      if (totalWithDesired <= availableWidth) {
+        quadSpacing = DESIRED_SPACING;
+      } else {
+        // space remaining distributed between gaps; avoid negative spacing
+        quadSpacing = (availableWidth - sumSizes) / (count - 1);
+        if (quadSpacing < 4) quadSpacing = 4; // minimum small spacing to avoid overlap
+      }
+    }
+
+    // Calcola larghezza totale effettiva e posizione iniziale x
+    let totalWidth = sumSizes + quadSpacing * Math.max(0, count - 1);
+    let xPos = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
     let baselineY = height - margin; // Linea di base in basso con margine
     
     sezioneOttavaSquareHitboxes = []; // Reset hitbox
@@ -1951,8 +2056,8 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       xPos += quadSize + quadSpacing;
     }
     
-    // Reset xPos per la seconda passata
-    xPos = width - margin - totalWidth;
+    // Reset xPos per la seconda passata (centro, come sopra)
+    xPos = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
     
     // Seconda passata: disegna tutti i cubi con opacità corretta
     for (let i = 0; i < numRows - 1; i++) {
@@ -1981,7 +2086,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       // Usa drawCubo per disegnare il parallelepipedo
       push();
       translate(cx, baselineY);
-      drawCuboOverlay(half, H, sezioneOttavaTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent);
+      drawCuboIstogramma(half, H, sezioneOttavaTrans, categoryColor, i300 >= 1, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent);
       pop();
       
       if (nome === hoveredSezioneOttavaItem) {
@@ -2000,10 +2105,37 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       xPos += quadSize + quadSpacing;
     }
     
+    // If nothing is hovered this frame, show a helpful default message
+    const catContainer = placeCatCausaContainer();
+    if (catContainer) {
+      if (hoveredSezioneOttavaItem === null) {
+        catContainer.innerHTML = `
+          <h3 style="color: white; margin: 0;">Seleziona una categoria per visualizzare i dettagli</h3>
+        `;
+      }
+    }
+
     // Reset hover per il prossimo frame
     hoveredSezioneOttavaItem = null;
   }
   
+  // Linea orizzontale bianca a 100px dal basso (rispetta i margin laterali)
+  push();
+  stroke(255);
+  strokeWeight(1);
+
+  line(SEZIONE_MARGIN, height - 120, width - SEZIONE_MARGIN, height - 120);
+  pop();
+
+  // Label 'Incidenti' riferita alla linea (70px sotto la linea)
+  push();
+  fill(255);
+  if (typeof transportFont !== 'undefined' && transportFont) textFont(transportFont); else textFont(lcdFont);
+  textSize(16);
+  textAlign(CENTER, CENTER);
+  text('Incidenti', width / 2, height - 80);
+  pop();
+
   // Disegna frecce di navigazione laterali
   drawFrecceNavigazione();
 
