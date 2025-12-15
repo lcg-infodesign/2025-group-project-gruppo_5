@@ -92,7 +92,7 @@ let sezioneOttavaTransTarget = 0; // target per l'animazione
 let hoveredSezioneOttavaItem = null; // traccia quale elemento è in hover
 let sezioneOttavaFadeIn = 0; // fade in della sezione 8
 // Margine usato per il layout interno della sezione 8 e per le legende
-const SEZIONE_MARGIN = 150;
+const SEZIONE_MARGIN = 100;
 
 // Frecce navigazione sezione 8
 let frecceSezioneOttava = {
@@ -527,7 +527,7 @@ function createLegends() {
     legend.style.justifyContent = 'left';
     legend.style.gap = '1em';
     legend.style.left = SEZIONE_MARGIN + 'px';
-    legend.style.top = (SEZIONE_MARGIN + 50) + 'px';
+    legend.style.top = (SEZIONE_MARGIN + 60) + 'px';
     legend.style.boxSizing = 'border-box';
     legend.style.zIndex = '999';
     document.body.appendChild(legend);
@@ -599,7 +599,7 @@ function updateLegendVisibility() {
     if (legend) {
       legend.style.display = 'flex';
       legend.style.left = SEZIONE_MARGIN + 'px';
-      legend.style.top = (SEZIONE_MARGIN + 50) + 'px';
+      legend.style.top = (SEZIONE_MARGIN + 60) + 'px';
 
       // Imposta il contenuto in base al tipo di visualizzazione
       if (!showBars) {
@@ -619,11 +619,19 @@ function updateLegendVisibility() {
         r1.style.flexDirection = 'row';
         r1.style.alignItems = 'center';
         r1.style.gap = '1em';
+        let rectWrapper = document.createElement('div');
+        rectWrapper.style.width = '2em';
+        rectWrapper.style.display = 'flex';
+        rectWrapper.style.justifyContent = 'center';
+        rectWrapper.style.alignItems = 'center';
+        rectWrapper.style.flexShrink = '0';
         let rect = document.createElement('div');
         rect.style.width = '2em';
         rect.style.height = '2em';
+        rect.style.flexShrink = '0';
         rect.style.backgroundColor = '#ffffff';
-        r1.appendChild(rect);
+        rectWrapper.appendChild(rect);
+        r1.appendChild(rectWrapper);
         let t1 = document.createElement('div');
         t1.style.color = 'white';
         t1.textContent = 'area proporzionale al numero di incidenti';
@@ -636,11 +644,20 @@ function updateLegendVisibility() {
         r2.style.flexDirection = 'row';
         r2.style.alignItems = 'center';
         r2.style.gap = '1em';
+        let emptyWrapper = document.createElement('div');
+        emptyWrapper.style.width = '2em';
+        emptyWrapper.style.display = 'flex';
+        emptyWrapper.style.justifyContent = 'center';
+        emptyWrapper.style.alignItems = 'center';
+        emptyWrapper.style.flexShrink = '0';
         let empty = document.createElement('div');
-        empty.style.width = '0.5em';
-        empty.style.height = '0.5em';
+        empty.style.width = '0.7em';
+        empty.style.height = '0.7em';
+        empty.style.flexShrink = '0';
         empty.style.border = '2px solid #ffffff';
-        r2.appendChild(empty);
+        empty.style.boxSizing = 'border-box';
+        emptyWrapper.appendChild(empty);
+        r2.appendChild(emptyWrapper);
         let t2 = document.createElement('div');
         t2.style.color = 'white';
         t2.textContent = 'numero di incidenti inferiore a 300';
@@ -662,13 +679,10 @@ function updateLegendVisibility() {
         r1.style.flexDirection = 'row';
         r1.style.alignItems = 'center';
         r1.style.gap = '1em';
-        let square = document.createElement('div');
-        square.style.width = '18px';
-        square.style.height = '18px';
-        square.style.background = '#ff8b43';
-        square.style.marginRight = '8px';
-        square.style.borderRadius = '2px';
-        r1.appendChild(square);
+        let cubeCanvas = createLegendCubeCanvasStyled(88);
+        cubeCanvas.style.marginRight = '8px';
+        cubeCanvas.style.flexShrink = '0';
+        r1.appendChild(cubeCanvas);
         let t1 = document.createElement('div');
         t1.style.color = 'white';
         t1.textContent = 'altezza proporzionale al numero di lesionati';
@@ -1252,6 +1266,99 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   pop();
 }
 
+// Crea un cubo nello stile di sezionequinta per la legenda
+function createLegendCubeCanvasStyled(size) {
+  // Crea il canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+  
+  // Posizioni e dimensioni
+  const centerX = size / 2;
+  const centerY = size / 2.2;
+  const halfWidth = size * 0.22;
+  const sideHeight = size * 0.35;
+  
+  // Calcoli per la rotazione isometrica (45 gradi)
+  const angle = Math.PI / 4;
+  const cosine = Math.cos(angle);
+  const sine = Math.sin(angle);
+  const squashFactor = 0.38;
+  
+  // Funzione per ruotare i punti
+  function rotatePoint(x, y) {
+    let rotatedX = x * cosine - y * sine;
+    let rotatedY = (x * sine + y * cosine) * squashFactor;
+    return {
+      x: centerX + rotatedX,
+      y: centerY + rotatedY
+    };
+  }
+  
+  // Calcola i 4 punti del top
+  const topLeft = rotatePoint(-halfWidth, -halfWidth);
+  const topRight = rotatePoint(halfWidth, -halfWidth);
+  const bottomRight = rotatePoint(halfWidth, halfWidth);
+  const bottomLeft = rotatePoint(-halfWidth, halfWidth);
+  
+  // Disegna le due facce laterali (vuote)
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = Math.max(1, size * 0.07);
+  
+  // Faccia sinistra
+  ctx.beginPath();
+  ctx.moveTo(bottomLeft.x, bottomLeft.y);
+  ctx.lineTo(bottomRight.x, bottomRight.y);
+  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
+  ctx.lineTo(bottomLeft.x, bottomLeft.y + sideHeight);
+  ctx.closePath();
+  ctx.stroke();
+  
+  // Faccia destra
+  ctx.beginPath();
+  ctx.moveTo(bottomRight.x, bottomRight.y);
+  ctx.lineTo(topRight.x, topRight.y);
+  ctx.lineTo(topRight.x, topRight.y + sideHeight);
+  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
+  ctx.closePath();
+  ctx.stroke();
+  
+  // Disegna il top bianco
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(topLeft.x, topLeft.y);
+  ctx.lineTo(topRight.x, topRight.y);
+  ctx.lineTo(bottomRight.x, bottomRight.y);
+  ctx.lineTo(bottomLeft.x, bottomLeft.y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  
+  // Disegna gli spigoli verticali
+  ctx.beginPath();
+  ctx.moveTo(topRight.x, topRight.y);
+  ctx.lineTo(topRight.x, topRight.y + sideHeight);
+  ctx.moveTo(bottomRight.x, bottomRight.y);
+  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
+  ctx.moveTo(bottomLeft.x, bottomLeft.y);
+  ctx.lineTo(bottomLeft.x, bottomLeft.y + sideHeight);
+  ctx.stroke();
+  
+  // Disegna il bordo della base
+  ctx.beginPath();
+  ctx.moveTo(bottomLeft.x, bottomLeft.y + sideHeight);
+  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
+  ctx.lineTo(topRight.x, topRight.y + sideHeight);
+  ctx.stroke();
+  
+  return canvas;
+}
+
 // Funzione per disegnare i cubi nell'istogramma (simile a drawCubo, senza troncamento alla base)
 function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent) {
   function easeOutCubic(t) {
@@ -1336,7 +1443,7 @@ function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, 
   pop();
   
   // Se l'elemento rappresenta meno di 300 incidenti, disegna
-  // un secondo "top" più piccolo, riempito di rosso e con bordo
+  // un secondo "top" più piccolo,
   // del colore della categoria (rispetta cubeOpacity sull'alpha)
   if (incidenti < 300) {
     push();
@@ -1363,15 +1470,6 @@ function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, 
     pop();
   }
 
-
-  // Debug: numero incidenti sopra
-  fill(255, 0, 0, 255 * cubeOpacity);
-  noStroke();
-  textFont(transportFont);
-  textSize(10);
-  textAlign(CENTER, BOTTOM);
-  let debugY = min(p0.y, p1.y, p2.y, p3.y);
-  text(incidenti.toLocaleString('it-IT'), 0, debugY - 20);
 
 }
 
@@ -2124,8 +2222,34 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   stroke(255);
   strokeWeight(1);
 
-  line(SEZIONE_MARGIN, height - 120, width - SEZIONE_MARGIN, height - 120);
+  line(SEZIONE_MARGIN, height - 80, width - SEZIONE_MARGIN, height - 80);
   pop();
+
+  // Linea verticale sul lato destro: appare con easing legato a `sezioneOttavaTrans`
+  {
+    // Abbassata di 20px rispetto alla linea orizzontale
+    let bottomY = height - 80; // prima era -80
+    let topY = bottomY - (bottomY - SEZIONE_MARGIN) * sezioneOttavaTrans; // si estende verso l'alto
+    let alpha = 255 * sezioneOttavaTrans;
+    if (alpha > 2) {
+      // Etichetta sopra la linea
+      push();
+      fill(255, alpha);
+      noStroke();
+      if (typeof transportFont !== 'undefined' && transportFont) textFont(transportFont); else textFont(lcdFont);
+      textSize(14);
+      textAlign(CENTER, BOTTOM);
+      text('Soggetti lesi', width - SEZIONE_MARGIN, topY + 40);
+      pop();
+
+      // Linea verticale
+      push();
+      stroke(255, alpha);
+      strokeWeight(1);
+      line(width - SEZIONE_MARGIN, SEZIONE_MARGIN + 70, width - SEZIONE_MARGIN, height - 80);
+      pop();
+    }
+  }
 
   // Label 'Incidenti' riferita alla linea (70px sotto la linea)
   push();
@@ -2133,7 +2257,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   if (typeof transportFont !== 'undefined' && transportFont) textFont(transportFont); else textFont(lcdFont);
   textSize(16);
   textAlign(CENTER, CENTER);
-  text('Incidenti', width / 2, height - 80);
+  text('Incidenti', width / 2, height - 50);
   pop();
 
   // Disegna frecce di navigazione laterali
