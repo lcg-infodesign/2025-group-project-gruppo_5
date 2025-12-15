@@ -83,6 +83,9 @@ let dimensioneQuadratino = 0; // Dimensione dei quadratini, calcolata in sezione
 
 // Sezione 8: visualizzazione di dettaglio (NON più overlay)
 let sezioneOttavaHitboxes = [];
+let hoveredGridIndex = -1; // Traccia quale griglia è in hover (-1 = nessuna, 0 = blu, 1 = verde, 2 = rosa)
+let hoverScales = [1, 1, 1]; // Scale per ogni griglia (animato con lerp)
+let hoverScaleTarget = [1, 1, 1]; // Target scale per smooth animation
 let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
 const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
 let sezioneOttavaSquareHitboxes = []; // hitbox per i quadrati
@@ -244,13 +247,26 @@ function setup() {
   createLegends();
   updateLegendVisibility();
   
-  // Setup scroll arrow click handler
-  let scrollArrow = document.getElementById('scroll-arrow');
-  if (scrollArrow) {
-    scrollArrow.addEventListener('click', function() {
+  // Setup scroll arrows click handlers
+  let scrollArrowDown = document.getElementById('scroll-arrow-down');
+  if (scrollArrowDown) {
+    scrollArrowDown.addEventListener('click', function() {
       // Vai al prossimo checkpoint
       if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
         currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    });
+  }
+  
+  let scrollArrowUp = document.getElementById('scroll-arrow-up');
+  if (scrollArrowUp) {
+    scrollArrowUp.addEventListener('click', function() {
+      // Vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
         scrollTarget = scrollCheckpoints[currentCheckpointIndex];
         isScrolling = true;
         scrollAccumulator = 0;
@@ -369,6 +385,7 @@ function draw() {
   
   // Aggiorna animazioni
   updateAnimations();
+  updateHoverScales(); // Aggiorna animazione hover
   updateCursor();
   
   // Debug
@@ -840,12 +857,27 @@ function getCategoriaData(cat) {
   return null;
 }
 
+function updateHoverScales() {
+  // Smooth interpolation per scale animation (chiamato ogni frame)
+  for (let i = 0; i < 3; i++) {
+    hoverScales[i] = lerp(hoverScales[i], hoverScaleTarget[i], 0.15);
+  }
+}
+
 function updateCursor() { // cursore mano sugli elementi cliccabili
   // Sezione 7: hover sulle categorie cliccabili
-  if (scrollY >= 4850 && scrollY < 6500 && sezioneOttavaHitboxes.length > 0) {
-    for (let hitbox of sezioneOttavaHitboxes) {
+  hoveredGridIndex = -1; // Reset
+  
+  // Aggiorna target scale per tutte le griglie
+  hoverScaleTarget = [1, 1, 1];
+  
+  if (scrollY >= 5100 && scrollY < 6500 && sezioneOttavaHitboxes.length > 0) {
+    for (let i = 0; i < sezioneOttavaHitboxes.length; i++) {
+      let hitbox = sezioneOttavaHitboxes[i];
       if (isMouseOver(hitbox.x, hitbox.y, hitbox.w, hitbox.h)) {
         cursor(HAND);
+        hoveredGridIndex = i;
+        hoverScaleTarget[i] = 1.05; // Zoom del 5%
         return;
       }
     }
@@ -956,22 +988,56 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     updateNavbarCounterValues();
   }
   
-  // SCROLL ARROW: Nascondi quando sei all'ultimo checkpoint
-  let scrollArrow = document.getElementById('scroll-arrow');
-  if (scrollArrow) {
-    if (currentCheckpointIndex >= scrollCheckpoints.length - 1) {
-      scrollArrow.style.opacity = '0';
-      scrollArrow.style.pointerEvents = 'none';
+  // SCROLL ARROWS: Gestisci visibilità e animazioni
+  let scrollArrowDown = document.getElementById('scroll-arrow-down');
+  let scrollArrowUp = document.getElementById('scroll-arrow-up');
+  let arrowsContainer = document.querySelector('.scroll-arrows-container');
+  
+  let upVisible = false;
+  let downVisible = false;
+  
+  // Freccia giù: nascondi quando sei al checkpoint 4900 (indice 7) o oltre
+  if (scrollArrowDown) {
+    if (currentCheckpointIndex >= 8) {
+      scrollArrowDown.style.opacity = '0';
+      scrollArrowDown.style.pointerEvents = 'none';
     } else {
-      scrollArrow.style.opacity = '1';
-      scrollArrow.style.pointerEvents = 'all';
+      scrollArrowDown.style.opacity = '1';
+      scrollArrowDown.style.pointerEvents = 'all';
+      downVisible = true;
     }
     
     // Attiva/disattiva animazione bounce: solo quando NON si sta scrollando
     if (isScrolling) {
-      scrollArrow.style.animationPlayState = 'paused';
+      scrollArrowDown.style.animationPlayState = 'paused';
     } else {
-      scrollArrow.style.animationPlayState = 'running';
+      scrollArrowDown.style.animationPlayState = 'running';
+    }
+  }
+  
+  // Freccia su: nascondi quando sei al primo checkpoint o quando scrollY supera 5200
+  if (scrollArrowUp) {
+    if (currentCheckpointIndex <= 0 || scrollY > 5200) {
+      scrollArrowUp.style.opacity = '0';
+      scrollArrowUp.style.pointerEvents = 'none';
+    } else {
+      scrollArrowUp.style.opacity = '0.5';
+      scrollArrowUp.style.pointerEvents = 'all';
+      upVisible = true;
+    }
+  }
+  
+  // Centra il container in base alle frecce visibili
+  if (arrowsContainer) {
+    if (upVisible && downVisible) {
+      // Entrambe visibili: centra la coppia
+      arrowsContainer.style.transform = 'translateX(-50%)';
+    } else if (upVisible) {
+      // Solo freccia su: offset per centrare la singola
+      arrowsContainer.style.transform = 'translateX(calc(-50% + 22px))';
+    } else if (downVisible) {
+      // Solo freccia giù: offset per centrare la singola
+      arrowsContainer.style.transform = 'translateX(calc(-50% - 22px))';
     }
   }
 }
@@ -1528,24 +1594,31 @@ function drawSezioneSesta() {
     colpaFadeIn = 255;
   }
   
-  // Fade out "MA DI CHI È LA COLPA?"
-  let colpaFadeOut = 255;
-  if (scrollY > 4600 && scrollY < 4750) {
-    colpaFadeOut = map(scrollY, 4600, 4750, 255, 0);
-    colpaFadeOut = constrain(colpaFadeOut, 0, 255);
-  } else if (scrollY >= 4750) {
-    colpaFadeOut = 0;
-  } else {
-    colpaFadeOut = colpaFadeIn;
+  // Transizione "MA DI CHI È LA COLPA?" - rimpicciolisce e si sposta sopra quando appare la griglia
+  let colpaOpacity = colpaFadeIn;
+  let colpaTextSize = width * 0.05;
+  let colpaPosY = height / 2;
+  
+  if (scrollY > 4300 && scrollY < 4600) {
+    // Durante la transizione: rimpicciolisce e si sposta in alto (anticipata)
+    let transitionProgress = map(scrollY, 4300, 4600, 0, 1);
+    transitionProgress = constrain(transitionProgress, 0, 1);
+    
+    colpaTextSize = lerp(width * 0.05, width * 0.025, transitionProgress);
+    colpaPosY = lerp(height / 2, height * 0.2, transitionProgress);
+  } else if (scrollY >= 4600) {
+    // Dopo la transizione: piccolo e in alto
+    colpaTextSize = width * 0.025;
+    colpaPosY = height * 0.2;
   }
   
-  if (colpaFadeOut > 0) {
+  if (colpaOpacity > 0 && scrollY < 6500) {
     push();
     textAlign(CENTER, CENTER);
     textFont(lcdFont);
-    textSize(width * 0.05);
-    fill(255, 122, 0, colpaFadeOut);
-    text("MA DI CHI È LA COLPA?", width / 2, height / 2);
+    textSize(colpaTextSize);
+    fill(255, 122, 0, colpaOpacity);
+    text("MA DI CHI È LA COLPA?", width / 2, colpaPosY);
     pop();
   }
 }
@@ -1555,18 +1628,27 @@ function drawSezioneSettima() {
   if (scrollY >= 6500) return;
   if (transizioneAttiva && scrollY > 5200) return;
   
-  // Fade in griglia
+  // Fade in griglia più veloce (100px invece di 150px)
   let grigliaFadeIn = 0;
-  if (scrollY > 4700 && scrollY < 4850) {
-    grigliaFadeIn = map(scrollY, 4700, 4850, 0, 255);
+  if (scrollY > 4500 && scrollY < 4600) {
+    grigliaFadeIn = map(scrollY, 4500, 4600, 0, 255);
     grigliaFadeIn = constrain(grigliaFadeIn, 0, 255);
     animRegroupActive = true;
-  } else if (scrollY >= 4850) {
+  } else if (scrollY >= 4600) {
     grigliaFadeIn = 255;
     animRegroupActive = true;
   } else {
     grigliaFadeIn = 0;
     animRegroupActive = false;
+  }
+  
+  // Transizione colore da bianco a colori originali (200px di scroll dopo fade in, totale 300px)
+  let colorTransition = 0;
+  if (scrollY > 4700 && scrollY < 4900) {
+    colorTransition = map(scrollY, 4700, 4900, 0, 1);
+    colorTransition = constrain(colorTransition, 0, 1);
+  } else if (scrollY >= 4900) {
+    colorTransition = 1;
   }
   
   if (grigliaFadeIn <= 0) return;
@@ -1628,7 +1710,7 @@ function drawSezioneSettima() {
   // Disegna griglia
   let animProgress = floor(map(grigliaFadeIn, 0, 255, 0, quadTotale));
   let x0 = (width - quadPerRiga * (quadSize + quadSpacing)) / 2;
-  let y0 = (height - numeroRighe * (quadSize + quadSpacing)) / 2 + 100;
+  let y0 = (height - numeroRighe * (quadSize + quadSpacing)) / 2 + 30;
   rectMode(CORNER);
   
   // Layout 3 griglie
@@ -1646,7 +1728,7 @@ function drawSezioneSettima() {
                    greenDims.cols * (quadSize + quadSpacing) + groupSpacing + 
                    pinkDims.cols * (quadSize + quadSpacing);
   let startX = (width - totalWidth) / 2;
-  let topY = height / 2 - max(blueDims.rows, greenDims.rows, pinkDims.rows) * (quadSize + quadSpacing) / 2 + 100;
+  let topY = height / 2 - max(blueDims.rows, greenDims.rows, pinkDims.rows) * (quadSize + quadSpacing) / 2 + 60;
   
   let blueStartX = startX;
   let greenStartX = blueStartX + blueDims.cols * (quadSize + quadSpacing) + groupSpacing;
@@ -1703,12 +1785,70 @@ function drawSezioneSettima() {
       y = lerp(yStartGrid, yDest, animRegroupProgress);
     }
     
-    fill(red(fillCol), green(fillCol), blue(fillCol), grigliaFadeIn);
+    // Applica effetto hover: abbassa opacità delle griglie non in hover
+    let quadOpacity = grigliaFadeIn;
+    let gridIndex = -1;
+    let centerX = 0, centerY = 0;
+    
+    if (hoveredGridIndex !== -1) {
+      let isHovered = false;
+      if (red(fillCol) === 0 && green(fillCol) === 161) {
+        gridIndex = 0;
+        centerX = blueStartX + (blueDims.cols * (quadSize + quadSpacing)) / 2;
+        centerY = topY + (blueDims.rows * (quadSize + quadSpacing)) / 2;
+        isHovered = (hoveredGridIndex === 0);
+      } else if (red(fillCol) === 51 && green(fillCol) === 187) {
+        gridIndex = 1;
+        centerX = greenStartX + (greenDims.cols * (quadSize + quadSpacing)) / 2;
+        centerY = topY + (greenDims.rows * (quadSize + quadSpacing)) / 2;
+        isHovered = (hoveredGridIndex === 1);
+      } else {
+        gridIndex = 2;
+        centerX = pinkStartX + (pinkDims.cols * (quadSize + quadSpacing)) / 2;
+        centerY = topY + (pinkDims.rows * (quadSize + quadSpacing)) / 2;
+        isHovered = (hoveredGridIndex === 2);
+      }
+      
+      if (!isHovered) {
+        quadOpacity = grigliaFadeIn * 0.3; // Abbassa opacità al 30%
+      }
+    } else {
+      // Determina a quale griglia appartiene per lo scale
+      if (red(fillCol) === 0 && green(fillCol) === 161) {
+        gridIndex = 0;
+        centerX = blueStartX + (blueDims.cols * (quadSize + quadSpacing)) / 2;
+        centerY = topY + (blueDims.rows * (quadSize + quadSpacing)) / 2;
+      } else if (red(fillCol) === 51 && green(fillCol) === 187) {
+        gridIndex = 1;
+        centerX = greenStartX + (greenDims.cols * (quadSize + quadSpacing)) / 2;
+        centerY = topY + (greenDims.rows * (quadSize + quadSpacing)) / 2;
+      } else {
+        gridIndex = 2;
+        centerX = pinkStartX + (pinkDims.cols * (quadSize + quadSpacing)) / 2;
+        centerY = topY + (pinkDims.rows * (quadSize + quadSpacing)) / 2;
+      }
+    }
+    
+    // Applica scale con centro nella griglia
+    let scale = hoverScales[gridIndex];
+    let scaledX = centerX + (x - centerX) * scale;
+    let scaledY = centerY + (y - centerY) * scale;
+    let scaledSize = quadSize * scale;
+    
+    // Interpola colore da bianco al colore originale
+    let finalR = lerp(255, red(fillCol), colorTransition);
+    let finalG = lerp(255, green(fillCol), colorTransition);
+    let finalB = lerp(255, blue(fillCol), colorTransition);
+    
+    fill(finalR, finalG, finalB, quadOpacity);
     noStroke();
-    rect(x, y, quadSize, quadSize);
+    rect(scaledX, scaledY, scaledSize, scaledSize);
   }
   
   // Disegna i numeri sopra ogni gruppo (appaiono gradualmente con l'animazione di riordino)
+  let txtSize = width * 0.025;
+  txtSize = constrain(txtSize, 18, 50);
+  
   if (animRegroupProgress > 0.3) { // Inizia a mostrare i numeri quando il riordino è al 30%
     let numberOpacity = map(animRegroupProgress, 0.3, 1, 0, grigliaFadeIn);
     numberOpacity = constrain(numberOpacity, 0, grigliaFadeIn);
@@ -1716,8 +1856,6 @@ function drawSezioneSettima() {
     push();
     textFont(lcdFont);
     textAlign(CENTER, BOTTOM);
-    let txtSize = width * 0.025;
-    txtSize = constrain(txtSize, 18, 50);
     textSize(txtSize);
     
     // Calcola i numeri animati (salgono gradualmente)
@@ -1730,39 +1868,61 @@ function drawSezioneSettima() {
     
     // Numero gruppo BLU (Conducenti)
     let blueCenterX = blueStartX + (blueDims.cols * (quadSize + quadSpacing)) / 2;
-    fill(0, 161, 241, numberOpacity);
+    let blueOpacity = hoveredGridIndex === -1 || hoveredGridIndex === 0 ? numberOpacity : numberOpacity * 0.3;
+    fill(0, 161, 241, blueOpacity);
     text(currentConducenti.toLocaleString('it-IT'), blueCenterX, topY - 30);
     
     // Label sotto il numero
     textFont(transportFont);
     textSize(txtSize * 0.4);
-    fill(255, 255, 255, numberOpacity);
-    text('Conducente', blueCenterX, topY - 10);
+    fill(255, 255, 255, blueOpacity);
+    text('Conducenti', blueCenterX, topY - 10);
     
     // Numero gruppo VERDE (Cause esterne)
     let greenCenterX = greenStartX + (greenDims.cols * (quadSize + quadSpacing)) / 2;
+    let greenOpacity = hoveredGridIndex === -1 || hoveredGridIndex === 1 ? numberOpacity : numberOpacity * 0.3;
     textFont(lcdFont);
     textSize(txtSize);
-    fill(51, 187, 68, numberOpacity);
+    fill(51, 187, 68, greenOpacity);
     text(currentCauseEsterne.toLocaleString('it-IT'), greenCenterX, topY - 30);
     
     textFont(transportFont);
     textSize(txtSize * 0.4);
-    fill(255, 255, 255, numberOpacity);
+    fill(255, 255, 255, greenOpacity);
     text('Cause esterne', greenCenterX, topY - 10);
     
     // Numero gruppo ROSA (Non conducenti)
     let pinkCenterX = pinkStartX + (pinkDims.cols * (quadSize + quadSpacing)) / 2;
+    let pinkOpacity = hoveredGridIndex === -1 || hoveredGridIndex === 2 ? numberOpacity : numberOpacity * 0.3;
     textFont(lcdFont);
     textSize(txtSize);
-    fill(253, 115, 237, numberOpacity);
+    fill(253, 115, 237, pinkOpacity);
     text(currentNonConducenti.toLocaleString('it-IT'), pinkCenterX, topY - 30);
     
     textFont(transportFont);
     textSize(txtSize * 0.4);
-    fill(255, 255, 255, numberOpacity);
+    fill(255, 255, 255, pinkOpacity);
     text('Non conducenti', pinkCenterX, topY - 10);
     
+    pop();
+  }
+  
+  // Testo informativo sotto le griglie (appare con l'animazione)
+  if (animRegroupProgress > 0.5) {
+    let ctaOpacity = map(animRegroupProgress, 0.5, 1, 0, grigliaFadeIn);
+    ctaOpacity = constrain(ctaOpacity, 0, grigliaFadeIn);
+    
+    push();
+    textAlign(CENTER, TOP);
+    textFont(transportFont);
+    textSize(txtSize * 0.4);
+    fill(255, 255, 255, ctaOpacity);
+    
+    // Calcola posizione sotto la griglia più bassa
+    let maxRows = max(blueDims.rows, greenDims.rows, pinkDims.rows);
+    let bottomY = topY + maxRows * (quadSize + quadSpacing) + 15;
+    
+    text("Clicca e scopri le cause degli incidenti più nello specifico", width / 2, bottomY);
     pop();
   }
   
@@ -2407,7 +2567,7 @@ function mouseClicked() {
   }
 
   // Se click su hitbox nella sezione 7, scrolla alla sezione 8 con la categoria selezionata
-  if (scrollY >= 4850 && scrollY < 6500 && sezioneOttavaHitboxes.length) {
+  if (scrollY >= 5100 && scrollY < 6500 && sezioneOttavaHitboxes.length) {
     for (let i = 0; i < sezioneOttavaHitboxes.length; i++) {
       let hb = sezioneOttavaHitboxes[i];
       if (mouseX >= hb.x && mouseX <= hb.x + hb.w && mouseY >= hb.y && mouseY <= hb.y + hb.h) {
