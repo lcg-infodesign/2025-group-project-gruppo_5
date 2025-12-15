@@ -275,6 +275,43 @@ function setup() {
     });
   }
   
+  // Back arrow: torna alla sezione responsabilità (scroll 5200)
+  let backArrow = document.getElementById('back-arrow');
+  if (backArrow) {
+    backArrow.addEventListener('click', function() {
+      scrollTarget = 5200;
+      currentCheckpointIndex = 8; // Checkpoint 5200
+      isScrolling = true;
+      scrollAccumulator = 0;
+      categoriaSelezionata = null; // Reset categoria
+      hasClickedCategory = false; // Reset flag
+    });
+  }
+  
+  // Frecce navigazione dettaglio: cambio categoria
+  let detailArrowLeft = document.getElementById('detail-arrow-left');
+  let detailArrowRight = document.getElementById('detail-arrow-right');
+  
+  if (detailArrowLeft) {
+    detailArrowLeft.addEventListener('click', function() {
+      if (categoriaSelezionata !== null) {
+        let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+        let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
+        categoriaSelezionata = categorieArray[prevIndex];
+      }
+    });
+  }
+  
+  if (detailArrowRight) {
+    detailArrowRight.addEventListener('click', function() {
+      if (categoriaSelezionata !== null) {
+        let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+        let nextIndex = (currentIndex + 1) % categorieArray.length;
+        categoriaSelezionata = categorieArray[nextIndex];
+      }
+    });
+  }
+  
   // Setup navbar navigation click handlers
   let navItems = document.querySelectorAll('.nav-item');
   navItems.forEach(function(item) {
@@ -890,27 +927,8 @@ function updateCursor() { // cursore mano sugli elementi cliccabili
     }
   }
   
-  // Sezione 8: hover sulle frecce e sui cubi
+  // Sezione 8: hover sui cubi
   if (scrollY >= 6500 && scrollY < 6700) {
-    let arrowSize = frecceSezioneOttava.sinistra.size;
-    
-    // Check hover freccia sinistra
-    if (dist(mouseX, mouseY, frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y) < arrowSize) {
-      frecceSezioneOttava.sinistra.hover = true;
-      cursor(HAND);
-      return;
-    } else {
-      frecceSezioneOttava.sinistra.hover = false;
-    }
-    
-    // Check hover freccia destra
-    if (dist(mouseX, mouseY, frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y) < arrowSize) {
-      frecceSezioneOttava.destra.hover = true;
-      cursor(HAND);
-      return;
-    } else {
-      frecceSezioneOttava.destra.hover = false;
-    }
     
     // Check hover sui cubi
     if (sezioneOttavaSquareHitboxes.length > 0) {
@@ -921,9 +939,6 @@ function updateCursor() { // cursore mano sugli elementi cliccabili
         }
       }
     }
-  } else {
-    frecceSezioneOttava.sinistra.hover = false;
-    frecceSezioneOttava.destra.hover = false;
   }
   
   cursor(ARROW);
@@ -962,6 +977,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   let navbar = document.getElementById('navbar');
   if (!navbar) return;
   
+  // Aggiorna link categoria dinamico
+  updateNavbarCategoria();
+  
   // Mostra/nascondi navbar in base all'opacità
   if (navbarOpacita > 50) {
     navbar.classList.add('visible');
@@ -971,13 +989,27 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   
   // Aggiorna quale sezione è attiva
   let navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach((item, index) => {
-    if (index === sezioneAttiva) {
-      item.classList.add('active');
-    } else {
-      item.classList.remove('active');
-    }
-  });
+  
+  // Se siamo nella sezione dettaglio (scrollY >= 6500 e categoria selezionata), attiva Responsabilità + categoria
+  if (scrollY >= 6500 && categoriaSelezionata !== null) {
+    navItems.forEach((item) => {
+      // Attiva sia Responsabilità (data-section="2") che la categoria
+      if (item.dataset.section === '2' || item.id === 'nav-categoria') {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  } else {
+    // Altrimenti usa la logica normale basata su sezioneAttiva
+    navItems.forEach((item, index) => {
+      if (index === sezioneAttiva) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
   
   // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
   let navbarCounter = document.getElementById('navbar-counter');
@@ -999,9 +1031,57 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   let scrollArrowDown = document.getElementById('scroll-arrow-down');
   let scrollArrowUp = document.getElementById('scroll-arrow-up');
   let arrowsContainer = document.querySelector('.scroll-arrows-container');
+  let backArrow = document.getElementById('back-arrow');
   
   let upVisible = false;
   let downVisible = false;
+  
+  // BACK ARROW: Mostra nella sezione dettaglio
+  if (backArrow) {
+    if (scrollY >= 6500 && categoriaSelezionata !== null) {
+      backArrow.classList.add('visible');
+    } else {
+      backArrow.classList.remove('visible');
+    }
+  }
+  
+  // DETAIL ARROWS: Gestisci visibilità e colori dinamici
+  let detailArrowLeft = document.getElementById('detail-arrow-left');
+  let detailArrowRight = document.getElementById('detail-arrow-right');
+  
+  if (detailArrowLeft && detailArrowRight && categoriaSelezionata !== null) {
+    // Mostra le frecce nella sezione dettaglio
+    if (scrollY >= 6500) {
+      detailArrowLeft.classList.add('visible');
+      detailArrowRight.classList.add('visible');
+      
+      // Calcola categoria precedente e successiva
+      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+      let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
+      let nextIndex = (currentIndex + 1) % categorieArray.length;
+      
+      // Ottieni i colori
+      let prevColor = getOverlayColor(categorieArray[prevIndex]);
+      let nextColor = getOverlayColor(categorieArray[nextIndex]);
+      
+      // Converti colori p5 in RGB CSS
+      let prevRGB = `rgb(${red(prevColor)}, ${green(prevColor)}, ${blue(prevColor)})`;
+      let nextRGB = `rgb(${red(nextColor)}, ${green(nextColor)}, ${blue(nextColor)})`;
+      
+      // Applica i colori ai bordi e agli stroke degli SVG
+      detailArrowLeft.style.borderColor = prevRGB;
+      detailArrowLeft.querySelector('svg path').setAttribute('stroke', prevRGB);
+      
+      detailArrowRight.style.borderColor = nextRGB;
+      detailArrowRight.querySelector('svg path').setAttribute('stroke', nextRGB);
+    } else {
+      detailArrowLeft.classList.remove('visible');
+      detailArrowRight.classList.remove('visible');
+    }
+  } else if (detailArrowLeft && detailArrowRight) {
+    detailArrowLeft.classList.remove('visible');
+    detailArrowRight.classList.remove('visible');
+  }
   
   // Freccia giù: nascondi quando sei al checkpoint 4900 (indice 7) o oltre
   if (scrollArrowDown) {
@@ -1046,6 +1126,31 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
       // Solo freccia giù: offset per centrare la singola
       arrowsContainer.style.transform = 'translateX(calc(-50% - 22px))';
     }
+  }
+}
+
+// NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio
+function updateNavbarCategoria() {
+  let navCategoria = document.getElementById('nav-categoria');
+  let navSeparator = document.getElementById('nav-separator');
+  if (!navCategoria) return;
+  
+  // Mostra/nascondi in base a se siamo nella sezione dettaglio
+  if (categoriaSelezionata !== null && scrollY >= 6500) {
+    navCategoria.style.display = 'block';
+    if (navSeparator) navSeparator.style.display = 'inline';
+    
+    // Aggiorna il testo in base alla categoria
+    if (categoriaSelezionata === 'conducenti') {
+      navCategoria.textContent = 'Conducenti';
+    } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      navCategoria.textContent = 'Cause esterne';
+    } else if (categoriaSelezionata === 'non-conducenti') {
+      navCategoria.textContent = 'Non conducenti';
+    }
+  } else {
+    navCategoria.style.display = 'none';
+    if (navSeparator) navSeparator.style.display = 'none';
   }
 }
 
@@ -2074,11 +2179,6 @@ function drawTransizioneSezioneOttava() {
     pop();
   }
   
-  // Disegna frecce laterali con fade in
-  if (fadeInUI > 0) {
-    drawFrecceNavigazioneTransizione(fadeInUI);
-  }
-  
   // Calcola xPos corrente per disegnare i quadrati finali
   let xPos = finalXStart;
   
@@ -2147,64 +2247,6 @@ function drawTransizioneSezioneOttava() {
     xPos += finalSize + finalQuadSpacing;
   }
   
-  pop();
-}
-
-function drawFrecceNavigazioneTransizione(alpha) {
-  // Versione delle frecce con alpha controllato per fade in durante transizione
-  frecceSezioneOttava.sinistra.y = height / 2;
-  frecceSezioneOttava.destra.x = width - 50;
-  frecceSezioneOttava.destra.y = height / 2;
-  
-  let circleSize = frecceSezioneOttava.sinistra.size;
-  let arrowWidth = circleSize * 0.65;
-  let arrowHeight = circleSize * 0.35;
-  
-  let currentIndex = categorieArray.indexOf(categoriaSelezionata);
-  let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
-  let nextIndex = (currentIndex + 1) % categorieArray.length;
-  
-  let prevColor = getOverlayColor(categorieArray[prevIndex]);
-  let nextColor = getOverlayColor(categorieArray[nextIndex]);
-  
-  // Freccia sinistra
-  push();
-  stroke(red(prevColor), green(prevColor), blue(prevColor), alpha);
-  strokeWeight(3);
-  noFill();
-  ellipse(frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y, circleSize, circleSize);
-  
-  fill(red(prevColor), green(prevColor), blue(prevColor), alpha);
-  noStroke();
-  beginShape();
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/2, frecceSezioneOttava.sinistra.y);
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/2);
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/4);
-  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y - arrowHeight/4);
-  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y + arrowHeight/4);
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/4);
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/2);
-  endShape(CLOSE);
-  pop();
-  
-  // Freccia destra
-  push();
-  stroke(red(nextColor), green(nextColor), blue(nextColor), alpha);
-  strokeWeight(3);
-  noFill();
-  ellipse(frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y, circleSize, circleSize);
-  
-  fill(red(nextColor), green(nextColor), blue(nextColor), alpha);
-  noStroke();
-  beginShape();
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/2, frecceSezioneOttava.destra.y);
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/2);
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/4);
-  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y - arrowHeight/4);
-  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y + arrowHeight/4);
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/4);
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/2);
-  endShape(CLOSE);
   pop();
 }
 
@@ -2436,90 +2478,10 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   text('Incidenti', width / 2, height - 50);
   pop();
 
-  // Disegna frecce di navigazione laterali
-  drawFrecceNavigazione();
-
   pop();
 }
 
-function drawFrecceNavigazione() {
-  // Posiziona le frecce a metà altezza dello schermo
-  // Le frecce in overlay/transizione devono restare come prima (non usare il margin)
-  frecceSezioneOttava.sinistra.x = 50;
-  frecceSezioneOttava.sinistra.y = height / 2;
-  frecceSezioneOttava.destra.x = width - 50;
-  frecceSezioneOttava.destra.y = height / 2;
-  
-  let circleSize = frecceSezioneOttava.sinistra.size;
-  let arrowWidth = circleSize * 0.65; // Larghezza della freccia
-  let arrowHeight = circleSize * 0.35; // Altezza della freccia
-  
-  // Determina categoria precedente e successiva
-  let currentIndex = categorieArray.indexOf(categoriaSelezionata);
-  let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
-  let nextIndex = (currentIndex + 1) % categorieArray.length;
-  
-  let prevColor = getOverlayColor(categorieArray[prevIndex]);
-  let nextColor = getOverlayColor(categorieArray[nextIndex]);
-  
-  // Freccia sinistra (categoria precedente)
-  push();
-  let leftAlpha = frecceSezioneOttava.sinistra.hover ? 255 : 200;
-  
-  // Cerchio vuoto con bordo del colore della categoria precedente
-  stroke(red(prevColor), green(prevColor), blue(prevColor), leftAlpha);
-  strokeWeight(3);
-  noFill();
-  ellipse(frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y, circleSize, circleSize);
-  
-  // Freccia del colore della categoria precedente (verso sinistra)
-  fill(red(prevColor), green(prevColor), blue(prevColor), leftAlpha);
-  noStroke();
-  beginShape();
-  // Punta della freccia (sinistra)
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/2, frecceSezioneOttava.sinistra.y);
-  // Lato superiore della punta
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/2);
-  // Parte alta del corpo
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y - arrowHeight/6);
-  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y - arrowHeight/6);
-  // Parte bassa del corpo
-  vertex(frecceSezioneOttava.sinistra.x + arrowWidth/2, frecceSezioneOttava.sinistra.y + arrowHeight/6);
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/6);
-  // Lato inferiore della punta
-  vertex(frecceSezioneOttava.sinistra.x - arrowWidth/6, frecceSezioneOttava.sinistra.y + arrowHeight/2);
-  endShape(CLOSE);
-  pop();
-  
-  // Freccia destra (categoria successiva)
-  push();
-  let rightAlpha = frecceSezioneOttava.destra.hover ? 255 : 200;
-  
-  // Cerchio vuoto con bordo del colore della categoria successiva
-  stroke(red(nextColor), green(nextColor), blue(nextColor), rightAlpha);
-  strokeWeight(3);
-  noFill();
-  ellipse(frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y, circleSize, circleSize);
-  
-  // Freccia del colore della categoria successiva (verso destra)
-  fill(red(nextColor), green(nextColor), blue(nextColor), rightAlpha);
-  noStroke();
-  beginShape();
-  // Punta della freccia (destra)
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/2, frecceSezioneOttava.destra.y);
-  // Lato superiore della punta
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/2);
-  // Parte alta del corpo
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y - arrowHeight/6);
-  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y - arrowHeight/6);
-  // Parte bassa del corpo
-  vertex(frecceSezioneOttava.destra.x - arrowWidth/2, frecceSezioneOttava.destra.y + arrowHeight/6);
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/6);
-  // Lato inferiore della punta
-  vertex(frecceSezioneOttava.destra.x + arrowWidth/6, frecceSezioneOttava.destra.y + arrowHeight/2);
-  endShape(CLOSE);
-  pop();
-}
+
 
 function drawDebugInfo() {
   push();

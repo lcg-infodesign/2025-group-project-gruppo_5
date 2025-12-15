@@ -137,6 +137,22 @@ h3{
   white-space: nowrap;
 }
 
+/* Separatore tra categoria principale e sottocategoria */
+.nav-separator {
+  color: var(--txt);
+  opacity: 0.5;
+  margin: 0 4px;
+  margin-left: -40px;
+  font-size: 14px;
+}
+
+/* Stile per link sottocategoria */
+.nav-item-sub {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-left: -40px;
+}
+
 /* Sottolineatura arancione per sezione attiva */
 .nav-item.active {
   color: var(--orange);
@@ -195,13 +211,10 @@ h3{
   opacity: 0;
   transition: all 0.3s ease;
   pointer-events: none;
-  cursor: default;
 }
 
 .navbar-counter.visible {
   opacity: 1;
-  /* keep pointer-events disabled so the counter is not clickable */
-  pointer-events: none;
 }
 
 .counter-item {
@@ -315,6 +328,97 @@ h3{
   60% {
     transform: translateY(-5px);
   }
+}
+
+/* ========================================
+   BACK ARROW - Freccia per tornare indietro
+   ======================================== */
+.back-arrow {
+  position: absolute;
+  top: calc(100px + 15px); /* SEZIONE_MARGIN (100px) + metà textSize (20px, ma un po' meno per allineamento ottico) */
+  left: clamp(30px, 3vw, 60px);
+  width: clamp(28px, 2.5vw, 34px);
+  height: clamp(28px, 2.5vw, 34px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid var(--txt);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  z-index: 998;
+}
+
+.back-arrow.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.back-arrow:hover {
+  background: rgba(255, 139, 67, 0.2);
+  border-color: var(--orange);
+  transform: translateX(-3px);
+}
+
+.back-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.back-arrow:hover svg path {
+  stroke: var(--orange);
+}
+
+/* Frecce navigazione tra categorie di dettaglio */
+.detail-arrow {
+  position: absolute;
+  top: 66.67vh; /* 2/3 dell'altezza dello schermo */
+  width: clamp(35px, 3vw, 45px);
+  height: clamp(35px, 3vw, 45px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid var(--txt);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  z-index: 998;
+}
+
+.detail-arrow-left {
+  left: 50px;
+}
+
+.detail-arrow-right {
+  right: 50px;
+}
+
+.detail-arrow.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.detail-arrow:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.detail-arrow-left:hover {
+  transform: translateX(-3px);
+}
+
+.detail-arrow-right:hover {
+  transform: translateX(3px);
+}
+
+.detail-arrow svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* ========================================

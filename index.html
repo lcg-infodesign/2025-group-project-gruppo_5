@@ -24,6 +24,10 @@
         <a href="#responsabilita" class="nav-item" data-section="2"
           >Responsabilità</a
         >
+        <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
+        <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3" style="display: none;"
+          >Dettaglio</a
+        >
       </div>
 
       <!-- Counter centrale che appare dopo la sezione 6 -->
@@ -63,6 +67,25 @@
           <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
+    </div>
+
+    <!-- Freccia indietro per tornare alle responsabilità -->
+    <div id="back-arrow" class="back-arrow">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Frecce navigazione tra categorie di dettaglio -->
+    <div id="detail-arrow-left" class="detail-arrow detail-arrow-left">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div id="detail-arrow-right" class="detail-arrow detail-arrow-right">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
     
     <script src="sketch.js"></script>
