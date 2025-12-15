@@ -87,6 +87,7 @@ let hoveredGridIndex = -1; // Traccia quale griglia è in hover (-1 = nessuna, 0
 let hoverScales = [1, 1, 1]; // Scale per ogni griglia (animato con lerp)
 let hoverScaleTarget = [1, 1, 1]; // Target scale per smooth animation
 let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
+let hasClickedCategory = false; // Traccia se l'utente ha cliccato su una categoria
 const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
 let sezioneOttavaSquareHitboxes = []; // hitbox per i quadrati
 let showBars = false; // false = quadrati, true = istogramma con barre
@@ -318,6 +319,12 @@ function setup() {
 function mouseWheel(event) {
   if (scrollTarget !== -1) {
     // Se c'è già un'animazione in corso, ignora lo scroll
+    return false;
+  }
+  
+  // Blocca scroll a 5200 (checkpoint index 8) se non ha cliccato una categoria
+  if (currentCheckpointIndex === 8 && !hasClickedCategory && event.delta > 0) {
+    // Impedisci scroll in avanti oltre 5200
     return false;
   }
   
@@ -942,7 +949,7 @@ function drawSezioneIntro() {
     textFont(transportFont);
     textSize(16);
     fill(255, 255, 255, min(sottotitoloOpacita, introOpacita));
-    text('Scoprila analizzando i dati ISTAT del 2024', width / 2, height - 70);
+    text('Scoprila analizzando i dati ISTAT del 2024', width / 2, height - 100);
     pop();
   }
 }
@@ -1082,12 +1089,14 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
+  let centerY = height * 0.45; // Posizione responsive (45% dell'altezza dello schermo)
+  
   // Quadrato bianco
   if (quadratoDimensione > 0) {
     push();
     rectMode(CENTER);
     fill(255, 255, 255, quadratoFadeOut);
-    rect(width / 2, height / 2, quadratoDimensione, quadratoDimensione);
+    rect(width / 2, centerY, quadratoDimensione, quadratoDimensione);
     pop();
   }
   
@@ -1102,7 +1111,7 @@ function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
     textLeading(txtSize * 1.3);
     fill(255, 122, 0, min(quadratoTestoOpacita, quadratoFadeOut));
     let testoMostrato = quadratoTestoCompleto.substring(0, quadratoCaratteriVisibili);
-    text(testoMostrato, width / 2, height / 2 + quadratoDimensione / 2 + 20);
+    text(testoMostrato, width / 2, centerY + quadratoDimensione / 2 + 20);
     pop();
   }
 }
@@ -1241,7 +1250,7 @@ function drawSezioneQuinta() {
     drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut);
   }
   
-  // Testo
+  // Testo (ora sotto il cubo)
   if (quintaSezioneCaratteriVisibili > 0 && quintaSezioneOpacita > 0) {
     push();
     textFont(lcdFont);
@@ -1252,14 +1261,14 @@ function drawSezioneQuinta() {
     textLeading(txtSize * 1.4);
     fill(255, 122, 0, min(quintaSezioneOpacita, quintaSezioneFadeOut));
     let testoMostrato = quintaSezioneTestoCompleto.substring(0, quintaSezioneCaratteriVisibili);
-    text(testoMostrato, width / 2, height / 2 - 120);
+    text(testoMostrato, width / 2, height / 2 + 180);
     pop();
   }
 }
 
 function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   push();
-  translate(width / 2, height / 2 + 80);
+  translate(width / 2, height / 2 - 140);
   
   let semilatoQuadrato = 100;
   let easingRallentamento = (tempo) => 1 - pow(1 - tempo, 3);
@@ -1552,8 +1561,8 @@ function drawSezioneSesta() {
   
   // Fade out counter
   let counterFadeOut = 255;
-  if (scrollY > 3800 && scrollY < 4100) {
-    counterFadeOut = map(scrollY, 3800, 4100, 255, 0);
+  if (scrollY > 3850 && scrollY < 4100) {
+    counterFadeOut = map(scrollY, 3850, 4100, 255, 0);
     counterFadeOut = constrain(counterFadeOut, 0, 255);
   } else if (scrollY >= 4100) {
     counterFadeOut = 0;
@@ -1568,8 +1577,8 @@ function drawSezioneSesta() {
     textFont(lcdFont);
 
     fill(255, 255, 255, counterFadeOut);
-    textSize(width * 0.03);
-    text("PENSA CHE SOLO OGGI:", width / 2, height * 0.3);
+    textSize(width * 0.02);
+    text("SOLO OGGI, NEL 2024, A QUEST’ORA:", width / 2, height * 0.3);
 
     fill(255, 122, 0, counterFadeOut);
     textSize(width * 0.06);
@@ -1582,6 +1591,13 @@ function drawSezioneSesta() {
     text("INCIDENTI", width * 0.25, height * 0.7);
     text("MORTI", width * 0.50, height * 0.7);
     text("FERITI", width * 0.75, height * 0.7);
+    
+    // Testo informativo sotto il counter
+    textFont(transportFont);
+    textSize(width * 0.012);
+    fill(255, 255, 255, counterFadeOut);
+    text("[si aggiorna in tempo reale]", width / 2, height * 0.35);
+    
     pop();
   }
   
@@ -1596,7 +1612,7 @@ function drawSezioneSesta() {
   
   // Transizione "MA DI CHI È LA COLPA?" - rimpicciolisce e si sposta sopra quando appare la griglia
   let colpaOpacity = colpaFadeIn;
-  let colpaTextSize = width * 0.05;
+  let colpaTextSize = width * 0.03;
   let colpaPosY = height / 2;
   
   if (scrollY > 4300 && scrollY < 4600) {
@@ -1604,7 +1620,7 @@ function drawSezioneSesta() {
     let transitionProgress = map(scrollY, 4300, 4600, 0, 1);
     transitionProgress = constrain(transitionProgress, 0, 1);
     
-    colpaTextSize = lerp(width * 0.05, width * 0.025, transitionProgress);
+    colpaTextSize = lerp(width * 0.03, width * 0.025, transitionProgress);
     colpaPosY = lerp(height / 2, height * 0.2, transitionProgress);
   } else if (scrollY >= 4600) {
     // Dopo la transizione: piccolo e in alto
@@ -2582,6 +2598,7 @@ function mouseClicked() {
         // Attiva la transizione animata
         transizioneAttiva = true;
         transizioneProgress = 0;
+        hasClickedCategory = true; // Sblocca lo scroll
         // Scrolla alla sezione 8
         scrollTarget = 6500;
         break;
