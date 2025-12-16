@@ -713,10 +713,20 @@ h3{
   text-align: left;
 }
 
-.crediti-header {
+.crediti-top {
+  display: flex;
+  gap: 60px;
   margin-bottom: 40px;
   padding-bottom: 30px;
   border-bottom: 1px solid rgba(255, 139, 67, 0.3);
+  align-items: flex-start;
+}
+
+.crediti-header {
+  flex: 0 0 auto;
+  max-width: 350px;
+  margin-top: 60px;
+  margin-left: -350px;
 }
 
 .corso-info {
@@ -728,7 +738,7 @@ h3{
 }
 
 .crediti-autori {
-  margin-bottom: 40px;
+  flex: 1;
 }
 
 .crediti-title {

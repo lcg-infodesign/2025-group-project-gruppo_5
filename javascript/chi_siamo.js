@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (scrollArrow1) {
     scrollArrow1.addEventListener('click', function() {
       if (!isTransitioning) {
+        scrollAccumulator = 0; // Reset accumulator
         goToSection2();
       }
     });
@@ -101,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (scrollArrow2) {
     scrollArrow2.addEventListener('click', function() {
       if (!isTransitioning) {
+        scrollAccumulator = 0; // Reset accumulator
         goToSection3();
       }
     });
