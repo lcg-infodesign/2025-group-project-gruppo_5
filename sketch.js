@@ -2450,8 +2450,18 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     const catContainer = placeCatCausaContainer();
     if (catContainer) {
       if (hoveredSezioneOttavaItem === null) {
+        // Cambia il testo in base allo stato
+        let testoIstruzione = '';
+        if (categoriaSelezionata === null) {
+          testoIstruzione = "Seleziona un'area per visualizzare i dettagli";
+        } else if (sezioneOttavaTrans > 0) {
+          testoIstruzione = "Passa sopra una colonna per visualizzare i dettagli";
+        } else {
+          testoIstruzione = "Seleziona un'area per visualizzare i dettagli";
+        }
+        
         catContainer.innerHTML = `
-          <h3 style="color: white; margin: 0;">Seleziona una categoria per visualizzare i dettagli</h3>
+          <h3 style="color: white; margin: 0;">${testoIstruzione}</h3>
         `;
       }
     }
