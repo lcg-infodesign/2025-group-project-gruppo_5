@@ -771,7 +771,7 @@ function updateLegendVisibility() {
         r1.appendChild(cubeCanvas);
         let t1 = document.createElement('div');
         t1.style.color = 'white';
-        t1.textContent = 'altezza proporzionale al numero di lesionati';
+        t1.textContent = 'altezza proporzionale al numero di soggetti lesi';
         r1.appendChild(t1);
         legend.appendChild(r1);
 
@@ -2538,29 +2538,6 @@ function drawDebugInfo() {
 function mouseClicked() {
   // Gestione click nella sezione 8
   if (scrollY >= 6500 && scrollY < 6700) {
-    // Click sulle frecce laterali per navigare tra categorie
-    let arrowSize = frecceSezioneOttava.sinistra.size;
-    
-    // Freccia sinistra
-    if (dist(mouseX, mouseY, frecceSezioneOttava.sinistra.x, frecceSezioneOttava.sinistra.y) < arrowSize) {
-      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
-      let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
-      categoriaSelezionata = categorieArray[prevIndex];
-      sezioneOttavaTrans = 0; // Reset animazione barre
-      transizioneAttiva = false; // Disattiva transizione
-      return;
-    }
-    
-    // Freccia destra
-    if (dist(mouseX, mouseY, frecceSezioneOttava.destra.x, frecceSezioneOttava.destra.y) < arrowSize) {
-      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
-      let nextIndex = (currentIndex + 1) % categorieArray.length;
-      categoriaSelezionata = categorieArray[nextIndex];
-      sezioneOttavaTrans = 0; // Reset animazione barre
-      transizioneAttiva = false; // Disattiva transizione
-      return;
-    }
-    
     // Click su un qualsiasi quadrato: toggle tutte le barre
     for (let hitbox of sezioneOttavaSquareHitboxes) {
       if (mouseX >= hitbox.x && mouseX <= hitbox.x + hitbox.w &&
