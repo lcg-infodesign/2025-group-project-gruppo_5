@@ -676,7 +676,7 @@ h3{
   align-items: center;
   justify-content: flex-start;
   /* remove horizontal padding so inner containers center correctly */
-  padding: 150px 0 80px;
+  padding: 50px 0 60px;
   position: fixed;
   top: 0;
   left: 0;
@@ -822,6 +822,7 @@ h3{
   color: var(--orange);
   font-size: 48px;
   font-weight: 400;
+  margin-top: 80px;
   margin-bottom: 24px;
   letter-spacing: 0.2em;
   text-align: center;
@@ -844,7 +845,7 @@ h3{
   font-size: 19px;
   line-height: 1.65;
   color: var(--txt);
-  margin-bottom: 32px;
+  margin-bottom: 10px;
   font-weight: 400;
   letter-spacing: 0.005em;
   text-align: center;
