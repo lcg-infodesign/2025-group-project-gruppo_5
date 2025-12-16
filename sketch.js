@@ -248,6 +248,9 @@ function setup() {
   createLegends();
   updateLegendVisibility();
   
+  // Gestisci hash URL per navigazione da altre pagine
+  handleURLHash();
+  
   // Setup scroll arrows click handlers
   let scrollArrowDown = document.getElementById('scroll-arrow-down');
   if (scrollArrowDown) {
@@ -351,6 +354,28 @@ function setup() {
       scrollAccumulator = 0;
     });
   });
+}
+
+// Gestisce hash URL per navigazione da altre pagine
+function handleURLHash() {
+  const hash = window.location.hash;
+  
+  if (hash === '#incidenti') {
+    // Vai alla sezione incidenti
+    currentCheckpointIndex = 3;
+    scrollY = 2900;
+    scrollTarget = -1;
+    isScrolling = false;
+    scrollAccumulator = 0;
+  } else if (hash === '#responsabilita') {
+    // Vai alla sezione responsabilità
+    currentCheckpointIndex = 8;
+    scrollY = 5200;
+    scrollTarget = -1;
+    isScrolling = false;
+    scrollAccumulator = 0;
+  }
+  // Se non c'è hash o è #intro, rimane all'inizio (default)
 }
 
 function mouseWheel(event) {
