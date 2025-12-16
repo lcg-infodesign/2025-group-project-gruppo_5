@@ -2453,10 +2453,13 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
         // Cambia il testo in base allo stato
         let testoIstruzione = '';
         if (categoriaSelezionata === null) {
+          // Nessuna categoria selezionata
           testoIstruzione = "Seleziona un'area per visualizzare i dettagli";
-        } else if (sezioneOttavaTrans > 0) {
+        } else if (sezioneOttavaTrans > 0.5) {
+          // Categoria selezionata e colonne completamente visibili
           testoIstruzione = "Passa sopra una colonna per visualizzare i dettagli";
         } else {
+          // Categoria selezionata ma colonne ancora in animazione
           testoIstruzione = "Seleziona un'area per visualizzare i dettagli";
         }
         
@@ -2584,18 +2587,29 @@ function mouseClicked() {
     for (let i = 0; i < sezioneOttavaHitboxes.length; i++) {
       let hb = sezioneOttavaHitboxes[i];
       if (mouseX >= hb.x && mouseX <= hb.x + hb.w && mouseY >= hb.y && mouseY <= hb.y + hb.h) {
+        let nuovaCategoria = null;
         // Imposta la categoria in base all'indice: 0=conducenti, 1=cause-esterne, 2=non-conducenti
         if (i === 0) {
-          categoriaSelezionata = 'conducenti';
+          nuovaCategoria = 'conducenti';
         } else if (i === 1) {
-          categoriaSelezionata = 'cause-esterne-concomitanti';
+          nuovaCategoria = 'cause-esterne-concomitanti';
         } else if (i === 2) {
-          categoriaSelezionata = 'non-conducenti';
+          nuovaCategoria = 'non-conducenti';
         }
-        // Attiva la transizione animata
-        transizioneAttiva = true;
-        transizioneProgress = 0;
-        hasClickedCategory = true; // Sblocca lo scroll
+        
+        // Se riclicco sulla stessa categoria, la deseleziono
+        if (categoriaSelezionata === nuovaCategoria) {
+          categoriaSelezionata = null;
+          sezioneOttavaTransTarget = 0;
+          hasClickedCategory = false;
+        } else {
+          categoriaSelezionata = nuovaCategoria;
+          // Attiva la transizione animata
+          transizioneAttiva = true;
+          transizioneProgress = 0;
+          hasClickedCategory = true; // Sblocca lo scroll
+        }
+        
         // Scrolla alla sezione 8
         scrollTarget = 6500;
         break;
