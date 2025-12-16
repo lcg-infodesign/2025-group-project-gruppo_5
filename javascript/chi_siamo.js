@@ -16,7 +16,11 @@ let animFeriti = 0;
 document.addEventListener('DOMContentLoaded', function() {
   const section1 = document.getElementById('chi-siamo');
   const section2 = document.getElementById('team');
-  const scrollArrow = document.getElementById('scroll-arrow');
+  const section3 = document.getElementById('crediti');
+  const scrollArrow1 = document.getElementById('scroll-arrow-1');
+  const scrollArrow2 = document.getElementById('scroll-arrow-2');
+  const arrowContainer1 = document.getElementById('arrow-container-1');
+  const arrowContainer2 = document.getElementById('arrow-container-2');
   
   // Crea debug scroll nello stesso stile del sito
   const debugDiv = document.createElement('div');
@@ -28,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadCSVData();
   
   // Imposta altezza body
-  document.body.style.height = '200vh';
+  document.body.style.height = '300vh';
   document.body.style.overflow = 'auto';
   
   // Forza scroll a 0 all'inizio
@@ -41,6 +45,20 @@ document.addEventListener('DOMContentLoaded', function() {
   section1.style.display = 'flex';
   section2.style.opacity = '0';
   section2.style.display = 'none';
+  section3.style.opacity = '0';
+  section3.style.display = 'none';
+  
+  // Gestisci visibilità frecce
+  if (arrowContainer1) {
+    arrowContainer1.style.display = 'flex';
+    arrowContainer1.style.opacity = '1';
+    arrowContainer1.style.pointerEvents = 'all';
+  }
+  if (arrowContainer2) {
+    arrowContainer2.style.display = 'none';
+    arrowContainer2.style.opacity = '0';
+    arrowContainer2.style.pointerEvents = 'none';
+  }
   
   // Listener per wheel/trackpad
   let scrollAccumulator = 0;
@@ -49,23 +67,41 @@ document.addEventListener('DOMContentLoaded', function() {
     
     scrollAccumulator += e.deltaY;
     
-    // Se scroll verso il basso supera la soglia, vai alla sezione 2
+    // Sezione 1 -> 2
     if (scrollAccumulator > 100 && targetScroll === 0) {
       goToSection2();
       scrollAccumulator = 0;
     }
-    // Se scroll verso l'alto supera la soglia, torna alla sezione 1
+    // Sezione 2 -> 1
     else if (scrollAccumulator < -100 && targetScroll === window.innerHeight) {
       goToSection1();
       scrollAccumulator = 0;
     }
+    // Sezione 2 -> 3
+    else if (scrollAccumulator > 100 && targetScroll === window.innerHeight) {
+      goToSection3();
+      scrollAccumulator = 0;
+    }
+    // Sezione 3 -> 2
+    else if (scrollAccumulator < -100 && targetScroll === window.innerHeight * 2) {
+      goToSection2FromSection3();
+      scrollAccumulator = 0;
+    }
   }, { passive: true });
   
-  // Click sulla freccia
-  if (scrollArrow) {
-    scrollArrow.addEventListener('click', function() {
+  // Click sulle frecce
+  if (scrollArrow1) {
+    scrollArrow1.addEventListener('click', function() {
       if (!isTransitioning) {
         goToSection2();
+      }
+    });
+  }
+  
+  if (scrollArrow2) {
+    scrollArrow2.addEventListener('click', function() {
+      if (!isTransitioning) {
+        goToSection3();
       }
     });
   }
@@ -115,6 +151,12 @@ document.addEventListener('DOMContentLoaded', function() {
     isTransitioning = true;
     targetScroll = window.innerHeight;
     
+    // Nascondi freccia 1 immediatamente
+    if (arrowContainer1) {
+      arrowContainer1.style.opacity = '0';
+      arrowContainer1.style.pointerEvents = 'none';
+    }
+    
     // Fade out section 1
     section1.style.transition = 'opacity 0.6s ease';
     section1.style.opacity = '0';
@@ -124,6 +166,13 @@ document.addEventListener('DOMContentLoaded', function() {
       section1.style.display = 'none';
       section2.style.display = 'flex';
       section2.style.opacity = '0';
+      
+      // Mostra freccia 2 subito
+      if (arrowContainer2) {
+        arrowContainer2.style.display = 'flex';
+        arrowContainer2.style.opacity = '1';
+        arrowContainer2.style.pointerEvents = 'all';
+      }
       
       // Fade in section 2
       setTimeout(() => {
@@ -144,6 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
     isTransitioning = true;
     targetScroll = 0;
     
+    // Nascondi freccia 2 immediatamente
+    if (arrowContainer2) {
+      arrowContainer2.style.opacity = '0';
+      arrowContainer2.style.pointerEvents = 'none';
+    }
+    
     // Fade out section 2
     section2.style.transition = 'opacity 0.6s ease';
     section2.style.opacity = '0';
@@ -153,6 +208,13 @@ document.addEventListener('DOMContentLoaded', function() {
       section2.style.display = 'none';
       section1.style.display = 'flex';
       section1.style.opacity = '0';
+      
+      // Mostra freccia 1 subito
+      if (arrowContainer1) {
+        arrowContainer1.style.display = 'flex';
+        arrowContainer1.style.opacity = '1';
+        arrowContainer1.style.pointerEvents = 'all';
+      }
       
       // Fade in section 1
       setTimeout(() => {
@@ -167,6 +229,77 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.scrollTo(0, 0);
     currentScroll = 0;
+  }
+  
+  function goToSection3() {
+    isTransitioning = true;
+    targetScroll = window.innerHeight * 2;
+    
+    // Nascondi freccia 2 immediatamente
+    if (arrowContainer2) {
+      arrowContainer2.style.opacity = '0';
+      arrowContainer2.style.pointerEvents = 'none';
+    }
+    
+    // Fade out section 2
+    section2.style.transition = 'opacity 0.6s ease';
+    section2.style.opacity = '0';
+    
+    // Dopo fade out, nascondi section 2 e mostra section 3
+    setTimeout(() => {
+      section2.style.display = 'none';
+      section3.style.display = 'flex';
+      section3.style.opacity = '0';
+      
+      // Fade in section 3
+      setTimeout(() => {
+        section3.style.transition = 'opacity 0.6s ease';
+        section3.style.opacity = '1';
+        
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 600);
+      }, 50);
+    }, 600);
+    
+    window.scrollTo(0, window.innerHeight * 2);
+    currentScroll = window.innerHeight * 2;
+  }
+  
+  function goToSection2FromSection3() {
+    isTransitioning = true;
+    targetScroll = window.innerHeight;
+    
+    // Fade out section 3
+    section3.style.transition = 'opacity 0.6s ease';
+    section3.style.opacity = '0';
+    
+    // Dopo fade out, nascondi section 3 e mostra section 2
+    setTimeout(() => {
+      section3.style.display = 'none';
+      section2.style.display = 'flex';
+      section2.style.opacity = '0';
+      
+      // Mostra freccia 2 subito
+      if (arrowContainer2) {
+        arrowContainer2.style.display = 'flex';
+        arrowContainer2.style.opacity = '1';
+        arrowContainer2.style.pointerEvents = 'all';
+      }
+      
+      // Fade in section 2
+      setTimeout(() => {
+        section2.style.transition = 'opacity 0.6s ease';
+        section2.style.opacity = '1';
+        
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 600);
+      }, 50);
+    }, 600);
+    
+    window.scrollTo(0, window.innerHeight);
+    currentScroll = window.innerHeight;
   }
   
   function startCounterAnimation() {

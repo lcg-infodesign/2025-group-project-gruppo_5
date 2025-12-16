@@ -692,11 +692,104 @@ h3{
   padding: 10px 20px 80px;
 }
 
+.section-crediti {
+  justify-content: flex-start;
+  padding: 120px 40px 80px;
+  overflow-y: auto;
+}
+
 .section-content {
   max-width: 920px;
   text-align: center;
   margin: 0 auto;
   width: 100%;
+}
+
+/* Stili sezione crediti */
+.crediti-content {
+  max-width: 920px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: left;
+}
+
+.crediti-header {
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 139, 67, 0.3);
+}
+
+.corso-info {
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--txt);
+  margin: 5px 0;
+}
+
+.crediti-autori {
+  margin-bottom: 40px;
+}
+
+.crediti-title {
+  font-family: "LCD", monospace;
+  color: var(--orange);
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 15px;
+  letter-spacing: 0.05em;
+}
+
+.autori-list {
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--txt);
+}
+
+.crediti-license {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: rgba(255, 139, 67, 0.05);
+  border-left: 3px solid var(--orange);
+}
+
+.copyright {
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: var(--orange);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.license-text p {
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--txt);
+  margin: 10px 0;
+}
+
+.license-text strong {
+  color: var(--orange);
+}
+
+.crediti-docenti {
+  display: flex;
+  gap: 60px;
+  margin-bottom: 40px;
+}
+
+.docenti-col {
+  flex: 1;
+}
+
+.docenti-col p {
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--txt);
+  margin: 5px 0;
 }
 
 /* Orange Title (usato per titoli principali) */
