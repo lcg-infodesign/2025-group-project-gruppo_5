@@ -168,6 +168,16 @@ h3{
   background: var(--orange);
 }
 
+.nav-item.dropdown.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--orange);
+}
+
 /* Lato destro: bottoni */
 .nav-right {
   display: flex;
@@ -192,6 +202,87 @@ h3{
   border-color: var(--orange);
   color: var(--orange);
 }
+
+.nav-item:hover {
+  color: var(--orange);
+  opacity: 0.5;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-item:hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--orange); 
+}
+
+/*TENDINA CATEGORIE RESPONSABILITÀ*/
+.nav-item.active, 
+.nav-item.active .dropdown-link {
+  color: var(--orange) !important;
+}
+
+/*Contenitore tendina categorie responsabilità*/
+.nav-item.dropdown {
+  position: relative;
+}
+
+/* Stile per il link principale "Responsabilità" */
+.dropdown-link {
+  text-decoration: none;
+  color: var(--txt);
+  transition: color 0.3s ease;
+}
+
+/* Cambia colore al passaggio del mouse sul link principale */
+.dropdown-link:hover {
+  color: var(--orange);
+}
+
+/* Stile per il menu della tendina */
+.dropdown-menu {
+  display: none; /* Nascondi la tendina di default */
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  background-color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+/* Mostra la tendina al passaggio del mouse */
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Nascondi la tendina quando sei già in Conducenti / Non conducenti / Cause esterne */
+.nav-item.dropdown.dropdown-no-tendina .dropdown-menu,
+.nav-item.dropdown.dropdown-no-tendina:hover .dropdown-menu {
+  display: none !important;
+}
+
+/* Stile per gli elementi della tendina */
+.dropdown-item {
+  display: block;
+  padding: 8px 16px;
+  color: var(--txt);
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Cambia colore al passaggio del mouse sugli elementi della tendina */
+.dropdown-item:hover {
+  background: var(--hover);
+  color: var(--orange);
+}
+
+
 
 /* ========================================
    NAVBAR COUNTER - Counter centrale animato
@@ -244,7 +335,7 @@ h3{
 /* Testo informativo fisso sotto il counter */
 .counter-info {
   position: absolute;
-  top: calc(90%);
+  top: calc(87%);
   left: 50%;
   transform: translateX(-50%);
   color: var(--txt);
@@ -495,6 +586,10 @@ h3{
 /* ========================================
    PAGINA DEI DATI - tendine
    ======================================== */
+.Listadati{
+  margin-left: 25vw;
+}
+
 .newCategory {
   /*sfondo bottone*/
   background-color: var(--bg);
@@ -694,8 +789,8 @@ h3{
 
 .section-crediti {
   justify-content: flex-start;
-  padding: 120px 40px 80px;
-  overflow-y: auto;
+  padding: 100px 40px 200px;
+  min-height: 100vh;
 }
 
 .section-content {
@@ -747,6 +842,7 @@ h3{
   font-size: 24px;
   font-weight: 400;
   margin-bottom: 15px;
+  margin-top: 20px;
   letter-spacing: 0.05em;
 }
 
@@ -758,7 +854,7 @@ h3{
 }
 
 .crediti-license {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 20px;
   background: rgba(255, 139, 67, 0.05);
   border-left: 3px solid var(--orange);
@@ -786,12 +882,17 @@ h3{
 
 .crediti-docenti {
   display: flex;
-  gap: 60px;
-  margin-bottom: 40px;
+  gap: 20px;
+  margin: 0 auto; 
+  max-width: 100%; 
+  padding: 0 20px; 
+  box-sizing: border-box;
+  /*margin-bottom: 40px;*/
 }
 
 .docenti-col {
   flex: 1;
+  min-width: 0;
 }
 
 .docenti-col p {
@@ -843,6 +944,19 @@ h3{
 /* Description text */
 .description {
   font-size: 19px;
+  line-height: 1.65;
+  color: var(--txt);
+  margin-bottom: 10px;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 920px;
+}
+
+.description-dati {
+  font-size: 16px;
   line-height: 1.65;
   color: var(--txt);
   margin-bottom: 10px;

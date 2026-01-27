@@ -86,6 +86,7 @@ let sezioneOttavaHitboxes = [];
 let hoveredGridIndex = -1; // Traccia quale griglia è in hover (-1 = nessuna, 0 = blu, 1 = verde, 2 = rosa)
 let hoverScales = [1, 1, 1]; // Scale per ogni griglia (animato con lerp)
 let hoverScaleTarget = [1, 1, 1]; // Target scale per smooth animation
+// Vista corrente dettaglio (équivalent "vistaCorrente"): navbar → selezionaDaNavbar → qui → drawSezioneOttava
 let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
 let hasClickedCategory = false; // Traccia se l'utente ha cliccato su una categoria
 const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
@@ -315,24 +316,41 @@ function setup() {
     });
   }
   
+  // Aggiungi un listener per le frecce su e giù della tastiera
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'ArrowUp') {
+    // Simula il click su scrollArrowUp
+    if (currentCheckpointIndex > 0) {
+      currentCheckpointIndex--;
+      scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+      isScrolling = true;
+      scrollAccumulator = 0;
+    }
+  } else if (event.key === 'ArrowDown') {
+    // Simula il click su scrollArrowDown
+    if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+      currentCheckpointIndex++;
+      scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+      isScrolling = true;
+      scrollAccumulator = 0;
+    }
+  }
+});
+
   // Setup navbar navigation click handlers
   let navItems = document.querySelectorAll('.nav-item');
   navItems.forEach(function(item) {
     item.addEventListener('click', function(e) {
+      if (e.target.closest && e.target.closest('.dropdown-item')) return;
       e.preventDefault();
       let section = parseInt(item.getAttribute('data-section'));
       
-      // Mappa sezione navbar a scrollY specifico:
-      // 0 = Intro → scrollY 800
-      // 1 = Incidenti → checkpoint 3 (scrollY 2900)
-      // 2 = Responsabilità → scrollY 5200
       let targetScrollY = 0;
       let targetCheckpoint = 0;
       
       if (section === 0) {
         targetScrollY = 0;
-        targetCheckpoint = 0; // checkpoint 0 - intro iniziale
-        // Reset variabili intro per mostrare il testo iniziale
+        targetCheckpoint = 0;
         introCaratteriVisibili = introTestoCompleto.length;
         sottotitoloOpacita = 255;
         introOpacita = 255;
@@ -340,13 +358,12 @@ function setup() {
         quadratoCaratteriVisibili = 0;
       } else if (section === 1) {
         targetScrollY = 2900;
-        targetCheckpoint = 3; // checkpoint 2900 - griglia incidenti
+        targetCheckpoint = 3;
       } else if (section === 2) {
         targetScrollY = 5200;
-        targetCheckpoint = 8; // checkpoint 5200 - griglia responsabilità
+        targetCheckpoint = 8;
       }
       
-      // Salto diretto senza animazione
       currentCheckpointIndex = targetCheckpoint;
       scrollY = targetScrollY;
       scrollTarget = -1;
@@ -354,28 +371,45 @@ function setup() {
       scrollAccumulator = 0;
     });
   });
+
+  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne → selezionaDaNavbar
+  let dropMenu = document.getElementById('dropdown-responsabilita-menu');
+  if (dropMenu) {
+    dropMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let cat = link.getAttribute('data-categoria');
+        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
+      });
+    });
+  }
 }
 
-// Gestisce hash URL per navigazione da altre pagine
+// Gestisce hash URL: navigazione da altre pagine + permalink categorie
+// Pattern: 1 pagina, navbar → selezionaDaNavbar → categoriaSelezionata → drawSezioneOttava
+const HASH_CATEGORIE = ['#conducenti', '#non-conducenti', '#cause-esterne-concomitanti'];
+
 function handleURLHash() {
   const hash = window.location.hash;
   
   if (hash === '#incidenti') {
-    // Vai alla sezione incidenti
     currentCheckpointIndex = 3;
     scrollY = 2900;
     scrollTarget = -1;
     isScrolling = false;
     scrollAccumulator = 0;
   } else if (hash === '#responsabilita') {
-    // Vai alla sezione responsabilità
     currentCheckpointIndex = 8;
     scrollY = 5200;
     scrollTarget = -1;
     isScrolling = false;
     scrollAccumulator = 0;
+  } else if (HASH_CATEGORIE.indexOf(hash) !== -1) {
+    // Permalink: #conducenti, #non-conducenti, #cause-esterne-concomitanti → dettaglio
+    let cat = hash.slice(1);
+    if (typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
   }
-  // Se non c'è hash o è #intro, rimane all'inizio (default)
 }
 
 function mouseWheel(event) {
@@ -450,7 +484,7 @@ function draw() {
   drawSezioneSesta();
   drawSezioneSettima();
   drawTransizioneSezioneOttava(); // Transizione animata tra 5200 e 6500
-  drawSezioneOttava();
+  drawSezioneOttava(); // usa categoriaSelezionata (navbar → selezionaDaNavbar) per Conducenti / Non conducenti / Cause esterne
   
   // Aggiorna animazioni
   updateAnimations();
@@ -801,6 +835,8 @@ function updateLegendVisibility() {
   }
 }
 
+
+
 function calcNavbarOpacity() { // effetto opacità navbar
   let opacity = map(scrollY, 300, 600, 0, 255);
   return constrain(opacity, 0, 255);
@@ -933,6 +969,31 @@ function updateHoverScales() {
   }
 }
 
+// Chiamata dalla navbar (dropdown Responsabilità). Imposta stato + salto a dettaglio.
+// draw() → drawSezioneOttava usa categoriaSelezionata (getCategoriaData) per disegnare.
+window.selezionaDaNavbar = function(nomeCategoria) {
+  categoriaSelezionata = nomeCategoria;
+  hasClickedCategory = true;
+  
+  showBars = true;
+  sezioneOttavaTrans = 1;
+  sezioneOttavaTransTarget = 1;
+  transizioneAttiva = false;
+  transizioneProgress = 1;
+
+  currentCheckpointIndex = 9;
+  scrollY = 6500;
+  scrollTarget = -1;
+  isScrolling = false;
+  scrollAccumulator = 0;
+  
+  if (typeof updateLegendVisibility === 'function') updateLegendVisibility();
+  
+  // Permalink: aggiorna URL (es. #conducenti) per link diretti e refresh
+  try { window.history.replaceState(null, '', '#' + nomeCategoria); } catch (e) {}
+};
+
+
 function updateCursor() { // cursore mano sugli elementi cliccabili
   // Sezione 7: hover sulle categorie cliccabili
   hoveredGridIndex = -1; // Reset
@@ -1016,17 +1077,21 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   let navItems = document.querySelectorAll('.nav-item');
   
   // Se siamo nella sezione dettaglio (scrollY >= 6500 e categoria selezionata), attiva Responsabilità + categoria
-  if (scrollY >= 6500 && categoriaSelezionata !== null) {
+  let inDettaglio = scrollY >= 6500 && categoriaSelezionata !== null;
+  if (inDettaglio) {
     navItems.forEach((item) => {
-      // Attiva sia Responsabilità (data-section="2") che la categoria
       if (item.dataset.section === '2' || item.id === 'nav-categoria') {
         item.classList.add('active');
       } else {
         item.classList.remove('active');
       }
     });
+    // Nascondi la tendina (Conducenti / Non conducenti / Cause esterne) quando sei già nel dettaglio
+    let drop = document.querySelector('.nav-item.dropdown');
+    if (drop) drop.classList.add('dropdown-no-tendina');
   } else {
-    // Altrimenti usa la logica normale basata su sezioneAttiva
+    let drop = document.querySelector('.nav-item.dropdown');
+    if (drop) drop.classList.remove('dropdown-no-tendina');
     navItems.forEach((item, index) => {
       if (index === sezioneAttiva) {
         item.classList.add('active');
@@ -1154,7 +1219,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   }
 }
 
-// NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio
+// NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio e evidencia voce dropdown attiva
 function updateNavbarCategoria() {
   let navCategoria = document.getElementById('nav-categoria');
   let navSeparator = document.getElementById('nav-separator');
@@ -1203,20 +1268,10 @@ function updateCounterTooltip() {
   tooltip.innerHTML = `Statistiche medie del<br>${giorno}/${mese}/2024 alle ore ${ore}:${minuti}`;
 }
 
-// NAVBAR: Gestione click sui link per scroll automatico
-window.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      let section = parseInt(item.dataset.section);
-      
-      // Scroll automatico verso la sezione
-      if (section === 0) scrollTarget = 0;
-      else if (section === 1) scrollTarget = 1600;
-      else if (section === 2) scrollTarget = 4300;
-    });
-  });
-});
+// Navbar click: gestito solo in setup() (vedi handler su .nav-item).
+// Il blocco DOMContentLoaded qui sotto è stato rimosso: duplicava i listener e,
+// sui dropdown-item (Conducenti / Non conducenti / Cause esterne), impostava
+// scrollTarget=4300 sovrascrivendo il salto a 6500 da selezionaDaNavbar.
 
 function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
   let centerY = height * 0.45; // Posizione responsive (45% dell'altezza dello schermo)
@@ -2188,7 +2243,7 @@ function drawTransizioneSezioneOttava() {
   
   let finalXStart = width - 100 - totalWidth;
   let baselineY = height - 100;
-  
+
   // Fase 3: Fade in elementi UI (titolo, frecce, etc) durante posizionamento (6200-6500)
   let fadeInUI = map(scrollY, 6200, 6500, 0, 255);
   fadeInUI = constrain(fadeInUI, 0, 255);
@@ -2290,7 +2345,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   
   push();
 
-  // Mostra dati dal CSV corrispondente
+  // Dati dalla categoria scelta: navbar dropdown → selezionaDaNavbar(id) → categoriaSelezionata → qui
   let categoryData = getCategoriaData(categoriaSelezionata);
   if (categoryData) {
     const margin = SEZIONE_MARGIN; // spazio interno su tutti i lati
@@ -2400,7 +2455,8 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     // Reset xPos per la seconda passata (centro, come sopra)
     xPos = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
     
-    // Seconda passata: disegna tutti i cubi con opacità corretta
+    // Seconda passata: disegna tutti i cubi/barre (una per sottocausa). categoryData = getCategoriaData(categoriaSelezionata);
+    // categoriaSelezionata impostata da navbar (sezione Responsabilità) via selezionaDaNavbar(id) o da click in sez. 7.
     for (let i = 0; i < numRows - 1; i++) {
       let i300 = int(categoryData.getString(i, 'I/300'));
       let nome = categoryData.getString(i, 0); // Prima colonna: nome categoria
@@ -2478,7 +2534,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   stroke(255);
   strokeWeight(1);
 
-  line(SEZIONE_MARGIN, height - 80, width - SEZIONE_MARGIN, height - 80);
+  line(SEZIONE_MARGIN, height - 100, width - SEZIONE_MARGIN, height - 100);
   pop();
 
   // Linea verticale sul lato destro: appare con easing legato a `sezioneOttavaTrans`
@@ -2502,7 +2558,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       push();
       stroke(255, alpha);
       strokeWeight(1);
-      line(width - SEZIONE_MARGIN, SEZIONE_MARGIN + 70, width - SEZIONE_MARGIN, height - 80);
+      line(width - SEZIONE_MARGIN, SEZIONE_MARGIN + 70, width - SEZIONE_MARGIN, height - 100);
       pop();
     }
   }
