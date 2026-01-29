@@ -1200,11 +1200,18 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
       downVisible = true;
     }
     
-    // Attiva/disattiva animazione bounce: solo quando NON si sta scrollando
-    if (isScrolling) {
-      scrollArrowDown.style.animationPlayState = 'paused';
-    } else {
+    // Freccia giù: bordo sempre bianco, freccia interna sempre arancione
+    scrollArrowDown.style.borderColor = 'rgb(239, 239, 239)';
+    let downSvgPath = scrollArrowDown.querySelector('svg path');
+    if (downSvgPath) {
+      downSvgPath.setAttribute('stroke', 'rgb(255, 139, 67)');
+    }
+    
+    // Attiva/disattiva animazione bounce: solo al primo checkpoint e quando NON si sta scrollando
+    if (currentCheckpointIndex === 0 && !isScrolling) {
       scrollArrowDown.style.animationPlayState = 'running';
+    } else {
+      scrollArrowDown.style.animationPlayState = 'paused';
     }
   }
   
@@ -1214,9 +1221,21 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
       scrollArrowUp.style.opacity = '0';
       scrollArrowUp.style.pointerEvents = 'none';
     } else {
-      scrollArrowUp.style.opacity = '0.5';
+      scrollArrowUp.style.opacity = '1';
       scrollArrowUp.style.pointerEvents = 'all';
       upVisible = true;
+    }
+    
+    // Freccia su: bordo sempre bianco, freccia interna bianca (arancione solo a 5200 quando è da sola)
+    scrollArrowUp.style.borderColor = 'rgb(239, 239, 239)';
+    let upSvgPath = scrollArrowUp.querySelector('svg path');
+    if (upSvgPath) {
+      // Se è a scroll 5200 e la freccia giù non è visibile, diventa arancione
+      if (currentCheckpointIndex === 8 && !downVisible) {
+        upSvgPath.setAttribute('stroke', 'rgb(255, 139, 67)');
+      } else {
+        upSvgPath.setAttribute('stroke', 'rgb(239, 239, 239)');
+      }
     }
   }
   
