@@ -47,7 +47,7 @@ body {
 
   /*testi*/
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
 }
 
 .scroll {
@@ -70,27 +70,27 @@ p {
 h1 {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: 40px;
+  font-size: clamp(28px, 2.08vw, 40px); /* 40px @ 1920px */
   margin: 2rem;
 }
 
 h2 {
   font-family: "LCD", monospace;
-  font-size: 24px;
+  font-size: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
   margin: 2em 0 0.5em 2rem;
 }
 
 h3{
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 20px;
+  font-size: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   margin: 2em 0 0.5em 2rem;
 }
 
 .main-title {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: 40px;
-  margin: 120px 2rem 2rem;
+  font-size: clamp(28px, 2.08vw, 40px); /* 40px @ 1920px */
+  margin: clamp(80px, 6.25vw, 120px) 2rem 2rem; /* 120px @ 1920px */
 }
 
 /* ========================================
@@ -101,13 +101,13 @@ h3{
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px;
+  height: clamp(60px, 4.17vw, 80px); /* 80px @ 1920px */
   /*background: transparent;*/
   background-color: #000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 50px 0 60px;
+  padding: 0 clamp(35px, 2.6vw, 50px) 0 clamp(40px, 3.13vw, 60px);
   z-index: 1000;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -123,7 +123,7 @@ h3{
 /* Lato sinistro: link sezioni */
 .nav-left {
   display: flex;
-  gap: 50px;
+  gap: clamp(30px, 2.6vw, 50px); /* 50px @ 1920px */
   align-items: center;
   flex-shrink: 0;
 }
@@ -132,7 +132,7 @@ h3{
   color: var(--txt);
   text-decoration: none;
   position: relative;
-  padding-bottom: 8px;
+  padding-bottom: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */
   transition: color 0.3s ease;
   white-space: nowrap;
 }
@@ -141,16 +141,16 @@ h3{
 .nav-separator {
   color: var(--txt);
   opacity: 0.5;
-  margin: 0 4px;
-  margin-left: -40px;
-  font-size: 14px;
+  margin: 0 clamp(3px, 0.21vw, 4px);
+  margin-left: clamp(-30px, -2.08vw, -40px); /* -40px @ 1920px */
+  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
 }
 
 /* Stile per link sottocategoria */
 .nav-item-sub {
-  font-size: 14px;
+  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
   opacity: 0.85;
-  margin-left: -40px;
+  margin-left: clamp(-30px, -2.08vw, -40px); /* -40px @ 1920px */
 }
 
 /* Sottolineatura arancione per sezione attiva */
@@ -181,7 +181,7 @@ h3{
 /* Lato destro: bottoni */
 .nav-right {
   display: flex;
-  gap: 20px;
+  gap: clamp(15px, 1.04vw, 20px); /* 20px @ 1920px */
   flex-shrink: 0;
 }
 
@@ -189,8 +189,8 @@ h3{
   background: transparent;
   border: 1.5px solid var(--txt);
   color: var(--txt);
-  padding: 10px 24px;
-  border-radius: 12px;
+  padding: clamp(8px, 0.52vw, 10px) clamp(18px, 1.25vw, 24px); /* 10px 24px @ 1920px */
+  border-radius: clamp(10px, 0.63vw, 12px); /* 12px @ 1920px */
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -250,8 +250,8 @@ h3{
   left: 0;
   background-color: #000;
   border: none;
-  border-radius: 8px;
-  padding: 10px 0;
+  border-radius: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */
+  padding: clamp(8px, 0.52vw, 10px) 0;
   z-index: 1000;
 }
 
@@ -269,10 +269,10 @@ h3{
 /* Stile per gli elementi della tendina */
 .dropdown-item {
   display: block;
-  padding: 8px 16px;
+  padding: clamp(6px, 0.42vw, 8px) clamp(12px, 0.83vw, 16px); /* 8px 16px @ 1920px */
   color: var(--txt);
   text-decoration: none;
-  font-size: 14px;
+  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -293,12 +293,12 @@ h3{
   top: 50%;
   transform: translate(-50%, -50%);
   display: flex;
-  gap: 30px;
+  gap: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
   align-items: center;
-  padding: 8px 20px;
+  padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 20px); /* 8px 20px @ 1920px */
   background: transparent;
   border: 1.5px solid var(--txt);
-  border-radius: 15px;
+  border-radius: clamp(12px, 0.78vw, 15px); /* 15px @ 1920px */
   opacity: 0;
   transition: all 0.3s ease;
   pointer-events: none;
@@ -317,7 +317,7 @@ h3{
 
 .counter-number {
   font-family: "LCD", monospace;
-  font-size: 20px;
+  font-size: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   font-weight: 400;
   color: var(--orange);
   line-height: 1;
@@ -325,7 +325,7 @@ h3{
 }
 
 .counter-label {
-  font-size: 11px;
+  font-size: clamp(9px, 0.57vw, 11px); /* 11px @ 1920px */
   font-weight: 400;
   color: var(--txt);
   text-transform: capitalize;
@@ -339,7 +339,7 @@ h3{
   left: 50%;
   transform: translateX(-50%);
   color: var(--txt);
-  font-size: 10px;
+  font-size: clamp(8px, 0.52vw, 10px); /* 10px @ 1920px */
   font-weight: 400;
   line-height: 1.3;
   text-align: center;
@@ -357,19 +357,19 @@ h3{
    ======================================== */
 .scroll-arrows-container {
   position: fixed;
-  bottom: 30px;
+  bottom: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 12px;
+  gap: clamp(10px, 0.63vw, 12px); /* 12px @ 1920px */
   align-items: center;
   z-index: 999;
   transition: all 0.3s ease;
 }
 
 .scroll-arrow {
-  width: 32px;
-  height: 32px;
+  width: clamp(28px, 1.67vw, 32px); /* 32px @ 1920px */
+  height: clamp(28px, 1.67vw, 32px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -401,8 +401,8 @@ h3{
 }
 
 .scroll-arrow svg {
-  width: 16px;
-  height: 16px;
+  width: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  height: clamp(14px, 0.83vw, 16px);
 }
 
 .scroll-arrow:hover svg path {
@@ -455,8 +455,8 @@ h3{
 }
 
 .back-arrow svg {
-  width: 20px;
-  height: 20px;
+  width: clamp(18px, 1.04vw, 20px); /* 20px @ 1920px */
+  height: clamp(18px, 1.04vw, 20px);
 }
 
 .back-arrow:hover svg path {
@@ -483,11 +483,11 @@ h3{
 }
 
 .detail-arrow-left {
-  left: 50px;
+  left: clamp(35px, 2.6vw, 50px); /* 50px @ 1920px */
 }
 
 .detail-arrow-right {
-  right: 50px;
+  right: clamp(35px, 2.6vw, 50px); /* 50px @ 1920px */
 }
 
 .detail-arrow.visible {
@@ -508,8 +508,8 @@ h3{
 }
 
 .detail-arrow svg {
-  width: 22px;
-  height: 22px;
+  width: clamp(20px, 1.15vw, 22px); /* 22px @ 1920px */
+  height: clamp(20px, 1.15vw, 22px);
 }
 
 /* ========================================
@@ -520,9 +520,9 @@ h3{
 .container {
   /*box e sfondo*/
   background-color: var(--ovGray);
-  width: 300px;
+  width: clamp(250px, 15.63vw, 300px); /* 300px @ 1920px */
   padding: 1.5em;
-  border-radius: 20px;
+  border-radius: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   /*disposizione contenuti*/
   display: flex;
   flex-direction: column;
@@ -530,8 +530,8 @@ h3{
   gap: 1em;
 
   position: fixed;
-  top: 10em;
-  left: 5em;
+  top: clamp(120px, 10.42vw, 200px); /* ~10em @ 1920px */
+  left: clamp(60px, 5.21vw, 100px); /* ~5em @ 1920px */
 }
 
 .riga { /*le singole righe di contenuto*/
@@ -552,13 +552,13 @@ h3{
 .emptyRect{
   width: 0.5em;
   height: 0.5em;
-  border: 2px solid var(--txt);
+  border: clamp(1.5px, 0.1vw, 2px) solid var(--txt); /* 2px @ 1920px */
 }
 
 .gradiente{
   width: 10em;
   height: 0.5em;
-  border-radius: 20px;
+  border-radius: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   background: linear-gradient(to right, var(--txt), var(--orange));
 }
 
@@ -568,7 +568,7 @@ h3{
 }
 
 .catCausa{
-  width: 400px;
+  width: clamp(320px, 20.83vw, 400px); /* 400px @ 1920px */
   padding: 1.5em;
   /**/
   display: flex;
@@ -577,8 +577,8 @@ h3{
   gap: 1em;
   /**/
   position: fixed;
-  top: 10em;
-  left: 30em;
+  top: clamp(120px, 10.42vw, 200px); /* ~10em @ 1920px */
+  left: clamp(380px, 31.25vw, 600px); /* ~30em @ 1920px */
 }
 
 
@@ -587,17 +587,17 @@ h3{
    PAGINA DEI DATI - tendine
    ======================================== */
 .Listadati{
-  margin-left: 25vw;
+  margin-left: clamp(180px, 25vw, 480px); /* 25vw @ 1920px */
 }
 
 .newCategory {
   /*sfondo bottone*/
   background-color: var(--bg);
   width: 60vw;
-  max-width: 40em;
-  padding: 1em;
-  margin: 0.5em 0 0 2rem;
-  border-radius: 20px;
+  max-width: clamp(550px, 41.67vw, 800px); /* ~40em @ 1920px */
+  padding: clamp(14px, 1.04vw, 20px); /* ~1em @ 1920px */
+  margin: clamp(8px, 0.52vw, 10px) 0 0 clamp(28px, 2.08vw, 40px); /* 0.5em, 2rem @ 1920px */
+  border-radius: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   border: 0.1rem solid var(--txt);
   cursor: pointer;
   /*disposizione dei contenuti*/
@@ -606,7 +606,7 @@ h3{
   align-items: center;
   /*testo interno*/
   color: var(--txt);
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
   font-weight: 600;
   text-align: left;
 }
@@ -771,7 +771,7 @@ h3{
   align-items: center;
   justify-content: flex-start;
   /* remove horizontal padding so inner containers center correctly */
-  padding: 50px 0 60px;
+  padding: clamp(40px, 2.6vw, 50px) 0 clamp(48px, 3.13vw, 60px); /* 50px 60px @ 1920px */
   position: fixed;
   top: 0;
   left: 0;
@@ -784,17 +784,17 @@ h3{
 .section-team {
   justify-content: center;
   /* keep small horizontal padding inside section content, not on fixed section */
-  padding: 10px 20px 80px;
+  padding: clamp(8px, 0.52vw, 10px) clamp(16px, 1.04vw, 20px) clamp(60px, 4.17vw, 80px); /* 10px 20px 80px @ 1920px */
 }
 
 .section-crediti {
   justify-content: flex-start;
-  padding: 100px 40px 200px;
+  padding: clamp(80px, 5.21vw, 100px) clamp(30px, 2.08vw, 40px) clamp(160px, 10.42vw, 200px); /* 100px 40px 200px @ 1920px */
   min-height: 100vh;
 }
 
 .section-content {
-  max-width: 920px;
+  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
   text-align: center;
   margin: 0 auto;
   width: 100%;
@@ -802,7 +802,7 @@ h3{
 
 /* Stili sezione crediti */
 .crediti-content {
-  max-width: 920px;
+  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
   margin: 0 auto;
   width: 100%;
   text-align: left;
@@ -810,26 +810,26 @@ h3{
 
 .crediti-top {
   display: flex;
-  gap: 60px;
-  margin-bottom: 40px;
-  padding-bottom: 30px;
+  gap: clamp(40px, 3.13vw, 60px); /* 60px @ 1920px */
+  margin-bottom: clamp(30px, 2.08vw, 40px); /* 40px @ 1920px */
+  padding-bottom: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
   border-bottom: 1px solid rgba(255, 139, 67, 0.3);
   align-items: flex-start;
 }
 
 .crediti-header {
   flex: 0 0 auto;
-  max-width: 350px;
-  margin-top: 60px;
-  margin-left: -350px;
+  max-width: clamp(250px, 18.23vw, 350px); /* 350px @ 1920px */
+  margin-top: clamp(40px, 3.13vw, 60px); /* 60px @ 1920px */
+  margin-left: clamp(-250px, -18.23vw, -350px); /* -350px @ 1920px */
 }
 
 .corso-info {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
   line-height: 1.6;
   color: var(--txt);
-  margin: 5px 0;
+  margin: clamp(4px, 0.26vw, 5px) 0; /* 5px @ 1920px */
 }
 
 .crediti-autori {
@@ -839,41 +839,41 @@ h3{
 .crediti-title {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: 24px;
+  font-size: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
   font-weight: 400;
-  margin-bottom: 15px;
-  margin-top: 20px;
+  margin-bottom: clamp(12px, 0.78vw, 15px); /* 15px @ 1920px */
+  margin-top: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   letter-spacing: 0.05em;
 }
 
 .autori-list {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
   line-height: 1.8;
   color: var(--txt);
 }
 
 .crediti-license {
-  margin-bottom: 20px;
-  padding: 20px;
+  margin-bottom: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  padding: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   background: rgba(255, 139, 67, 0.05);
-  border-left: 3px solid var(--orange);
+  border-left: clamp(2px, 0.16vw, 3px) solid var(--orange); /* 3px @ 1920px */
 }
 
 .copyright {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 14px;
+  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
   color: var(--orange);
-  margin-bottom: 15px;
+  margin-bottom: clamp(12px, 0.78vw, 15px); /* 15px @ 1920px */
   font-weight: 600;
 }
 
 .license-text p {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 13px;
+  font-size: clamp(11px, 0.68vw, 13px); /* 13px @ 1920px */
   line-height: 1.6;
   color: var(--txt);
-  margin: 10px 0;
+  margin: clamp(8px, 0.52vw, 10px) 0; /* 10px @ 1920px */
 }
 
 .license-text strong {
@@ -882,10 +882,10 @@ h3{
 
 .crediti-docenti {
   display: flex;
-  gap: 20px;
+  gap: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   margin: 0 auto; 
   max-width: 100%; 
-  padding: 0 20px; 
+  padding: 0 clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   box-sizing: border-box;
   /*margin-bottom: 40px;*/
 }
@@ -897,7 +897,7 @@ h3{
 
 .docenti-col p {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
   line-height: 1.8;
   color: var(--txt);
   margin: 5px 0;
@@ -907,9 +907,9 @@ h3{
 .orange-title {
   font-family: "Transport", Arial, Helvetica, sans-serif;
   color: var(--orange);
-  font-size: 48px;
+  font-size: clamp(36px, 2.5vw, 48px); /* 48px @ 1920px */
   font-weight: 600;
-  margin-bottom: 64px;
+  margin-bottom: clamp(48px, 3.33vw, 64px); /* 64px @ 1920px */
   letter-spacing: -0.01em;
   line-height: 1.2;
   text-align: center;
@@ -921,10 +921,10 @@ h3{
 .team-title {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: 48px;
+  font-size: clamp(36px, 2.5vw, 48px); /* 48px @ 1920px */
   font-weight: 400;
-  margin-top: 80px;
-  margin-bottom: 24px;
+  margin-top: clamp(60px, 4.17vw, 80px); /* 80px @ 1920px */
+  margin-bottom: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
   letter-spacing: 0.2em;
   text-align: center;
   line-height: 3;
@@ -932,7 +932,7 @@ h3{
   margin-right: auto;
   text-shadow: 
     2px 0 0 var(--bg),
-    -2px 0 0 var(--bg),
+    -2px 0 var(--bg),
     0 2px 0 var(--bg),
     0 -2px 0 var(--bg),
     1px 1px 0 var(--bg),
@@ -943,39 +943,39 @@ h3{
 
 /* Description text */
 .description {
-  font-size: 19px;
+  font-size: clamp(18px, 0.99vw, 19px); /* 19px @ 1920px */
   line-height: 1.65;
   color: var(--txt);
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 0.52vw, 10px); /* 10px @ 1920px */
   font-weight: 400;
   letter-spacing: 0.005em;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  max-width: 920px;
+  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
 }
 
 .description-dati {
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
   line-height: 1.65;
   color: var(--txt);
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 0.52vw, 10px); /* 10px @ 1920px */
   font-weight: 400;
   letter-spacing: 0.005em;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  max-width: 920px;
+  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
 }
 
 /* Team Grid */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 16px;
+  gap: clamp(12px, 0.83vw, 16px); /* 16px @ 1920px */
   width: 100%;
-  max-width: 1400px;
-  padding: 0 20px;
+  max-width: clamp(1000px, 72.92vw, 1400px); /* 1400px @ 1920px */
+  padding: 0 clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   margin: 0 auto;
   justify-items: center;
 }
@@ -985,12 +985,12 @@ h3{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: clamp(8px, 0.63vw, 12px); /* 12px @ 1920px */
 }
 
 .team-photo {
   width: 100%;
-  max-width: 180px;
+  max-width: clamp(120px, 9.38vw, 180px); /* 180px @ 1920px */
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
@@ -1007,7 +1007,7 @@ h3{
 }
 
 .card-name span {
-  font-size: 16px;
+  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
   font-weight: 600;
   color: var(--txt);
   line-height: 1.2;

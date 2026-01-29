@@ -635,19 +635,19 @@ function createLegends() {
   if (!document.getElementById('legend')) {
     let legend = document.createElement('div');
     legend.id = 'legend';
-    // Applichiamo gli stessi stili della classe `.container` via JS inline
+    // Applichiamo gli stessi stili della classe `.container` via JS inline (responsive)
     legend.style.display = 'none';
     legend.style.position = 'fixed';
     legend.style.backgroundColor = 'rgba(217,217,217,0.125)';
-    legend.style.width = '300px';
+    legend.style.width = (width * 0.19) + 'px'; // 365px @ 1920px
     legend.style.padding = '1.5em';
-    legend.style.borderRadius = '20px';
+    legend.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
     legend.style.display = 'flex';
     legend.style.flexDirection = 'column';
     legend.style.justifyContent = 'left';
     legend.style.gap = '1em';
     legend.style.left = SEZIONE_MARGIN + 'px';
-    legend.style.top = (SEZIONE_MARGIN + 60) + 'px';
+    legend.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px
     legend.style.boxSizing = 'border-box';
     legend.style.zIndex = '999';
     document.body.appendChild(legend);
@@ -657,22 +657,22 @@ function createLegends() {
   if (!document.getElementById('catCausaContainer')) {
     let cat = document.createElement('div');
     cat.id = 'catCausaContainer';
-    // Applichiamo inline gli stessi stili di `.catCausa`
+    // Applichiamo inline gli stessi stili di `.catCausa` (responsive)
     cat.style.display = 'none';
     cat.style.position = 'fixed';
-    cat.style.width = '400px';
+    cat.style.width = (width * 0.26) + 'px'; // 500px @ 1920px
     cat.style.padding = '1.5em';
     cat.style.display = 'flex';
     cat.style.flexDirection = 'column';
     cat.style.justifyContent = 'left';
     cat.style.gap = '1em';
-    cat.style.left = (SEZIONE_MARGIN + 320) + 'px';
-    cat.style.top = (SEZIONE_MARGIN + 50) + 'px';
+    cat.style.left = (SEZIONE_MARGIN + width * 0.21) + 'px'; // +403px @ 1920px
+    cat.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px - allineato con legenda
     cat.style.color = 'white';
     cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    cat.style.fontSize = '14px';
+    cat.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
     cat.style.lineHeight = '1.2';
-    cat.style.maxWidth = '320px';
+    cat.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
     cat.style.pointerEvents = 'none';
     cat.style.boxSizing = 'border-box';
     cat.style.zIndex = '999';
@@ -686,22 +686,22 @@ function placeCatCausaContainer() {
   if (!container) {
     container = document.createElement('div');
     container.id = 'catCausaContainer';
-    // Applichiamo inline gli stessi stili di `.catCausa`
+    // Applichiamo inline gli stessi stili di `.catCausa` (responsive)
     container.style.display = 'none';
     container.style.position = 'fixed';
-    container.style.width = '400px';
+    container.style.width = (width * 0.26) + 'px'; // 500px @ 1920px
     container.style.padding = '1.5em';
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
     container.style.justifyContent = 'left';
     container.style.gap = '1em';
-    container.style.left = (SEZIONE_MARGIN + 320) + 'px';
-    container.style.top = (SEZIONE_MARGIN + 50) + 'px';
+    container.style.left = (SEZIONE_MARGIN + width * 0.21) + 'px'; // +403px @ 1920px
+    container.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px
     container.style.color = 'white';
     container.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    container.style.fontSize = '14px';
+    container.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
     container.style.lineHeight = '1.2';
-    container.style.maxWidth = '320px';
+    container.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
     container.style.pointerEvents = 'none';
     container.style.boxSizing = 'border-box';
     container.style.zIndex = '999';
@@ -719,7 +719,7 @@ function updateLegendVisibility() {
     if (legend) {
       legend.style.display = 'flex';
       legend.style.left = SEZIONE_MARGIN + 'px';
-      legend.style.top = (SEZIONE_MARGIN + 60) + 'px';
+      legend.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px
 
       // Imposta il contenuto in base al tipo di visualizzazione
       if (!showBars) {
@@ -729,7 +729,7 @@ function updateLegendVisibility() {
         h.style.color = 'white';
         h.style.margin = '0';
         h.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-        h.style.fontSize = '18px';
+        h.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
         h.textContent = 'Legenda';
         legend.appendChild(h);
 
@@ -774,7 +774,7 @@ function updateLegendVisibility() {
         empty.style.width = '0.7em';
         empty.style.height = '0.7em';
         empty.style.flexShrink = '0';
-        empty.style.border = '2px solid #ffffff';
+        empty.style.border = (width * 0.001) + 'px solid #ffffff'; // 2px @ 1920px
         empty.style.boxSizing = 'border-box';
         emptyWrapper.appendChild(empty);
         r2.appendChild(emptyWrapper);
@@ -790,7 +790,7 @@ function updateLegendVisibility() {
         h.style.color = 'white';
         h.style.margin = '0';
         h.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-        h.style.fontSize = '18px';
+        h.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
         h.textContent = 'Legenda';
         legend.appendChild(h);
 
@@ -800,7 +800,7 @@ function updateLegendVisibility() {
         r1.style.alignItems = 'center';
         r1.style.gap = '1em';
         let cubeCanvas = createLegendCubeCanvasStyled(88);
-        cubeCanvas.style.marginRight = '8px';
+        cubeCanvas.style.marginRight = (width * 0.0042) + 'px'; // 8px @ 1920px
         cubeCanvas.style.flexShrink = '0';
         r1.appendChild(cubeCanvas);
         let t1 = document.createElement('div');
@@ -817,7 +817,7 @@ function updateLegendVisibility() {
         let grad = document.createElement('div');
         grad.style.width = '10em';
         grad.style.height = '0.5em';
-        grad.style.borderRadius = '20px';
+        grad.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
         grad.style.background = 'linear-gradient(to right, #ffffff, #ff8b43)';
         r2.appendChild(grad);
         let t2 = document.createElement('div');
@@ -975,9 +975,9 @@ window.selezionaDaNavbar = function(nomeCategoria) {
   categoriaSelezionata = nomeCategoria;
   hasClickedCategory = true;
   
-  showBars = true;
-  sezioneOttavaTrans = 1;
-  sezioneOttavaTransTarget = 1;
+  showBars = false; // Inizia sempre con i quadrati
+  sezioneOttavaTrans = 0; // Inizia sempre in modalità quadrato
+  sezioneOttavaTransTarget = 0;
   transizioneAttiva = false;
   transizioneProgress = 1;
 
@@ -1210,11 +1210,11 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
       // Entrambe visibili: centra la coppia
       arrowsContainer.style.transform = 'translateX(-50%)';
     } else if (upVisible) {
-      // Solo freccia su: offset per centrare la singola
-      arrowsContainer.style.transform = 'translateX(calc(-50% + 22px))';
+      // Solo freccia su: offset per centrare la singola (22px @ 1920px)
+      arrowsContainer.style.transform = `translateX(calc(-50% + ${width * 0.0115}px))`;
     } else if (downVisible) {
-      // Solo freccia giù: offset per centrare la singola
-      arrowsContainer.style.transform = 'translateX(calc(-50% - 22px))';
+      // Solo freccia giù: offset per centrare la singola (22px @ 1920px)
+      arrowsContainer.style.transform = `translateX(calc(-50% - ${width * 0.0115}px))`;
     }
   }
 }
@@ -2138,19 +2138,12 @@ function drawTransizioneSezioneOttava() {
     return;
   }
   
-  // Calcola progress dell'animazione basato su scrollY
-  // Dividiamo in 2 fasi: amalgama (5200-6200) e posizionamento (6200-6500)
+  // Calcola progress dell'animazione basato su scrollY (5200-6500)
   transizioneProgress = map(scrollY, 5200, 6500, 0, 1);
   transizioneProgress = constrain(transizioneProgress, 0, 1);
   
-  // Fase amalgama: scroll 5200-6200
-  let amalgamaProgress = map(scrollY, 5200, 6200, 0, 1);
-  amalgamaProgress = constrain(amalgamaProgress, 0, 1);
-  amalgamaProgress = amalgamaProgress * amalgamaProgress * (3 - 2 * amalgamaProgress); // smoothstep
-  
-  // Fase posizionamento: scroll 6200-6500
-  let posizionamentoProgress = map(scrollY, 6200, 6500, 0, 1);
-  posizionamentoProgress = constrain(posizionamentoProgress, 0, 1);
+  // Applica easing per movimento più fluido (ease-in-out cubico)
+  let easedProgress = transizioneProgress * transizioneProgress * (3 - 2 * transizioneProgress);
   
   push();
   background(0); // Sfondo nero
@@ -2186,8 +2179,8 @@ function drawTransizioneSezioneOttava() {
   // Colore categoria
   let categoryColor = getOverlayColor(categoriaSelezionata);
   
-  // Fase 1: Fade out degli altri elementi (numeri, labels, quadratini delle altre categorie)
-  let fadeOutOthers = map(amalgamaProgress, 0, 0.2, 255, 0);
+  // Fade out degli altri elementi all'inizio dell'animazione
+  let fadeOutOthers = map(easedProgress, 0, 0.15, 255, 0);
   fadeOutOthers = constrain(fadeOutOthers, 0, 255);
   
   // Posizioni iniziali dei quadratini nella sezione 7
@@ -2229,23 +2222,43 @@ function drawTransizioneSezioneOttava() {
   // Calcola posizioni finali nell'istogramma (sezione 8) - IDENTICHE alla sezione 8
   let numRows = categoryData.getRowCount();
   let baseQuadSize = quadSize;
-  let finalQuadSpacing = 40;
+  const DESIRED_SPACING = 80;
   
-  // Calcola larghezza totale istogramma per centrare a destra (stesso calcolo della sezione 8)
-  let totalWidth = 0;
+  // Pre-calcola le dimensioni e lo spacing (STESSO CALCOLO DELLA SEZIONE 8)
+  let sizes = [];
+  let sumSizes = 0;
   for (let i = 0; i < numRows - 1; i++) {
     let i300 = int(categoryData.getString(i, 'I/300'));
     let area = baseQuadSize * baseQuadSize * i300;
     let size = (i300 >= 1) ? sqrt(area) : baseQuadSize;
-    totalWidth += size + finalQuadSpacing;
+    sizes.push(size);
+    sumSizes += size;
   }
-  totalWidth -= finalQuadSpacing;
   
-  let finalXStart = width - 100 - totalWidth;
-  let baselineY = height - 100;
+  let count = sizes.length;
+  let availableWidth = width - 2 * SEZIONE_MARGIN;
+  
+  // Calcola spacing dinamico
+  let finalQuadSpacing = 0;
+  if (count <= 1) {
+    finalQuadSpacing = 0;
+  } else {
+    let totalWithDesired = sumSizes + DESIRED_SPACING * (count - 1);
+    if (totalWithDesired <= availableWidth) {
+      finalQuadSpacing = DESIRED_SPACING;
+    } else {
+      finalQuadSpacing = (availableWidth - sumSizes) / (count - 1);
+      if (finalQuadSpacing < 4) finalQuadSpacing = 4;
+    }
+  }
+  
+  // Calcola larghezza totale e posizione iniziale centrata (COME SEZIONE 8)
+  let totalWidth = sumSizes + finalQuadSpacing * Math.max(0, count - 1);
+  let finalXStart = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
+  let baselineY = height - SEZIONE_MARGIN;
 
-  // Fase 3: Fade in elementi UI (titolo, frecce, etc) durante posizionamento (6200-6500)
-  let fadeInUI = map(scrollY, 6200, 6500, 0, 255);
+  // Fade in elementi UI (titolo) progressivamente durante l'animazione
+  let fadeInUI = map(easedProgress, 0.5, 1, 0, 255);
   fadeInUI = constrain(fadeInUI, 0, 255);
   
   // Disegna titolo con fade in
@@ -2266,14 +2279,11 @@ function drawTransizioneSezioneOttava() {
   let quadIndex = 0;
   for (let causeIdx = 0; causeIdx < numRows - 1; causeIdx++) {
     let i300 = int(categoryData.getString(causeIdx, 'I/300'));
-    let area = baseQuadSize * baseQuadSize * i300;
-    let finalSize = (i300 >= 1) ? sqrt(area) : baseQuadSize;
+    let finalSize = sizes[causeIdx]; // Usa la dimensione pre-calcolata
     
     // Posizione finale ESATTA del quadrato (angolo in basso a sinistra)
     let finalX = xPos;
     let finalY = baselineY - finalSize;
-    let finalCenterX = finalX + finalSize / 2;
-    let finalCenterY = finalY + finalSize / 2;
     
     // Disegna i singoli quadratini che si amalgamano gradualmente nel quadrato finale
     let numQuadsForCause = floor(i300);
@@ -2283,40 +2293,42 @@ function drawTransizioneSezioneOttava() {
     let gridRows = ceil(numQuadsForCause / gridCols);
     let cellSize = finalSize / max(gridCols, gridRows);
     
-    // FASE 1: Amalgama (scroll 5200-6100) - i quadratini si fondono al centro schermo
-    // Posizione centro schermo per l'amalgama
-    let amalgamaCenterX = width / 2 + (causeIdx - (numRows - 2) / 2) * (finalSize + finalQuadSpacing);
-    let amalgamaCenterY = height / 2;
-    
-    // Disegna sempre i quadratini che si uniscono
+    // Disegna i quadratini con movimento fluido diretto dalla posizione iniziale a quella finale
     for (let q = 0; q < numQuadsForCause && quadIndex < numQuadratiniCategoria; q++) {
-      // Posizione iniziale nella griglia della categoria
+      // Posizione iniziale nella griglia della categoria (sezione 7)
       let startRow = floor(quadIndex / startDims.cols);
       let startCol = quadIndex % startDims.cols;
       let startXPos = startX + startCol * (quadSize + quadSpacing);
       let startYPos = topY + startRow * (quadSize + quadSpacing);
       
-      // Posizione di amalgama: griglia compatta al centro
-      let amalgamaRow = floor(q / gridCols);
-      let amalgamaCol = q % gridCols;
-      let amalgamaXPos = amalgamaCenterX - finalSize/2 + amalgamaCol * cellSize;
-      let amalgamaYPos = amalgamaCenterY - finalSize/2 + amalgamaRow * cellSize;
+      // Posizione finale nell'istogramma (sezione 8)
+      let finalRow = floor(q / gridCols);
+      let finalCol = q % gridCols;
+      let finalXPos = finalX + finalCol * cellSize;
+      let finalYPos = finalY + finalRow * cellSize;
       
-      // Posizione finale nell'istogramma
-      let finalXPos = finalX + amalgamaCol * cellSize;
-      let finalYPos = finalY + amalgamaRow * cellSize;
+      // Crea un offset temporale unico per ogni quadratino (effetto dissoluto)
+      // Usa una combinazione di posizione iniziale e indice per varietà
+      let timeOffset = (sin(quadIndex * 0.5) * 0.5 + 0.5) * 0.15; // offset tra -0.15 e +0.15
+      let individualProgress = constrain((easedProgress - timeOffset) / (1 - timeOffset), 0, 1);
       
-      // FASE 1: Convergono verso centro schermo e si espandono
-      let phase1X = lerp(startXPos, amalgamaXPos, amalgamaProgress);
-      let phase1Y = lerp(startYPos, amalgamaYPos, amalgamaProgress);
-      let phase1Size = lerp(quadSize, cellSize, amalgamaProgress);
+      // Applica un easing personalizzato per ogni quadratino (movimento più organico)
+      let smoothProgress = individualProgress * individualProgress * (3 - 2 * individualProgress);
       
-      // FASE 2: Si spostano dal centro all'istogramma (mantenendo dimensione finale)
-      let currentX = lerp(phase1X, finalXPos, posizionamentoProgress);
-      let currentY = lerp(phase1Y, finalYPos, posizionamentoProgress);
-      let currentSize = phase1Size; // Mantiene la dimensione raggiunta nella fase 1
+      // Calcola traiettoria curva invece che lineare (effetto più naturale)
+      // I quadratini si alzano leggermente durante il movimento
+      let curveHeight = sin(smoothProgress * PI) * height * 0.1; // alzamento massimo 10% altezza
       
-      fill(red(categoryColor), green(categoryColor), blue(categoryColor), 255);
+      // Movimento fluido con curva
+      let currentX = lerp(startXPos, finalXPos, smoothProgress);
+      let currentY = lerp(startYPos, finalYPos, smoothProgress) - curveHeight;
+      let currentSize = lerp(quadSize, cellSize, smoothProgress);
+      
+      // Opacità variabile per effetto dissoluzione
+      let alpha = map(smoothProgress, 0, 0.1, 200, 255); // fade in veloce all'inizio
+      alpha = constrain(alpha, 0, 255);
+      
+      fill(red(categoryColor), green(categoryColor), blue(categoryColor), alpha);
       noStroke();
       rectMode(CORNER);
       rect(currentX, currentY, currentSize, currentSize);
