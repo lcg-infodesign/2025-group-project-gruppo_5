@@ -91,13 +91,17 @@ let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' 
 let hasClickedCategory = false; // Traccia se l'utente ha cliccato su una categoria
 const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
 let sezioneOttavaSquareHitboxes = []; // hitbox per i quadrati
+let sezioneOttavaLesionatiHitboxes = []; // hitbox specifiche per le colonne dei lesionati
 let showBars = false; // false = quadrati, true = istogramma con barre
 let sezioneOttavaTrans = 0; // 0 = quadrati, 1 = parallelepipedi (animazione)
 let sezioneOttavaTransTarget = 0; // target per l'animazione
 let hoveredSezioneOttavaItem = null; // traccia quale elemento è in hover
 let sezioneOttavaFadeIn = 0; // fade in della sezione 8
+let sezioneOttavaItemOpacities = {}; // Traccia l'opacità animata per ogni elemento (nome -> opacità corrente)
+let sezioneOttavaItemOpacityTargets = {}; // Target opacità per l'animazione
 // Margine usato per il layout interno della sezione 8 e per le legende
 const SEZIONE_MARGIN = 100;
+const SEZIONE_OTTAVA_OPACITY_EASING = 0.12; // Velocità dell'easing per l'opacità (più basso = più lento)
 
 // Frecce navigazione sezione 8
 let frecceSezioneOttava = {
@@ -341,6 +345,20 @@ document.addEventListener('keydown', function(event) {
       scrollTarget = scrollCheckpoints[currentCheckpointIndex];
       isScrolling = true;
       scrollAccumulator = 0;
+    }
+  } else if (event.key === 'ArrowLeft') {
+    // Navigazione sinistra nella sezione 8 (cambio categoria precedente)
+    if (categoriaSelezionata !== null) {
+      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+      let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
+      categoriaSelezionata = categorieArray[prevIndex];
+    }
+  } else if (event.key === 'ArrowRight') {
+    // Navigazione destra nella sezione 8 (cambio categoria successiva)
+    if (categoriaSelezionata !== null) {
+      let currentIndex = categorieArray.indexOf(categoriaSelezionata);
+      let nextIndex = (currentIndex + 1) % categorieArray.length;
+      categoriaSelezionata = categorieArray[nextIndex];
     }
   }
 });
@@ -978,6 +996,13 @@ function getCategoriaData(cat) {
   return null;
 }
 
+function getCubeSpacingForCategoria(cat) {
+  // Spacing responsive basato sulla larghezza della viewport
+  let spacingConducenti = constrain(width * 0.012, 12, 20);
+  let spacingAltre = constrain(width * 0.045, 50, 90);
+  return cat === 'conducenti' ? spacingConducenti : spacingAltre;
+}
+
 function updateHoverScales() {
   // Smooth interpolation per scale animation (chiamato ogni frame)
   for (let i = 0; i < 3; i++) {
@@ -1035,6 +1060,16 @@ function updateCursor() { // cursore mano sugli elementi cliccabili
     // Check hover sui cubi
     if (sezioneOttavaSquareHitboxes.length > 0) {
       for (let hitbox of sezioneOttavaSquareHitboxes) {
+        if (isMouseOver(hitbox.x, hitbox.y, hitbox.w, hitbox.h)) {
+          cursor(HAND);
+          return;
+        }
+      }
+    }
+    
+    // Check hover sulle hitbox lesionati
+    if (sezioneOttavaLesionatiHitboxes.length > 0) {
+      for (let hitbox of sezioneOttavaLesionatiHitboxes) {
         if (isMouseOver(hitbox.x, hitbox.y, hitbox.w, hitbox.h)) {
           cursor(HAND);
           return;
@@ -2208,7 +2243,7 @@ function drawTransizioneSezioneOttava() {
   else if (categoriaSelezionata === 'non-conducenti') numQuadratiniCategoria = quadNonConducenti;
   
   // Layout sezione 7 (ricrea lo stesso layout)
-  let quadSize = dimensioneQuadratino;
+  let quadSize = dimensioneQuadratino || 30;
   let quadSpacing = quadSize * 0.5;
   let quadPerRiga = floor(width * 0.4 / (quadSize + quadSpacing));
   quadPerRiga = constrain(quadPerRiga, 30, 60);
@@ -2259,38 +2294,29 @@ function drawTransizioneSezioneOttava() {
   // Calcola posizioni finali nell'istogramma (sezione 8) - IDENTICHE alla sezione 8
   let numRows = categoryData.getRowCount();
   let baseQuadSize = quadSize;
-  const DESIRED_SPACING = 80;
   
-  // Pre-calcola le dimensioni e lo spacing (STESSO CALCOLO DELLA SEZIONE 8)
-  let sizes = [];
-  let sumSizes = 0;
+  // Pre-calcola dimensioni dei quadrati e larghezze dei cubi (COME SEZIONE 8)
+  let quadSizes = [];
+  let cubeWidths = [];
+  let sumCubeWidths = 0;
   for (let i = 0; i < numRows - 1; i++) {
     let i300 = int(categoryData.getString(i, 'I/300'));
     let area = baseQuadSize * baseQuadSize * i300;
     let size = (i300 >= 1) ? sqrt(area) : baseQuadSize;
-    sizes.push(size);
-    sumSizes += size;
+    let cubeWidth = size * sqrt(2);
+    quadSizes.push(size);
+    cubeWidths.push(cubeWidth);
+    sumCubeWidths += cubeWidth;
   }
   
-  let count = sizes.length;
+  let count = quadSizes.length;
   let availableWidth = width - 2 * SEZIONE_MARGIN;
   
-  // Calcola spacing dinamico
-  let finalQuadSpacing = 0;
-  if (count <= 1) {
-    finalQuadSpacing = 0;
-  } else {
-    let totalWithDesired = sumSizes + DESIRED_SPACING * (count - 1);
-    if (totalWithDesired <= availableWidth) {
-      finalQuadSpacing = DESIRED_SPACING;
-    } else {
-      finalQuadSpacing = (availableWidth - sumSizes) / (count - 1);
-      if (finalQuadSpacing < 4) finalQuadSpacing = 4;
-    }
-  }
+  // Spacing cubi per categoria (come sezione 8)
+  let finalQuadSpacing = getCubeSpacingForCategoria(categoriaSelezionata);
   
   // Calcola larghezza totale e posizione iniziale centrata (COME SEZIONE 8)
-  let totalWidth = sumSizes + finalQuadSpacing * Math.max(0, count - 1);
+  let totalWidth = sumCubeWidths + finalQuadSpacing * Math.max(0, count - 1);
   let finalXStart = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
   let baselineY = height - SEZIONE_MARGIN;
 
@@ -2316,10 +2342,11 @@ function drawTransizioneSezioneOttava() {
   let quadIndex = 0;
   for (let causeIdx = 0; causeIdx < numRows - 1; causeIdx++) {
     let i300 = int(categoryData.getString(causeIdx, 'I/300'));
-    let finalSize = sizes[causeIdx]; // Usa la dimensione pre-calcolata
+    let finalSize = quadSizes[causeIdx]; // Dimensione del quadrato
+    let cubeWidth = cubeWidths[causeIdx];
     
     // Posizione finale ESATTA del quadrato (angolo in basso a sinistra)
-    let finalX = xPos;
+    let finalX = xPos + (cubeWidth - finalSize) / 2;
     let finalY = baselineY - finalSize;
     
     // Disegna i singoli quadratini che si amalgamano gradualmente nel quadrato finale
@@ -2373,7 +2400,7 @@ function drawTransizioneSezioneOttava() {
       quadIndex++;
     }
     
-    xPos += finalSize + finalQuadSpacing;
+    xPos += cubeWidth + finalQuadSpacing;
   }
   
   pop();
@@ -2397,6 +2424,21 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   // Dati dalla categoria scelta: navbar dropdown → selezionaDaNavbar(id) → categoriaSelezionata → qui
   let categoryData = getCategoriaData(categoriaSelezionata);
   if (categoryData) {
+    // Reset opacità animate quando il dataset cambia
+    let currentRowCount = categoryData.getRowCount();
+    let newItemNames = new Set();
+    for (let i = 0; i < currentRowCount - 1; i++) {
+      newItemNames.add(categoryData.getString(i, 0));
+    }
+    
+    // Rimuovi elementi non più presenti nel dataset corrente
+    for (let nome in sezioneOttavaItemOpacities) {
+      if (!newItemNames.has(nome)) {
+        delete sezioneOttavaItemOpacities[nome];
+        delete sezioneOttavaItemOpacityTargets[nome];
+      }
+    }
+    
     const margin = SEZIONE_MARGIN; // spazio interno su tutti i lati
     fill(255, 255, 255, 255);
     textFont(lcdFont);
@@ -2409,39 +2451,28 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
     let categoryColor = getOverlayColor(categoriaSelezionata);
     let numRows = categoryData.getRowCount();
-    let baseQuadSize = dimensioneQuadratino; // Usa la variabile calcolata nella sezione 7
+    let baseQuadSize = dimensioneQuadratino || 30; // Usa la variabile calcolata nella sezione 7, fallback a 30 se non definita
 
     // Desired spacing between squares; we'll reduce it if total width overflows the available area
     const DESIRED_SPACING = 80;
 
-    // Pre-calcola le dimensioni dei quadratini e la somma delle larghezze
+    // Pre-calcola le dimensioni dei cubi (diagonale del quadrato) e la somma delle larghezze
     let sizes = [];
     let sumSizes = 0;
     for (let i = 0; i < numRows - 1; i++) {
       let i300 = int(categoryData.getString(i, 'I/300'));
       let area = baseQuadSize * baseQuadSize * i300;
       let size = (i300 >= 1) ? sqrt(area) : baseQuadSize;
-      sizes.push(size);
-      sumSizes += size;
+      let cubeWidth = size * sqrt(2); // base sui cubi (diagonale)
+      sizes.push(cubeWidth);
+      sumSizes += cubeWidth;
     }
 
     let count = sizes.length;
     let availableWidth = width - 2 * SEZIONE_MARGIN;
 
-    // Compute spacing: try DESIRED_SPACING, but if it overflows reduce spacing so all items fit
-    let quadSpacing = 0;
-    if (count <= 1) {
-      quadSpacing = 0;
-    } else {
-      let totalWithDesired = sumSizes + DESIRED_SPACING * (count - 1);
-      if (totalWithDesired <= availableWidth) {
-        quadSpacing = DESIRED_SPACING;
-      } else {
-        // space remaining distributed between gaps; avoid negative spacing
-        quadSpacing = (availableWidth - sumSizes) / (count - 1);
-        if (quadSpacing < 4) quadSpacing = 4; // minimum small spacing to avoid overlap
-      }
-    }
+    // Spacing cubi per categoria
+    let quadSpacing = getCubeSpacingForCategoria(categoriaSelezionata);
 
     // Calcola larghezza totale effettiva e posizione iniziale x
     let totalWidth = sumSizes + quadSpacing * Math.max(0, count - 1);
@@ -2449,6 +2480,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     let baselineY = height - margin; // Linea di base in basso con margine
     
     sezioneOttavaSquareHitboxes = []; // Reset hitbox
+    sezioneOttavaLesionatiHitboxes = []; // Reset hitbox lesionati
     
     // Trova il massimo e minimo numero di lesionati per scalare l'altezza
     let maxLesionati = 0;
@@ -2484,8 +2516,9 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       let quadSize = (i300 >= 1) ? sqrt(area) : baseQuadSize;
       let H = map(lesionati, minLesionati, maxLesionati, minBarHeight, maxBarHeight);
       
+      let cubeWidth = quadSize * sqrt(2);
       let half = quadSize / 2;
-      let cx = xPos + half;
+      let cx = xPos + cubeWidth / 2;
       
       // Hitbox esteso: larghezza del cubo, altezza totale della colonna
       let hitboxLeft = cx - half;
@@ -2498,7 +2531,15 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
         hoveredSezioneOttavaItem = nome;
       }
       
-      xPos += quadSize + quadSpacing;
+      // Precalcola hitbox lesionati per il controllo hover
+      let diagonaleQuadrato = quadSize * sqrt(2);
+      let hitboxLesionatiX = xPos + (quadSize - diagonaleQuadrato) / 2;
+      if (mouseX >= hitboxLesionatiX && mouseX <= hitboxLesionatiX + diagonaleQuadrato && 
+          mouseY >= baselineY - H * sezioneOttavaTrans && mouseY <= baselineY) {
+        hoveredSezioneOttavaItem = nome;
+      }
+      
+      xPos += cubeWidth + quadSpacing;
     }
     
     // Reset xPos per la seconda passata (centro, come sopra)
@@ -2520,14 +2561,29 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       // Calcola altezza in base ai lesionati
       let H = map(lesionati, minLesionati, maxLesionati, minBarHeight, maxBarHeight);
       
+      let cubeWidth = quadSize * sqrt(2);
       let half = quadSize / 2;
-      let cx = xPos + half;
+      let cx = xPos + cubeWidth / 2; // Centro del cubo
       
-      // Determina opacità: 100% se hovato, 20% se altri sono hovati, 100% se nessuno è hovato
-      let cubeOpacity = 1.0; // Opacità piena
+      // Determina target opacità: 100% se hovato, 30% se altri sono hovati, 100% se nessuno è hovato
+      let targetOpacity = 1.0; // Opacità piena
       if (hoveredSezioneOttavaItem !== null && hoveredSezioneOttavaItem !== nome) {
-        cubeOpacity = 0.3;
+        targetOpacity = 0.3;
       }
+      
+      // Inizializza l'opacità se non esiste ancora
+      if (sezioneOttavaItemOpacities[nome] === undefined) {
+        sezioneOttavaItemOpacities[nome] = targetOpacity;
+        sezioneOttavaItemOpacityTargets[nome] = targetOpacity;
+      }
+      
+      // Aggiorna il target
+      sezioneOttavaItemOpacityTargets[nome] = targetOpacity;
+      
+      // Applica easing con lerp
+      sezioneOttavaItemOpacities[nome] = lerp(sezioneOttavaItemOpacities[nome], sezioneOttavaItemOpacityTargets[nome], SEZIONE_OTTAVA_OPACITY_EASING);
+      
+      let cubeOpacity = sezioneOttavaItemOpacities[nome];
       
       // Usa drawCubo per disegnare il parallelepipedo
       push();
@@ -2545,10 +2601,25 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
         y: baselineY - quadSize - H * sezioneOttavaTrans,
         w: quadSize,
         h: quadSize + H * sezioneOttavaTrans,
-        index: i
+        index: i,
+        nome: nome
       });
       
-      xPos += quadSize + quadSpacing;
+      // Salva hitbox lesionati
+      let diagonaleQuadrato = quadSize * sqrt(2);
+      let hitboxLesionatiX = xPos + (quadSize - diagonaleQuadrato) / 2;
+      sezioneOttavaLesionatiHitboxes.push({
+        x: hitboxLesionatiX,
+        y: baselineY - H * sezioneOttavaTrans,
+        w: diagonaleQuadrato,
+        h: H * sezioneOttavaTrans,
+        index: i,
+        nome: nome,
+        lesionati: lesionati
+      });
+      
+      // Avanza xPos al bordo destro del cubo più lo spacing
+      xPos += cubeWidth + quadSpacing;
     }
     
     // If nothing is hovered this frame, show a helpful default message
