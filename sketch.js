@@ -1209,9 +1209,11 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     
     // Attiva/disattiva animazione bounce: solo al primo checkpoint e quando NON si sta scrollando
     if (currentCheckpointIndex === 0 && !isScrolling) {
-      scrollArrowDown.style.animationPlayState = 'running';
+      scrollArrowDown.classList.add('bounce-active');
+      scrollArrowDown.classList.remove('allow-hover-movement');
     } else {
-      scrollArrowDown.style.animationPlayState = 'paused';
+      scrollArrowDown.classList.remove('bounce-active');
+      scrollArrowDown.classList.add('allow-hover-movement');
     }
   }
   

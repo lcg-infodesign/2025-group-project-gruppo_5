@@ -383,6 +383,9 @@ h3{
 }
 
 .scroll-arrow-down {
+}
+
+.scroll-arrow-down.bounce-active {
   animation: bounce 2s infinite;
 }
 
@@ -393,11 +396,15 @@ h3{
 .scroll-arrow:hover {
   background: rgba(255, 139, 67, 0.2);
   border-color: var(--orange);
-  transform: translateY(-3px);
 }
 
 .scroll-arrow-up:hover {
   opacity: 1;
+  transform: translateY(-3px);
+}
+
+.scroll-arrow-down.allow-hover-movement:hover {
+  transform: translateY(3px);
 }
 
 .scroll-arrow svg {
