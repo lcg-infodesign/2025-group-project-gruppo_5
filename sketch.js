@@ -319,6 +319,10 @@ function setup() {
   // Aggiungi un listener per le frecce su e giù della tastiera
 document.addEventListener('keydown', function(event) {
   if (event.key === 'ArrowUp') {
+    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 9)
+    if (currentCheckpointIndex >= 9) {
+      return; // Impedisci scroll indietro dal dettaglio
+    }
     // Simula il click su scrollArrowUp
     if (currentCheckpointIndex > 0) {
       currentCheckpointIndex--;
@@ -327,6 +331,10 @@ document.addEventListener('keydown', function(event) {
       scrollAccumulator = 0;
     }
   } else if (event.key === 'ArrowDown') {
+    // Blocca freccia giù a 5200 se non ha cliccato una categoria
+    if (currentCheckpointIndex === 8 && !hasClickedCategory) {
+      return; // Impedisci scroll in avanti oltre 5200
+    }
     // Simula il click su scrollArrowDown
     if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
       currentCheckpointIndex++;
@@ -420,7 +428,15 @@ function mouseWheel(event) {
   
   // Blocca scroll a 5200 (checkpoint index 8) se non ha cliccato una categoria
   if (currentCheckpointIndex === 8 && !hasClickedCategory && event.delta > 0) {
-    // Impedisci scroll in avanti oltre 5200
+    // Impedisci scroll in avanti oltre 5200 e resetta accumulatore
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca scroll verso l'alto quando si è nel dettaglio (checkpoint 9, scrollY >= 6500)
+  if (currentCheckpointIndex >= 9 && event.delta < 0) {
+    // Impedisci scroll indietro dal dettaglio
+    scrollAccumulator = 0;
     return false;
   }
   
