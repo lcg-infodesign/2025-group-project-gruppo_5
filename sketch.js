@@ -2324,14 +2324,19 @@ function drawTransizioneSezioneOttava() {
   let fadeInUI = map(easedProgress, 0.5, 1, 0, 255);
   fadeInUI = constrain(fadeInUI, 0, 255);
   
-  // Disegna titolo con fade in
+  // Disegna titolo con fade in (allineato a sezione 8)
   if (fadeInUI > 0) {
     push();
     fill(255, 255, 255, fadeInUI);
     textFont(lcdFont);
     textSize(40);
     textAlign(LEFT, TOP);
-    text(categoriaSelezionata.toUpperCase(), 100, 100);
+    let margin = SEZIONE_MARGIN;
+    let titolo = categoriaSelezionata.replace(/-/g, ' ');
+    if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      titolo = 'cause esterne e concomitanti';
+    }
+    text(titolo.toUpperCase(), margin, margin);
     pop();
   }
   
