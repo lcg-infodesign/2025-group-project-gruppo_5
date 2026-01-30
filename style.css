@@ -203,6 +203,11 @@ h3{
   color: var(--orange);
 }
 
+.nav-button.active {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
 .nav-item:hover {
   color: var(--orange);
   opacity: 0.5;

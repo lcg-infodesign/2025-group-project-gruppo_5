@@ -403,10 +403,23 @@ document.addEventListener('keydown', function(event) {
     });
   });
 
-  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne e concomitanti → selezionaDaNavbar
-  let dropMenu = document.getElementById('dropdown-responsabilita-menu');
-  if (dropMenu) {
-    dropMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
+  // Dropdown principale: click sulle categorie quando NON sei in una categoria
+  let dropdownMain = document.getElementById('dropdown-main');
+  if (dropdownMain) {
+    dropdownMain.querySelectorAll('.dropdown-item').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let cat = link.getAttribute('data-categoria');
+        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
+      });
+    });
+  }
+  
+  // Dropdown categoria: click sulle categorie quando SEI in una categoria
+  let dropdownCategoria = document.getElementById('dropdown-categoria');
+  if (dropdownCategoria) {
+    dropdownCategoria.querySelectorAll('.dropdown-item').forEach(function(link) {
       link.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -556,11 +569,18 @@ function draw() {
 function handleAutoScroll() { //scroll automatico verso i checkpoint
   if (scrollTarget > -1) {
     isScrolling = true;
-    if (abs(scrollY - scrollTarget) > scrollVelocita) {
+    
+    // Aumenta velocità quando si torna indietro nell'intervallo tra 5200 e 6500
+    let currentVelocita = scrollVelocita;
+    if (scrollY > 5200 && scrollTarget <= 5200 && scrollY <= 6500) {
+      currentVelocita = 100; // Molto più veloce quando si torna indietro da 6500 a 5200
+    }
+    
+    if (abs(scrollY - scrollTarget) > currentVelocita) {
       if (scrollY < scrollTarget) {
-        scrollY += scrollVelocita;
+        scrollY += currentVelocita;
       } else {
-        scrollY -= scrollVelocita;
+        scrollY -= currentVelocita;
       }
     } else {
       scrollY = scrollTarget;
@@ -964,7 +984,16 @@ function updateAnimations() {
     let targetMorti = mortiOggi * progress;
     let targetFeriti = feritiOggi * progress;
 
-    if (counterAnimazioneAutomatica && !counterAnimazioneCompletata && frameCount - counterAnimazioneInizio < 240) {
+    // Controlla se si proviene da chi_siamo o dati
+    let skipAnimation = sessionStorage.getItem('skipCounterAnimation') === 'true';
+    if (skipAnimation) {
+      // Rimuovi il flag dopo averlo letto
+      sessionStorage.removeItem('skipCounterAnimation');
+      // Salta direttamente all'animazione completata
+      counterAnimazioneCompletata = true;
+    }
+    
+    if (counterAnimazioneAutomatica && !counterAnimazioneCompletata && frameCount - counterAnimazioneInizio < 240 && !skipAnimation) {
       // Animazione smooth più lenta solo per la PRIMA apparizione nella sezione 6
       animIncidenti += (targetIncidenti - animIncidenti) * 0.03;
       animMorti += (targetMorti - animMorti) * 0.03;
@@ -1146,6 +1175,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   
   // Aggiorna quale sezione è attiva
   let navItems = document.querySelectorAll('.nav-item');
+  let navResponsabilita = document.getElementById('nav-responsabilita');
   
   // Se siamo nella sezione dettaglio (scrollY >= 6500 e categoria selezionata), attiva Responsabilità + categoria
   let inDettaglio = scrollY >= 6500 && categoriaSelezionata !== null;
@@ -1157,12 +1187,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
-    // Nascondi la tendina (Conducenti / Non conducenti / Cause esterne e concomitanti) quando sei già nel dettaglio
-    let drop = document.querySelector('.nav-item.dropdown');
-    if (drop) drop.classList.add('dropdown-no-tendina');
+    // Attiva anche il link Responsabilità
+    if (navResponsabilita) navResponsabilita.classList.add('active');
   } else {
-    let drop = document.querySelector('.nav-item.dropdown');
-    if (drop) drop.classList.remove('dropdown-no-tendina');
     navItems.forEach((item, index) => {
       if (index === sezioneAttiva) {
         item.classList.add('active');
@@ -1170,6 +1197,10 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
+    // Attiva Responsabilità quando siamo nella sezione responsabilità (sezione 2)
+    if (navResponsabilita && sezioneAttiva === 2) {
+      navResponsabilita.classList.add('active');
+    }
   }
   
   // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
@@ -1311,18 +1342,25 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   }
 }
 
-// NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio e evidencia voce dropdown attiva
+// NAVBAR CATEGORIA: Aggiorna la visualizzazione della categoria e dei dropdown
 function updateNavbarCategoria() {
   let navCategoria = document.getElementById('nav-categoria');
   let navSeparator = document.getElementById('nav-separator');
+  let dropdownMain = document.getElementById('dropdown-main');
+  let dropdownCategoria = document.getElementById('dropdown-categoria');
   if (!navCategoria) return;
   
-  // Mostra/nascondi in base a se siamo nella sezione dettaglio
+  // Se siamo nella sezione dettaglio (categoria selezionata)
   if (categoriaSelezionata !== null && scrollY >= 6500) {
-    navCategoria.style.display = 'block';
-    if (navSeparator) navSeparator.style.display = 'inline';
+    // Mostra separatore e categoria
+    navSeparator.style.display = 'inline';
+    navCategoria.style.display = 'inline';
     
-    // Aggiorna il testo in base alla categoria
+    // Nascondi dropdown principale, mostra dropdown categoria
+    if (dropdownMain) dropdownMain.style.display = 'none';
+    if (dropdownCategoria) dropdownCategoria.style.display = '';
+    
+    // Aggiorna il testo della categoria
     if (categoriaSelezionata === 'conducenti') {
       navCategoria.textContent = 'Conducenti';
     } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
@@ -1330,9 +1368,34 @@ function updateNavbarCategoria() {
     } else if (categoriaSelezionata === 'non-conducenti') {
       navCategoria.textContent = 'Non conducenti';
     }
+    
+    // Nascondi nel dropdown categoria solo la categoria corrente
+    if (dropdownCategoria) {
+      let items = dropdownCategoria.querySelectorAll('.dropdown-item');
+      items.forEach(item => {
+        if (item.dataset.categoria === categoriaSelezionata) {
+          item.classList.add('hidden');
+        } else {
+          item.classList.remove('hidden');
+        }
+      });
+    }
   } else {
+    // Nascondi separatore e categoria
+    navSeparator.style.display = 'none';
     navCategoria.style.display = 'none';
-    if (navSeparator) navSeparator.style.display = 'none';
+    
+    // Mostra dropdown principale, nascondi dropdown categoria
+    if (dropdownMain) dropdownMain.style.display = '';
+    if (dropdownCategoria) dropdownCategoria.style.display = 'none';
+    
+    // Mostra tutte le categorie nel dropdown principale
+    if (dropdownMain) {
+      let items = dropdownMain.querySelectorAll('.dropdown-item');
+      items.forEach(item => {
+        item.classList.remove('hidden');
+      });
+    }
   }
 }
 
