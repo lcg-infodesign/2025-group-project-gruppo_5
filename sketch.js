@@ -2329,7 +2329,9 @@ function drawTransizioneSezioneOttava() {
     push();
     fill(255, 255, 255, fadeInUI);
     textFont(lcdFont);
-    textSize(40);
+    // Titolo responsivo (approx 40px @ 1920)
+    let titleSize = constrain(width * 0.021, 20, 48);
+    textSize(titleSize);
     textAlign(LEFT, TOP);
     let margin = SEZIONE_MARGIN;
     let titolo = categoriaSelezionata.replace(/-/g, ' ');
@@ -2447,7 +2449,9 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     const margin = SEZIONE_MARGIN; // spazio interno su tutti i lati
     fill(255, 255, 255, 255);
     textFont(lcdFont);
-    textSize(40);
+    // Titolo responsive (coerente con transizione)
+    let titleSize = constrain(width * 0.021, 20, 48);
+    textSize(titleSize);
     textAlign(LEFT, TOP);
     let yPos = margin;
     let titolo = categoriaSelezionata.replace(/-/g, ' ');
@@ -2455,15 +2459,15 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       titolo = 'cause esterne e concomitanti';
     }
     text(titolo.toUpperCase(), margin, yPos);
-    yPos += 80;
+    yPos += titleSize * 1.8;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
     let categoryColor = getOverlayColor(categoriaSelezionata);
     let numRows = categoryData.getRowCount();
     let baseQuadSize = dimensioneQuadratino || 30; // Usa la variabile calcolata nella sezione 7, fallback a 30 se non definita
 
-    // Desired spacing between squares; we'll reduce it if total width overflows the available area
-    const DESIRED_SPACING = 80;
+    // Desired spacing between squares; responsive based on viewport and base quad size
+    const DESIRED_SPACING = max(baseQuadSize * 2.2, constrain(width * 0.0417, 40, 160));
 
     // Pre-calcola le dimensioni dei cubi (diagonale del quadrato) e la somma delle larghezze
     let sizes = [];
