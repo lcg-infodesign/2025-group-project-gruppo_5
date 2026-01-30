@@ -398,7 +398,7 @@ document.addEventListener('keydown', function(event) {
     });
   });
 
-  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne → selezionaDaNavbar
+  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne e concomitanti → selezionaDaNavbar
   let dropMenu = document.getElementById('dropdown-responsabilita-menu');
   if (dropMenu) {
     dropMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
@@ -518,7 +518,7 @@ function draw() {
   drawSezioneSesta();
   drawSezioneSettima();
   drawTransizioneSezioneOttava(); // Transizione animata tra 5200 e 6500
-  drawSezioneOttava(); // usa categoriaSelezionata (navbar → selezionaDaNavbar) per Conducenti / Non conducenti / Cause esterne
+  drawSezioneOttava(); // usa categoriaSelezionata (navbar → selezionaDaNavbar) per Conducenti / Non conducenti / Cause esterne e concomitanti
   
   // Aggiorna animazioni
   updateAnimations();
@@ -1137,7 +1137,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
-    // Nascondi la tendina (Conducenti / Non conducenti / Cause esterne) quando sei già nel dettaglio
+    // Nascondi la tendina (Conducenti / Non conducenti / Cause esterne e concomitanti) quando sei già nel dettaglio
     let drop = document.querySelector('.nav-item.dropdown');
     if (drop) drop.classList.add('dropdown-no-tendina');
   } else {
@@ -1306,7 +1306,7 @@ function updateNavbarCategoria() {
     if (categoriaSelezionata === 'conducenti') {
       navCategoria.textContent = 'Conducenti';
     } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
-      navCategoria.textContent = 'Cause esterne';
+      navCategoria.textContent = 'Cause esterne e concomitanti';
     } else if (categoriaSelezionata === 'non-conducenti') {
       navCategoria.textContent = 'Non conducenti';
     }
@@ -1342,7 +1342,7 @@ function updateCounterTooltip() {
 
 // Navbar click: gestito solo in setup() (vedi handler su .nav-item).
 // Il blocco DOMContentLoaded qui sotto è stato rimosso: duplicava i listener e,
-// sui dropdown-item (Conducenti / Non conducenti / Cause esterne), impostava
+// sui dropdown-item (Conducenti / Non conducenti / Cause esterne e concomitanti), impostava
 // scrollTarget=4300 sovrascrivendo il salto a 6500 da selezionaDaNavbar.
 
 function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
@@ -2151,7 +2151,7 @@ function drawSezioneSettima() {
     fill(255, 255, 255, blueOpacity);
     text('Conducenti', blueCenterX, topY - 10);
     
-    // Numero gruppo VERDE (Cause esterne)
+    // Numero gruppo VERDE (Cause esterne e concomitanti)
     let greenCenterX = greenStartX + (greenDims.cols * (quadSize + quadSpacing)) / 2;
     let greenOpacity = hoveredGridIndex === -1 || hoveredGridIndex === 1 ? numberOpacity : numberOpacity * 0.3;
     textFont(lcdFont);
@@ -2162,7 +2162,7 @@ function drawSezioneSettima() {
     textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, greenOpacity);
-    text('Cause esterne', greenCenterX, topY - 10);
+    text('Cause esterne e concomitanti', greenCenterX, topY - 10);
     
     // Numero gruppo ROSA (Non conducenti)
     let pinkCenterX = pinkStartX + (pinkDims.cols * (quadSize + quadSpacing)) / 2;
@@ -2445,7 +2445,11 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     textSize(40);
     textAlign(LEFT, TOP);
     let yPos = margin;
-    text(categoriaSelezionata.toUpperCase(), margin, yPos);
+    let titolo = categoriaSelezionata.replace(/-/g, ' ');
+    if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      titolo = 'cause esterne e concomitanti';
+    }
+    text(titolo.toUpperCase(), margin, yPos);
     yPos += 80;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
