@@ -100,8 +100,8 @@ let sezioneOttavaFadeIn = 0; // fade in della sezione 8
 let sezioneOttavaItemOpacities = {}; // Traccia l'opacità animata per ogni elemento (nome -> opacità corrente)
 let sezioneOttavaItemOpacityTargets = {}; // Target opacità per l'animazione
 // Margine usato per il layout interno della sezione 8 e per le legende
-const SEZIONE_MARGIN = 100;
-const SEZIONE_OTTAVA_OPACITY_EASING = 0.12; // Velocità dell'easing per l'opacità (più basso = più lento)
+let SEZIONE_MARGIN = 100;
+const SEZIONE_OTTAVA_OPACITY_EASING = 0.06; // Velocità dell'easing per l'opacità (più basso = più lento)
 
 // Frecce navigazione sezione 8
 let frecceSezioneOttava = {
@@ -368,6 +368,11 @@ document.addEventListener('keydown', function(event) {
   navItems.forEach(function(item) {
     item.addEventListener('click', function(e) {
       if (e.target.closest && e.target.closest('.dropdown-item')) return;
+      // Se il link è `#dettaglio` e siamo già nella vista dettaglio, ignora il click
+      if (item.id === 'nav-categoria' && categoriaSelezionata !== null && scrollY >= 6500) {
+        e.preventDefault();
+        return;
+      }
       e.preventDefault();
       let section = parseInt(item.getAttribute('data-section'));
       
@@ -418,6 +423,21 @@ const HASH_CATEGORIE = ['#conducenti', '#non-conducenti', '#cause-esterne-concom
 
 function handleURLHash() {
   const hash = window.location.hash;
+  // Se la pagina è stata ricaricata (refresh), non seguire i permalink categorie
+  // Questo evita che un refresh apra automaticamente una categoria di dettaglio
+  let navType = null;
+  try {
+    const entries = performance.getEntriesByType('navigation');
+    if (entries && entries.length > 0) navType = entries[0].type;
+    else if (performance.navigation) navType = (performance.navigation.type === 1) ? 'reload' : 'navigate';
+  } catch (e) {
+    navType = null;
+  }
+  if (navType === 'reload') {
+    // Rimuovi l'hash senza ricaricare la pagina e resta all'indice
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    return;
+  }
   
   if (hash === '#incidenti') {
     currentCheckpointIndex = 3;
@@ -1422,9 +1442,9 @@ function drawSezioneGrigliaIncidenti() {
     grigliaIncidentiSottotitoloOpacita = 0;
   }
   
-  // Layout griglia
-  let dimensioneQuadratino = width * 0.008;
-  dimensioneQuadratino = constrain(dimensioneQuadratino, 8, 15);
+  // Layout griglia: usa la variabile globale per coerenza (evita valori non inizializzati)
+  dimensioneQuadratino = width * 0.008;
+  dimensioneQuadratino = constrain(dimensioneQuadratino, 8, 18);
   let spaziatura = dimensioneQuadratino * 0.5;
   let quadratiniPerRiga = floor(width * 0.4 / (dimensioneQuadratino + spaziatura));
   quadratiniPerRiga = constrain(quadratiniPerRiga, 30, 60);
@@ -2788,4 +2808,8 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   // Aumenta altezza per includere sezione 8 con transizione più lunga (fino a ~6700px)
   document.body.style.height = (windowHeight * 4) + 'px';
+  // Ricalcola margine e dimensione quadratini in modo responsive, così
+  // anche se si salta la sezione 7 i calcoli della sezione 8 saranno corretti.
+  SEZIONE_MARGIN = constrain(floor(windowWidth * 0.052), 40, 160); // ~100px @1920
+  dimensioneQuadratino = constrain(windowWidth * 0.008, 8, 18);
 }
