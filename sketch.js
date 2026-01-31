@@ -267,6 +267,26 @@ function setup() {
   let scrollArrowDown = document.getElementById('scroll-arrow-down');
   if (scrollArrowDown) {
     scrollArrowDown.addEventListener('click', function() {
+      // Blocca checkpoint 0 (intro) finché testo non è completo
+      if (currentCheckpointIndex === 0 && introCaratteriVisibili < introTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 1 (quadrato) finché testo non è completo
+      if (currentCheckpointIndex === 1 && quadratoCaratteriVisibili < quadratoTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 2 (terza sezione) finché testo non è completo
+      if (currentCheckpointIndex === 2 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 4 (5a) finché testo non è completo
+      if (currentCheckpointIndex === 4 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 5 (5b) finché testo non è completo
+      if (currentCheckpointIndex === 5 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length) {
+        return;
+      }
       // Vai al prossimo checkpoint
       if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
         currentCheckpointIndex++;
@@ -330,8 +350,8 @@ function setup() {
   // Aggiungi un listener per le frecce su e giù della tastiera
 document.addEventListener('keydown', function(event) {
   if (event.key === 'ArrowUp') {
-    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 9)
-    if (currentCheckpointIndex >= 9) {
+    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 10)
+    if (currentCheckpointIndex >= 10) {
       return; // Impedisci scroll indietro dal dettaglio
     }
     // Simula il click su scrollArrowUp
@@ -342,8 +362,28 @@ document.addEventListener('keydown', function(event) {
       scrollAccumulator = 0;
     }
   } else if (event.key === 'ArrowDown') {
+    // Blocca checkpoint 0 (intro) finché testo non è completo
+    if (currentCheckpointIndex === 0 && introCaratteriVisibili < introTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 1 (quadrato) finché testo non è completo
+    if (currentCheckpointIndex === 1 && quadratoCaratteriVisibili < quadratoTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 2 (terza sezione) finché testo non è completo
+    if (currentCheckpointIndex === 2 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 4 (5a) finché testo non è completo
+    if (currentCheckpointIndex === 4 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 5 (5b) finché testo non è completo
+    if (currentCheckpointIndex === 5 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length) {
+      return;
+    }
     // Blocca freccia giù a 5200 se non ha cliccato una categoria
-    if (currentCheckpointIndex === 8 && !hasClickedCategory) {
+    if (currentCheckpointIndex === 9 && !hasClickedCategory) {
       return; // Impedisci scroll in avanti oltre 5200
     }
     // Simula il click su scrollArrowDown
@@ -471,8 +511,39 @@ function mouseWheel(event) {
     return false;
   }
   
-  // Blocca scroll a 5200 (checkpoint index 8) se non ha cliccato una categoria
-  if (currentCheckpointIndex === 8 && !hasClickedCategory && event.delta > 0) {
+  // Blocca checkpoint 0 (intro) finché testo non è completo
+  if (currentCheckpointIndex === 0 && introCaratteriVisibili < introTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 1 (quadrato) finché testo non è completo
+  if (currentCheckpointIndex === 1 && quadratoCaratteriVisibili < quadratoTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 2 (terza sezione) finché testo non è completo
+  if (currentCheckpointIndex === 2 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 4 (5a) finché testo non è completo
+  if (currentCheckpointIndex === 4 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length && event.delta > 0) {
+    // Impedisci scroll in avanti da 5a a 5b
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 5 (5b) finché testo non è completo
+  if (currentCheckpointIndex === 5 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca scroll a 5200 (checkpoint index 9) se non ha cliccato una categoria
+  if (currentCheckpointIndex === 9 && !hasClickedCategory && event.delta > 0) {
     // Impedisci scroll in avanti oltre 5200 e resetta accumulatore
     scrollAccumulator = 0;
     return false;
@@ -568,6 +639,11 @@ function handleAutoScroll() { //scroll automatico verso i checkpoint
     let currentVelocita = scrollVelocita;
     if (scrollY > 5200 && scrollTarget <= 5200 && scrollY <= 6500) {
       currentVelocita = 100; // Molto più veloce quando si torna indietro da 6500 a 5200
+    }
+    
+    // Rallenta lo scroll tra 2900 e 3850 per passare attraverso 3100 e 3300
+    if ((scrollY >= 2900 && scrollY <= 3850) || (scrollTarget >= 3100 && scrollTarget <= 3300)) {
+      currentVelocita = 4; // Scroll più lento per non saltare i checkpoint intermedi
     }
     
     if (abs(scrollY - scrollTarget) > currentVelocita) {
@@ -1310,9 +1386,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     detailArrowRight.classList.remove('visible');
   }
   
-  // Freccia giù: nascondi quando sei al checkpoint 4900 (indice 7) o oltre
+  // Freccia giù: nascondi quando sei al checkpoint 5200 (indice 9) o oltre (se non ha cliccato categoria)
   if (scrollArrowDown) {
-    if (currentCheckpointIndex >= 8) {
+    if ((currentCheckpointIndex === 9 && !hasClickedCategory) || currentCheckpointIndex >= 10) {
       scrollArrowDown.style.opacity = '0';
       scrollArrowDown.style.pointerEvents = 'none';
     } else {
