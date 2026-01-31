@@ -596,7 +596,20 @@ h3{
    PAGINA DEI DATI - tendine
    ======================================== */
 .Listadati{
-  margin-left: clamp(180px, 25vw, 480px); /* 25vw @ 1920px */
+  /*margin-left: clamp(180px, 25vw, 480px); /* 25vw @ 1920px */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2em;
+  padding: 2em;
+  padding-bottom: 10em;
+}
+
+.bigCategory {
+  display: flex;
+  flex-direction: column; /* h2 sopra .catList */
+  gap: 0.6rem;
+  align-items: flex-start;
 }
 
 .newCategory {
