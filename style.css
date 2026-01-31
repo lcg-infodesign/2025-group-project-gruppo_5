@@ -295,7 +295,7 @@ h3{
 .navbar-counter {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: calc(50% + 5px); /* Leggermente più in basso per allineare con nav-button */
   transform: translate(-50%, -50%);
   display: flex;
   gap: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
@@ -340,7 +340,7 @@ h3{
 /* Testo informativo fisso sotto il counter */
 .counter-info {
   position: absolute;
-  top: calc(87%);
+  top: calc(87% + 5px);
   left: 50%;
   transform: translateX(-50%);
   color: var(--txt);
