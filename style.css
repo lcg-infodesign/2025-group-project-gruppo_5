@@ -214,6 +214,11 @@ h3{
   transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
+/* Rimuovi l'opacità per il dropdown */
+.nav-item.dropdown:hover {
+  opacity: 1;
+}
+
 .nav-item:hover::after {
   content: "";
   position: absolute;
@@ -239,6 +244,7 @@ h3{
 .dropdown-link {
   text-decoration: none;
   color: var(--txt);
+  padding: clamp(8px, 0.52vw, 10px) clamp(4px, 0.26vw, 5px);
   transition: color 0.3s ease;
 }
 
@@ -251,8 +257,8 @@ h3{
 .dropdown-menu {
   display: none; /* Nascondi la tendina di default */
   position: absolute;
-  top: 0; 
-  left: 100%;
+  top: -15px; 
+  left: calc(100% + 5px);
   background-color: #000;
   border: none;
   border-radius: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */
@@ -274,17 +280,24 @@ h3{
 /* Stile per gli elementi della tendina */
 .dropdown-item {
   display: block;
-  padding: clamp(6px, 0.42vw, 8px) clamp(12px, 0.83vw, 16px); /* 8px 16px @ 1920px */
+  padding: clamp(10px, 0.73vw, 14px) clamp(16px, 1.04vw, 20px); /* 14px 20px @ 1920px */
   color: var(--txt);
   text-decoration: none;
   font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
-  transition: background 0.3s ease, color 0.3s ease;
+  opacity: 1;
+  transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+}
+
+/* Quando un elemento è in hover, opacizza gli altri */
+.dropdown-menu:has(.dropdown-item:hover) .dropdown-item:not(:hover) {
+  opacity: 0.3;
 }
 
 /* Cambia colore al passaggio del mouse sugli elementi della tendina */
 .dropdown-item:hover {
   background: var(--hover);
   color: var(--orange);
+  opacity: 1;
 }
 
 
