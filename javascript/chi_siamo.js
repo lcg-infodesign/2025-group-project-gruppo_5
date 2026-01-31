@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Crea debug scroll nello stesso stile del sito
   const debugDiv = document.createElement('div');
   debugDiv.id = 'scroll-debug';
-  debugDiv.style.cssText = 'position: fixed; bottom: 10px; right: 10px; font-family: Courier, monospace; font-size: 14px; color: rgba(255, 122, 0, 0.6); z-index: 9999; text-align: right;';
+  const orangeColor = getComputedStyle(document.documentElement).getPropertyValue('--orange').trim();
+  debugDiv.style.cssText = `position: fixed; bottom: 10px; right: 10px; font-family: Courier, monospace; font-size: 14px; color: ${orangeColor}99; z-index: 9999; text-align: right;`;
   document.body.appendChild(debugDiv);
   
   // Carica i dati dal CSV per calcolare i valori giornalieri

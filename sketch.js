@@ -403,23 +403,10 @@ document.addEventListener('keydown', function(event) {
     });
   });
 
-  // Dropdown principale: click sulle categorie quando NON sei in una categoria
-  let dropdownMain = document.getElementById('dropdown-main');
-  if (dropdownMain) {
-    dropdownMain.querySelectorAll('.dropdown-item').forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        let cat = link.getAttribute('data-categoria');
-        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
-      });
-    });
-  }
-  
-  // Dropdown categoria: click sulle categorie quando SEI in una categoria
-  let dropdownCategoria = document.getElementById('dropdown-categoria');
-  if (dropdownCategoria) {
-    dropdownCategoria.querySelectorAll('.dropdown-item').forEach(function(link) {
+  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne e concomitanti → selezionaDaNavbar
+  let dropMenu = document.getElementById('dropdown-responsabilita-menu');
+  if (dropMenu) {
+    dropMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
       link.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -678,11 +665,11 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   // Determina il colore hex della categoria
   let categoryHex = '#ffffff';
   if (categoriaSelezionata === 'conducenti') {
-    categoryHex = '#00a1f1';
+    categoryHex = getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
   } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
-    categoryHex = '#33bb44';
+    categoryHex = getComputedStyle(document.documentElement).getPropertyValue('--green').trim();
   } else if (categoriaSelezionata === 'non-conducenti') {
-    categoryHex = '#fd73ed';
+    categoryHex = getComputedStyle(document.documentElement).getPropertyValue('--pink').trim();
   }
   
   // Mostra feriti e morti solo se aperta la modalità istogramma
@@ -892,7 +879,7 @@ function updateLegendVisibility() {
         grad.style.width = '10em';
         grad.style.height = '0.5em';
         grad.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
-        grad.style.background = 'linear-gradient(to right, #ffffff, #ff8b43)';
+        grad.style.background = 'linear-gradient(to right, #ffffff, var(--orange))';
         r2.appendChild(grad);
         let t2 = document.createElement('div');
         t2.style.color = 'white';
@@ -1032,10 +1019,16 @@ function isMouseOver(x, y, w, h) { // controllo hover generico
 }
 
 function getOverlayColor(cat) {
-  if (cat === 'conducenti') return color(0, 161, 241);
-  if (cat === 'cause-esterne-concomitanti') return color(51, 187, 68);
-  if (cat === 'non-conducenti') return color(253, 115, 237);
+  if (cat === 'conducenti') return getCSSColor('--blue');
+  if (cat === 'cause-esterne-concomitanti') return getCSSColor('--green');
+  if (cat === 'non-conducenti') return getCSSColor('--pink');
   return color(255);
+}
+
+// Helper per ottenere i colori dalle variabili CSS
+function getCSSColor(variableName) {
+  const cssValue = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+  return color(cssValue);
 }
 
 function getCategoriaData(cat) {
@@ -1136,7 +1129,8 @@ function updateCursor() { // cursore mano sugli elementi cliccabili
 
 function drawSezioneIntro() {
   // Testo intro
-  fill(255, 122, 0, introOpacita);
+  let orangeColor = getCSSColor('--orange');
+  fill(red(orangeColor), green(orangeColor), blue(orangeColor), introOpacita);
   let testoMostrato = introTestoCompleto.substring(0, introCaratteriVisibili);
   let txtSize = width * 0.025;
   txtSize = constrain(txtSize, 12, 60);
@@ -1175,7 +1169,6 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   
   // Aggiorna quale sezione è attiva
   let navItems = document.querySelectorAll('.nav-item');
-  let navResponsabilita = document.getElementById('nav-responsabilita');
   
   // Se siamo nella sezione dettaglio (scrollY >= 6500 e categoria selezionata), attiva Responsabilità + categoria
   let inDettaglio = scrollY >= 6500 && categoriaSelezionata !== null;
@@ -1187,9 +1180,12 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
-    // Attiva anche il link Responsabilità
-    if (navResponsabilita) navResponsabilita.classList.add('active');
+    // Nascondi la tendina (Conducenti / Non conducenti / Cause esterne e concomitanti) quando sei già nel dettaglio
+    let drop = document.querySelector('.nav-item.dropdown');
+    if (drop) drop.classList.add('dropdown-no-tendina');
   } else {
+    let drop = document.querySelector('.nav-item.dropdown');
+    if (drop) drop.classList.remove('dropdown-no-tendina');
     navItems.forEach((item, index) => {
       if (index === sezioneAttiva) {
         item.classList.add('active');
@@ -1197,10 +1193,6 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
-    // Attiva Responsabilità quando siamo nella sezione responsabilità (sezione 2)
-    if (navResponsabilita && sezioneAttiva === 2) {
-      navResponsabilita.classList.add('active');
-    }
   }
   
   // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
@@ -1290,7 +1282,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     scrollArrowDown.style.borderColor = 'rgb(239, 239, 239)';
     let downSvgPath = scrollArrowDown.querySelector('svg path');
     if (downSvgPath) {
-      downSvgPath.setAttribute('stroke', 'rgb(255, 139, 67)');
+      downSvgPath.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--orange').trim());
     }
     
     // Attiva/disattiva animazione bounce: solo al primo checkpoint e quando NON si sta scrollando
@@ -1320,7 +1312,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     if (upSvgPath) {
       // Se è a scroll 5200 e la freccia giù non è visibile, diventa arancione
       if (currentCheckpointIndex === 8 && !downVisible) {
-        upSvgPath.setAttribute('stroke', 'rgb(255, 139, 67)');
+        upSvgPath.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--orange').trim());
       } else {
         upSvgPath.setAttribute('stroke', 'rgb(239, 239, 239)');
       }
@@ -1342,25 +1334,18 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   }
 }
 
-// NAVBAR CATEGORIA: Aggiorna la visualizzazione della categoria e dei dropdown
+// NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio e evidencia voce dropdown attiva
 function updateNavbarCategoria() {
   let navCategoria = document.getElementById('nav-categoria');
   let navSeparator = document.getElementById('nav-separator');
-  let dropdownMain = document.getElementById('dropdown-main');
-  let dropdownCategoria = document.getElementById('dropdown-categoria');
   if (!navCategoria) return;
   
-  // Se siamo nella sezione dettaglio (categoria selezionata)
+  // Mostra/nascondi in base a se siamo nella sezione dettaglio
   if (categoriaSelezionata !== null && scrollY >= 6500) {
-    // Mostra separatore e categoria
-    navSeparator.style.display = 'inline';
-    navCategoria.style.display = 'inline';
+    navCategoria.style.display = 'block';
+    if (navSeparator) navSeparator.style.display = 'inline';
     
-    // Nascondi dropdown principale, mostra dropdown categoria
-    if (dropdownMain) dropdownMain.style.display = 'none';
-    if (dropdownCategoria) dropdownCategoria.style.display = '';
-    
-    // Aggiorna il testo della categoria
+    // Aggiorna il testo in base alla categoria
     if (categoriaSelezionata === 'conducenti') {
       navCategoria.textContent = 'Conducenti';
     } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
@@ -1368,34 +1353,9 @@ function updateNavbarCategoria() {
     } else if (categoriaSelezionata === 'non-conducenti') {
       navCategoria.textContent = 'Non conducenti';
     }
-    
-    // Nascondi nel dropdown categoria solo la categoria corrente
-    if (dropdownCategoria) {
-      let items = dropdownCategoria.querySelectorAll('.dropdown-item');
-      items.forEach(item => {
-        if (item.dataset.categoria === categoriaSelezionata) {
-          item.classList.add('hidden');
-        } else {
-          item.classList.remove('hidden');
-        }
-      });
-    }
   } else {
-    // Nascondi separatore e categoria
-    navSeparator.style.display = 'none';
     navCategoria.style.display = 'none';
-    
-    // Mostra dropdown principale, nascondi dropdown categoria
-    if (dropdownMain) dropdownMain.style.display = '';
-    if (dropdownCategoria) dropdownCategoria.style.display = 'none';
-    
-    // Mostra tutte le categorie nel dropdown principale
-    if (dropdownMain) {
-      let items = dropdownMain.querySelectorAll('.dropdown-item');
-      items.forEach(item => {
-        item.classList.remove('hidden');
-      });
-    }
+    if (navSeparator) navSeparator.style.display = 'none';
   }
 }
 
@@ -1449,7 +1409,8 @@ function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
     txtSize = constrain(txtSize, 12, 30);
     textSize(txtSize);
     textLeading(txtSize * 1.3);
-    fill(255, 122, 0, min(quadratoTestoOpacita, quadratoFadeOut));
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), min(quadratoTestoOpacita, quadratoFadeOut));
     let testoMostrato = quadratoTestoCompleto.substring(0, quadratoCaratteriVisibili);
     text(testoMostrato, width / 2, centerY + quadratoDimensione / 2 + 20);
     pop();
@@ -1465,7 +1426,8 @@ function drawSezioneTerza(terzaSezioneFadeOut) {
     let txtSize = width * 0.03;
     txtSize = constrain(txtSize, 16, 70);
     textSize(txtSize);
-    fill(255, 122, 0, min(terzaSezioneTitoloOpacita, terzaSezioneFadeOut));
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), min(terzaSezioneTitoloOpacita, terzaSezioneFadeOut));
     let testoMostrato = terzaSezioneTestoCompleto.substring(0, terzaSezioneCaratteriVisibili);
     text(testoMostrato, width / 2, height / 2 - 30);
     pop();
@@ -1545,7 +1507,8 @@ function drawSezioneGrigliaIncidenti() {
     let txtSize = width * 0.04;
     txtSize = constrain(txtSize, 20, 80);
     textSize(txtSize);
-    fill(255, 122, 0, grigliaFadeOut);
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), grigliaFadeOut);
     let numeroFormattato = counterAttuale.toLocaleString('it-IT');
     text(numeroFormattato, width / 2, startY - 60);
     pop();
@@ -1599,7 +1562,8 @@ function drawSezioneQuinta() {
     txtSize = constrain(txtSize, 16, 70);
     textSize(txtSize);
     textLeading(txtSize * 1.4);
-    fill(255, 122, 0, min(quintaSezioneOpacita, quintaSezioneFadeOut));
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), min(quintaSezioneOpacita, quintaSezioneFadeOut));
     let testoMostrato = quintaSezioneTestoCompleto.substring(0, quintaSezioneCaratteriVisibili);
     text(testoMostrato, width / 2, height / 2 + 180);
     pop();
@@ -1637,7 +1601,8 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   
   // Facce arancioni (mostra solo se hanno un'altezza significativa)
   if (altezzaLatiVerticali > 5) {
-    fill(255, 122, 0, quintaSezioneFadeOut);
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), quintaSezioneFadeOut);
     
     // Faccia sinistra
     quad(
@@ -1795,7 +1760,8 @@ function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, 
     : 0.5;
   normalizedPercent = constrain(normalizedPercent, 0, 1);
   // Gradiente da bianco a arancione
-  let sideColor = lerpColor(color(255, 255, 255), color(255, 139, 67), normalizedPercent);
+  let orangeRGB = getComputedStyle(document.documentElement).getPropertyValue('--orange').trim();
+  let sideColor = lerpColor(color(255, 255, 255), color(orangeRGB), normalizedPercent);
   
   let base = [
     {x: -half, y: -half}, {x: +half, y: -half},
@@ -1920,7 +1886,8 @@ function drawSezioneSesta() {
     textSize(width * 0.02);
     text("SOLO OGGI, NEL 2024, A QUEST’ORA:", width / 2, height * 0.3);
 
-    fill(255, 122, 0, counterFadeOut);
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), counterFadeOut);
     textSize(width * 0.06);
     text(floor(animIncidenti), width * 0.25, height * 0.5);
     text(floor(animMorti), width * 0.50, height * 0.5);
@@ -1973,7 +1940,8 @@ function drawSezioneSesta() {
     textAlign(CENTER, CENTER);
     textFont(lcdFont);
     textSize(colpaTextSize);
-    fill(255, 122, 0, colpaOpacity);
+    let orangeColor = getCSSColor('--orange');
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), colpaOpacity);
     text("MA DI CHI È LA COLPA?", width / 2, colpaPosY);
     pop();
   }
@@ -2030,9 +1998,9 @@ function drawSezioneSettima() {
   const quadTotale = quadConducenti + quadCauseEsterne + quadNonConducenti;
   
   // Colori
-  const coloreBlu = color(0, 161, 241);
-  const coloreVerde = color(51, 187, 68);
-  const coloreRosa = color(253, 115, 237);
+  const coloreBlu = getCSSColor('--blue');
+  const coloreVerde = getCSSColor('--green');
+  const coloreRosa = getCSSColor('--pink');
   
   // Layout
   dimensioneQuadratino = width * 0.008;
@@ -2798,7 +2766,8 @@ function drawDebugInfo() {
   textFont('Courier');
   textAlign(RIGHT, BOTTOM);
   textSize(14);
-  fill(255, 122, 0, 150);
+  let orangeColor = getCSSColor('--orange');
+  fill(red(orangeColor), green(orangeColor), blue(orangeColor), 150);
   text('scrollY: ' + floor(scrollY), width - 10, height - 10);
   pop();
 }
