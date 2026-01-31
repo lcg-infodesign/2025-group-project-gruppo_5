@@ -771,18 +771,16 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   let feritiMortiHTML = '';
   if (showBars) {
     feritiMortiHTML = `
-      <p style="margin: 0;"><span style="color: var(--orange);">Feriti:</span> <span style="color: white;">${lesionati.toLocaleString('it-IT')}</span></p>
-      <p style="margin: 0;"><span style="color: var(--orange);">Morti:</span> <span style="color: white;">${morti.toLocaleString('it-IT')}</span></p>
+      <p style="margin: 0.5em 0 0 0;"><span style="color: var(--orange);">Feriti:</span> <span style="color: white;">${lesionati.toLocaleString('it-IT')}</span></p>
+      <p style="margin: 0.5em 0 0 0;"><span style="color: var(--orange);">Morti:</span> <span style="color: white;">${morti.toLocaleString('it-IT')}</span></p>
     `;
   }
   
-  // Crea l'HTML dinamicamente
+  // Crea l'HTML dinamicamente - ogni dato va a capo con spaziatura uniforme
   container.innerHTML = `
-    <h3 style="color: white; margin: 0;">${nome}</h3>
-    <div class="riga">
-      <p style="margin: 0;"><span style="color: ${categoryHex};">Incidenti:</span> <span style="color: white;">${incidenti.toLocaleString('it-IT')}</span></p>
-      ${feritiMortiHTML}
-    </div>
+    <h3 style="color: white; margin: 0 0 0.5em 0;">${nome}</h3>
+    <p style="margin: 0.5em 0 0 0;"><span style="color: ${categoryHex};">Incidenti:</span> <span style="color: white;">${incidenti.toLocaleString('it-IT')}</span></p>
+    ${feritiMortiHTML}
   `;
 }
 
@@ -791,11 +789,12 @@ function createLegends() {
   if (!document.getElementById('legend')) {
     let legend = document.createElement('div');
     legend.id = 'legend';
-    // Applichiamo gli stessi stili della classe `.container` via JS inline (responsive)
+    // Stili con solo bordo, senza background
     legend.style.display = 'none';
     legend.style.position = 'fixed';
-    legend.style.backgroundColor = 'rgba(217,217,217,0.125)';
-    legend.style.width = (width * 0.19) + 'px'; // 365px @ 1920px
+    legend.style.backgroundColor = 'transparent';
+    legend.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+    legend.style.width = (width * 0.22) + 'px'; // Allargata per contenere meglio gli elementi
     legend.style.padding = '1.5em';
     legend.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
     legend.style.display = 'flex';
@@ -803,7 +802,7 @@ function createLegends() {
     legend.style.justifyContent = 'left';
     legend.style.gap = '1em';
     legend.style.left = SEZIONE_MARGIN + 'px';
-    legend.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px
+    legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso
     legend.style.boxSizing = 'border-box';
     legend.style.zIndex = '999';
     document.body.appendChild(legend);
@@ -813,17 +812,20 @@ function createLegends() {
   if (!document.getElementById('catCausaContainer')) {
     let cat = document.createElement('div');
     cat.id = 'catCausaContainer';
-    // Applichiamo inline gli stessi stili di `.catCausa` (responsive)
+    // Stili con solo bordo, senza background (come legenda)
     cat.style.display = 'none';
     cat.style.position = 'fixed';
-    cat.style.width = (width * 0.26) + 'px'; // 500px @ 1920px
+    cat.style.backgroundColor = 'transparent';
+    cat.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+    cat.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
+    cat.style.width = (width * 0.22) + 'px'; // Ridotta per stringere la box
     cat.style.padding = '1.5em';
     cat.style.display = 'flex';
     cat.style.flexDirection = 'column';
     cat.style.justifyContent = 'left';
     cat.style.gap = '1em';
-    cat.style.left = (SEZIONE_MARGIN + width * 0.21) + 'px'; // +403px @ 1920px
-    cat.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px - allineato con legenda
+    cat.style.left = (SEZIONE_MARGIN + width * 0.24) + 'px'; // Allineato dopo legenda allargata
+    cat.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso, allineata con legenda
     cat.style.color = 'white';
     cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
     cat.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
@@ -832,6 +834,7 @@ function createLegends() {
     cat.style.pointerEvents = 'none';
     cat.style.boxSizing = 'border-box';
     cat.style.zIndex = '999';
+    cat.style.transition = 'background-color 0.3s ease';
     document.body.appendChild(cat);
   }
 }
@@ -842,17 +845,20 @@ function placeCatCausaContainer() {
   if (!container) {
     container = document.createElement('div');
     container.id = 'catCausaContainer';
-    // Applichiamo inline gli stessi stili di `.catCausa` (responsive)
+    // Stili con solo bordo, senza background (come legenda)
     container.style.display = 'none';
     container.style.position = 'fixed';
-    container.style.width = (width * 0.26) + 'px'; // 500px @ 1920px
+    container.style.backgroundColor = 'transparent';
+    container.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+    container.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
+    container.style.width = (width * 0.22) + 'px'; // Ridotta per stringere la box
     container.style.padding = '1.5em';
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
     container.style.justifyContent = 'left';
     container.style.gap = '1em';
-    container.style.left = (SEZIONE_MARGIN + width * 0.21) + 'px'; // +403px @ 1920px
-    container.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px
+    container.style.left = (SEZIONE_MARGIN + width * 0.24) + 'px'; // Allineato dopo legenda allargata
+    container.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso
     container.style.color = 'white';
     container.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
     container.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
@@ -861,6 +867,7 @@ function placeCatCausaContainer() {
     container.style.pointerEvents = 'none';
     container.style.boxSizing = 'border-box';
     container.style.zIndex = '999';
+    container.style.transition = 'background-color 0.3s ease';
     document.body.appendChild(container);
   }
   return container;
@@ -875,7 +882,7 @@ function updateLegendVisibility() {
     if (legend) {
       legend.style.display = 'flex';
       legend.style.left = SEZIONE_MARGIN + 'px';
-      legend.style.top = (SEZIONE_MARGIN + width * 0.03125) + 'px'; // +60px @ 1920px
+      legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Allineata con categoria selezionata
 
       // Imposta il contenuto in base al tipo di visualizzazione
       if (!showBars) {
@@ -955,12 +962,19 @@ function updateLegendVisibility() {
         r1.style.flexDirection = 'row';
         r1.style.alignItems = 'center';
         r1.style.gap = '1em';
+        // Container per il cubo con larghezza fissa per allineamento
+        let cubeWrapper = document.createElement('div');
+        cubeWrapper.style.width = '88px';
+        cubeWrapper.style.flexShrink = '0';
+        cubeWrapper.style.display = 'flex';
+        cubeWrapper.style.alignItems = 'center';
+        cubeWrapper.style.justifyContent = 'center';
         let cubeCanvas = createLegendCubeCanvasStyled(88);
-        cubeCanvas.style.marginRight = (width * 0.0042) + 'px'; // 8px @ 1920px
-        cubeCanvas.style.flexShrink = '0';
-        r1.appendChild(cubeCanvas);
+        cubeWrapper.appendChild(cubeCanvas);
+        r1.appendChild(cubeWrapper);
         let t1 = document.createElement('div');
         t1.style.color = 'white';
+        t1.style.flex = '1';
         t1.textContent = 'altezza proporzionale al numero di soggetti lesi';
         r1.appendChild(t1);
         legend.appendChild(r1);
@@ -970,14 +984,23 @@ function updateLegendVisibility() {
         r2.style.flexDirection = 'row';
         r2.style.alignItems = 'center';
         r2.style.gap = '1em';
+        // Container per il gradiente con stessa larghezza del cubo
+        let gradWrapper = document.createElement('div');
+        gradWrapper.style.width = '88px';
+        gradWrapper.style.flexShrink = '0';
+        gradWrapper.style.display = 'flex';
+        gradWrapper.style.alignItems = 'center';
+        gradWrapper.style.justifyContent = 'center';
         let grad = document.createElement('div');
-        grad.style.width = '10em';
+        grad.style.width = '100%';
         grad.style.height = '0.5em';
         grad.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
         grad.style.background = 'linear-gradient(to right, #ffffff, var(--orange))';
-        r2.appendChild(grad);
+        gradWrapper.appendChild(grad);
+        r2.appendChild(gradWrapper);
         let t2 = document.createElement('div');
         t2.style.color = 'white';
+        t2.style.flex = '1';
         t2.textContent = 'opacità proporzionale alla percentuale di incidenti mortali';
         r2.appendChild(t2);
         legend.appendChild(r2);
@@ -1809,92 +1832,102 @@ function drawCubo(fadeOut) {
 
 // Crea un cubo nello stile di sezionequinta per la legenda
 function createLegendCubeCanvasStyled(size) {
-  // Crea il canvas
+  // Crea il canvas con risoluzione alta per display Retina
   const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
+  const dpr = window.devicePixelRatio || 1;
+  const scaledSize = size * dpr;
+  
+  canvas.width = scaledSize;
+  canvas.height = scaledSize;
   canvas.style.width = size + 'px';
   canvas.style.height = size + 'px';
   
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, size, size);
   
-  // Posizioni e dimensioni
+  // Abilita antialiasing migliore
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  
+  // Parametri del cubo (stesso stile della sezione 5)
   const centerX = size / 2;
-  const centerY = size / 2.2;
-  const halfWidth = size * 0.22;
-  const sideHeight = size * 0.35;
+  const centerY = size * 0.35; // Spostato più in alto per evitare taglio
+  const semilatoQuadrato = size * 0.25; // Dimensione proporzionale
+  const altezzaLatiVerticali = semilatoQuadrato * 1.7;
   
-  // Calcoli per la rotazione isometrica (45 gradi)
-  const angle = Math.PI / 4;
-  const cosine = Math.cos(angle);
-  const sine = Math.sin(angle);
-  const squashFactor = 0.38;
+  // Rotazione isometrica (45 gradi)
+  const angoloRotazione = Math.PI / 4;
+  const fattoreSchiacciamento = 0.38;
   
-  // Funzione per ruotare i punti
-  function rotatePoint(x, y) {
-    let rotatedX = x * cosine - y * sine;
-    let rotatedY = (x * sine + y * cosine) * squashFactor;
+  // Punti base del quadrato
+  const puntiBaseQuadrato = [
+    {x: -semilatoQuadrato, y: -semilatoQuadrato},
+    {x: semilatoQuadrato, y: -semilatoQuadrato},
+    {x: semilatoQuadrato, y: semilatoQuadrato},
+    {x: -semilatoQuadrato, y: semilatoQuadrato}
+  ];
+  
+  // Applica rotazione e schiacciamento
+  const applicaRotazioneESchiacciamento = (punto) => {
+    const coseno = Math.cos(angoloRotazione);
+    const seno = Math.sin(angoloRotazione);
+    const xRuotato = punto.x * coseno - punto.y * seno;
+    const yRuotato = (punto.x * seno + punto.y * coseno) * fattoreSchiacciamento;
     return {
-      x: centerX + rotatedX,
-      y: centerY + rotatedY
+      x: centerX + xRuotato,
+      y: centerY + yRuotato
     };
-  }
+  };
   
-  // Calcola i 4 punti del top
-  const topLeft = rotatePoint(-halfWidth, -halfWidth);
-  const topRight = rotatePoint(halfWidth, -halfWidth);
-  const bottomRight = rotatePoint(halfWidth, halfWidth);
-  const bottomLeft = rotatePoint(-halfWidth, halfWidth);
+  const puntoAltoSinistra = applicaRotazioneESchiacciamento(puntiBaseQuadrato[0]);
+  const puntoAltoDestra = applicaRotazioneESchiacciamento(puntiBaseQuadrato[1]);
+  const puntoBassoDestro = applicaRotazioneESchiacciamento(puntiBaseQuadrato[2]);
+  const puntoBassoSinistra = applicaRotazioneESchiacciamento(puntiBaseQuadrato[3]);
   
-  // Disegna le due facce laterali (vuote)
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = Math.max(1, size * 0.07);
+  // Colore grigio chiaro
+  const grayColor = '#B0B0B0';
   
-  // Faccia sinistra
+  // Disegna facce laterali TRASPARENTI con solo outline
+  ctx.strokeStyle = grayColor;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+  
+  // Faccia sinistra (solo bordo, no fill)
   ctx.beginPath();
-  ctx.moveTo(bottomLeft.x, bottomLeft.y);
-  ctx.lineTo(bottomRight.x, bottomRight.y);
-  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
-  ctx.lineTo(bottomLeft.x, bottomLeft.y + sideHeight);
+  ctx.moveTo(puntoBassoSinistra.x, puntoBassoSinistra.y);
+  ctx.lineTo(puntoBassoDestro.x, puntoBassoDestro.y);
+  ctx.lineTo(puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali);
+  ctx.lineTo(puntoBassoSinistra.x, puntoBassoSinistra.y + altezzaLatiVerticali);
   ctx.closePath();
   ctx.stroke();
   
-  // Faccia destra
+  // Faccia destra (solo bordo, no fill)
   ctx.beginPath();
-  ctx.moveTo(bottomRight.x, bottomRight.y);
-  ctx.lineTo(topRight.x, topRight.y);
-  ctx.lineTo(topRight.x, topRight.y + sideHeight);
-  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
+  ctx.moveTo(puntoBassoDestro.x, puntoBassoDestro.y);
+  ctx.lineTo(puntoAltoDestra.x, puntoAltoDestra.y);
+  ctx.lineTo(puntoAltoDestra.x, puntoAltoDestra.y + altezzaLatiVerticali);
+  ctx.lineTo(puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali);
   ctx.closePath();
   ctx.stroke();
   
-  // Disegna il top bianco
-  ctx.fillStyle = '#ffffff';
+  // Linea verticale centrale (edge tra le due facce)
   ctx.beginPath();
-  ctx.moveTo(topLeft.x, topLeft.y);
-  ctx.lineTo(topRight.x, topRight.y);
-  ctx.lineTo(bottomRight.x, bottomRight.y);
-  ctx.lineTo(bottomLeft.x, bottomLeft.y);
+  ctx.moveTo(puntoBassoDestro.x, puntoBassoDestro.y);
+  ctx.lineTo(puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali);
+  ctx.stroke();
+  
+  // Disegna la faccia superiore GRIGIA con fill
+  ctx.fillStyle = grayColor;
+  ctx.strokeStyle = grayColor;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(puntoAltoSinistra.x, puntoAltoSinistra.y);
+  ctx.lineTo(puntoAltoDestra.x, puntoAltoDestra.y);
+  ctx.lineTo(puntoBassoDestro.x, puntoBassoDestro.y);
+  ctx.lineTo(puntoBassoSinistra.x, puntoBassoSinistra.y);
   ctx.closePath();
   ctx.fill();
-  ctx.stroke();
-  
-  // Disegna gli spigoli verticali
-  ctx.beginPath();
-  ctx.moveTo(topRight.x, topRight.y);
-  ctx.lineTo(topRight.x, topRight.y + sideHeight);
-  ctx.moveTo(bottomRight.x, bottomRight.y);
-  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
-  ctx.moveTo(bottomLeft.x, bottomLeft.y);
-  ctx.lineTo(bottomLeft.x, bottomLeft.y + sideHeight);
-  ctx.stroke();
-  
-  // Disegna il bordo della base
-  ctx.beginPath();
-  ctx.moveTo(bottomLeft.x, bottomLeft.y + sideHeight);
-  ctx.lineTo(bottomRight.x, bottomRight.y + sideHeight);
-  ctx.lineTo(topRight.x, topRight.y + sideHeight);
   ctx.stroke();
   
   return canvas;
@@ -1945,14 +1978,19 @@ function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, 
   // Punti della base (in basso, senza troncamento)
   let bL0 = rot(base[3], 0);
   let bL1 = rot(base[0], 0);
-  let L0 = {x: bL0.x, y: 0};
-  let L1 = {x: bL1.x, y: 0};
+  // Crea un punto centrale unico che scende più in basso per formare una punta
+  let centerOffset = half * 0.5; // Offset per far scendere il punto centrale
+  let centerPoint = {x: 0, y: centerOffset}; // Punto centrale unico
+  let L0 = {x: bL0.x, y: 0}; // Punto esterno sinistro sulla linea
+  let L1 = centerPoint; // Punto centrale che scende
   let L2 = rot(base[0], sideH);
   let L3 = rot(base[3], sideH);
   let L = [L0, L1, L2, L3];
   
   let mirror = (pt) => ({x: -pt.x, y: pt.y});
-  let R = [mirror(L0), mirror(L1), mirror(L2), mirror(L3)];
+  let R0 = {x: -bL0.x, y: 0}; // Punto esterno destro sulla linea
+  let R1 = centerPoint; // Stesso punto centrale
+  let R = [R0, R1, mirror(L2), mirror(L3)];
   
   // Lati con gradiente bianco-arancione
   if (sideH > 0) {
@@ -1960,15 +1998,17 @@ function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, 
     noStroke();
     quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
     quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
-    // Outline nero per effetto giuntura
-    push();
-    stroke(0, 140 * cubeOpacity);
-    strokeWeight(1.2);
-    strokeJoin(ROUND);
-    noFill();
-    quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
-    quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
-    pop();
+    // Outline nero per effetto giuntura - solo in modalità colonna
+    if (trans > 0.5) {
+      push();
+      stroke(0, 140 * cubeOpacity);
+      strokeWeight(1.2);
+      strokeJoin(ROUND);
+      noFill();
+      quad(L[0].x, L[0].y, L[1].x, L[1].y, L[2].x, L[2].y, L[3].x, L[3].y);
+      quad(R[0].x, R[0].y, R[1].x, R[1].y, R[2].x, R[2].y, R[3].x, R[3].y);
+      pop();
+    }
   }
   
   // Top del cubo
@@ -1978,8 +2018,13 @@ function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, 
   } else {
     fill(0, 0, 0, 255 * cubeOpacity);
   }
-  stroke(0, 255 * cubeOpacity);
-  strokeWeight(1.2);
+  // Bordo nero solo in modalità colonna
+  if (trans > 0.5) {
+    stroke(0, 255 * cubeOpacity);
+    strokeWeight(1.2);
+  } else {
+    noStroke();
+  }
   strokeJoin(ROUND);
   quad(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
   pop();
@@ -2664,14 +2709,18 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     // Titolo responsive (coerente con transizione)
     let titleSize = constrain(width * 0.021, 20, 48);
     textSize(titleSize);
-    textAlign(LEFT, TOP);
-    let yPos = margin;
+    textAlign(LEFT, CENTER);
+    // Allinea il centro del titolo al centro della freccia back-arrow
+    // La freccia è a top: calc(100px + 15px) = 115px
+    // L'altezza della freccia è clamp(40px, 3.5vw, 50px)
+    let arrowHeight = constrain(width * 0.035, 40, 50); // clamp(40px, 3.5vw, 50px)
+    let titleYPos = 115 + arrowHeight / 2;
     let titolo = categoriaSelezionata.replace(/-/g, ' ');
     if (categoriaSelezionata === 'cause-esterne-concomitanti') {
       titolo = 'cause esterne e concomitanti';
     }
-    text(titolo.toUpperCase(), margin, yPos);
-    yPos += titleSize * 1.8;
+    text(titolo.toUpperCase(), margin, titleYPos);
+    let yPos = titleYPos + titleSize;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
     let categoryColor = getOverlayColor(categoriaSelezionata);
@@ -2770,6 +2819,13 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     // Reset xPos per la seconda passata (centro, come sopra)
     xPos = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
     
+    // Disegna la linea orizzontale bianca PRIMA dei parallelepipedi (così stanno sopra)
+    push();
+    stroke(255);
+    strokeWeight(1);
+    line(SEZIONE_MARGIN, height - 100, width - SEZIONE_MARGIN, height - 100);
+    pop();
+    
     // Seconda passata: disegna tutti i cubi/barre (una per sottocausa). categoryData = getCategoriaData(categoriaSelezionata);
     // categoriaSelezionata impostata da navbar (sezione Responsabilità) via selezionaDaNavbar(id) o da click in sez. 7.
     for (let i = 0; i < numRows - 1; i++) {
@@ -2851,6 +2907,9 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     const catContainer = placeCatCausaContainer();
     if (catContainer) {
       if (hoveredSezioneOttavaItem === null) {
+        // Rimuovi background arancione quando non c'è hover
+        catContainer.style.backgroundColor = 'transparent';
+        
         // Cambia il testo in base allo stato
         let testoIstruzione = '';
         if (categoriaSelezionata === null) {
@@ -2867,20 +2926,15 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
         catContainer.innerHTML = `
           <h3 style="color: white; margin: 0;">${testoIstruzione}</h3>
         `;
+      } else {
+        // Aggiungi background arancione opaco quando c'è hover
+        catContainer.style.backgroundColor = 'rgba(255, 139, 67, 0.15)';
       }
     }
 
     // Reset hover per il prossimo frame
     hoveredSezioneOttavaItem = null;
   }
-  
-  // Linea orizzontale bianca a 100px dal basso (rispetta i margin laterali)
-  push();
-  stroke(255);
-  strokeWeight(1);
-
-  line(SEZIONE_MARGIN, height - 100, width - SEZIONE_MARGIN, height - 100);
-  pop();
 
   // Linea verticale sul lato destro: appare con easing legato a `sezioneOttavaTrans`
   {
