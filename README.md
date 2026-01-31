@@ -54,15 +54,14 @@ Laurea Triennale in Design della Comunicazione
 
 
 <p style="display:flex; align-items:center; gap:20px;">
-  <span style="display:inline-block; width:160px; height:160px;">
+  <span style="display:inline-block; width:160px; height:120px;">
     <img src="./Assets/Images/LOGO.densitydesign.svg" alt="DensityDesign Lab"
          style="width:160px; height:160px; object-fit:contain;">
-  </span>
 
-  <span style="display:inline-flex; align-items:center; justify-content:center; width:300px; height:160px; background:#fff;">
+  <span style="display:inline-flex; align-items:center; justify-content:center; width:300px; height:120px; background:#fff;">
     <img src="./Assets/Images/LOGO.NECST.svg" alt="NECST Lab"
          style="width:260px; height:120px; object-fit:contain;">
-  </span>
+ 
 </p>
 
 
