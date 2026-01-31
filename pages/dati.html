@@ -16,9 +16,9 @@
     <!-- Navbar -->
     <nav id="navbar" class="visible">
       <div class="nav-left">
-        <a href="../index.html" class="nav-item" data-section="0">Intro</a>
-        <a href="../index.html#incidenti" class="nav-item" data-section="1">Incidenti</a>
-        <a href="../index.html#responsabilita" class="nav-item" data-section="2">Responsabilità</a>
+        <a href="../index.html" class="nav-item" data-section="0" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Intro</a>
+        <a href="../index.html#incidenti" class="nav-item" data-section="1" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Incidenti</a>
+        <a href="../index.html#responsabilita" class="nav-item" data-section="2" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
         <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
         <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3" style="display: none;">Dettaglio</a>
       </div>
@@ -44,7 +44,7 @@
 
       <div class="nav-right">
         <a class="nav-button" href="chi_siamo.html">Chi siamo</a>
-        <a class="nav-button" href="dati.html">I dati</a>
+        <a class="nav-button active" href="dati.html">I dati</a>
       </div>
     </nav>
     

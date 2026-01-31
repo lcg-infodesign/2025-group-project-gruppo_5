@@ -100,8 +100,8 @@ let sezioneOttavaFadeIn = 0; // fade in della sezione 8
 let sezioneOttavaItemOpacities = {}; // Traccia l'opacità animata per ogni elemento (nome -> opacità corrente)
 let sezioneOttavaItemOpacityTargets = {}; // Target opacità per l'animazione
 // Margine usato per il layout interno della sezione 8 e per le legende
-const SEZIONE_MARGIN = 100;
-const SEZIONE_OTTAVA_OPACITY_EASING = 0.12; // Velocità dell'easing per l'opacità (più basso = più lento)
+let SEZIONE_MARGIN = 100;
+const SEZIONE_OTTAVA_OPACITY_EASING = 0.06; // Velocità dell'easing per l'opacità (più basso = più lento)
 
 // Frecce navigazione sezione 8
 let frecceSezioneOttava = {
@@ -368,6 +368,11 @@ document.addEventListener('keydown', function(event) {
   navItems.forEach(function(item) {
     item.addEventListener('click', function(e) {
       if (e.target.closest && e.target.closest('.dropdown-item')) return;
+      // Se il link è `#dettaglio` e siamo già nella vista dettaglio, ignora il click
+      if (item.id === 'nav-categoria' && categoriaSelezionata !== null && scrollY >= 6500) {
+        e.preventDefault();
+        return;
+      }
       e.preventDefault();
       let section = parseInt(item.getAttribute('data-section'));
       
@@ -398,10 +403,23 @@ document.addEventListener('keydown', function(event) {
     });
   });
 
-  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne e concomitanti → selezionaDaNavbar
-  let dropMenu = document.getElementById('dropdown-responsabilita-menu');
-  if (dropMenu) {
-    dropMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
+  // Dropdown principale: click sulle categorie quando NON sei in una categoria
+  let dropdownMain = document.getElementById('dropdown-main');
+  if (dropdownMain) {
+    dropdownMain.querySelectorAll('.dropdown-item').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let cat = link.getAttribute('data-categoria');
+        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
+      });
+    });
+  }
+  
+  // Dropdown categoria: click sulle categorie quando SEI in una categoria
+  let dropdownCategoria = document.getElementById('dropdown-categoria');
+  if (dropdownCategoria) {
+    dropdownCategoria.querySelectorAll('.dropdown-item').forEach(function(link) {
       link.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -418,6 +436,21 @@ const HASH_CATEGORIE = ['#conducenti', '#non-conducenti', '#cause-esterne-concom
 
 function handleURLHash() {
   const hash = window.location.hash;
+  // Se la pagina è stata ricaricata (refresh), non seguire i permalink categorie
+  // Questo evita che un refresh apra automaticamente una categoria di dettaglio
+  let navType = null;
+  try {
+    const entries = performance.getEntriesByType('navigation');
+    if (entries && entries.length > 0) navType = entries[0].type;
+    else if (performance.navigation) navType = (performance.navigation.type === 1) ? 'reload' : 'navigate';
+  } catch (e) {
+    navType = null;
+  }
+  if (navType === 'reload') {
+    // Rimuovi l'hash senza ricaricare la pagina e resta all'indice
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    return;
+  }
   
   if (hash === '#incidenti') {
     currentCheckpointIndex = 3;
@@ -536,11 +569,18 @@ function draw() {
 function handleAutoScroll() { //scroll automatico verso i checkpoint
   if (scrollTarget > -1) {
     isScrolling = true;
-    if (abs(scrollY - scrollTarget) > scrollVelocita) {
+    
+    // Aumenta velocità quando si torna indietro nell'intervallo tra 5200 e 6500
+    let currentVelocita = scrollVelocita;
+    if (scrollY > 5200 && scrollTarget <= 5200 && scrollY <= 6500) {
+      currentVelocita = 100; // Molto più veloce quando si torna indietro da 6500 a 5200
+    }
+    
+    if (abs(scrollY - scrollTarget) > currentVelocita) {
       if (scrollY < scrollTarget) {
-        scrollY += scrollVelocita;
+        scrollY += currentVelocita;
       } else {
-        scrollY -= scrollVelocita;
+        scrollY -= currentVelocita;
       }
     } else {
       scrollY = scrollTarget;
@@ -944,7 +984,16 @@ function updateAnimations() {
     let targetMorti = mortiOggi * progress;
     let targetFeriti = feritiOggi * progress;
 
-    if (counterAnimazioneAutomatica && !counterAnimazioneCompletata && frameCount - counterAnimazioneInizio < 240) {
+    // Controlla se si proviene da chi_siamo o dati
+    let skipAnimation = sessionStorage.getItem('skipCounterAnimation') === 'true';
+    if (skipAnimation) {
+      // Rimuovi il flag dopo averlo letto
+      sessionStorage.removeItem('skipCounterAnimation');
+      // Salta direttamente all'animazione completata
+      counterAnimazioneCompletata = true;
+    }
+    
+    if (counterAnimazioneAutomatica && !counterAnimazioneCompletata && frameCount - counterAnimazioneInizio < 240 && !skipAnimation) {
       // Animazione smooth più lenta solo per la PRIMA apparizione nella sezione 6
       animIncidenti += (targetIncidenti - animIncidenti) * 0.03;
       animMorti += (targetMorti - animMorti) * 0.03;
@@ -1126,6 +1175,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   
   // Aggiorna quale sezione è attiva
   let navItems = document.querySelectorAll('.nav-item');
+  let navResponsabilita = document.getElementById('nav-responsabilita');
   
   // Se siamo nella sezione dettaglio (scrollY >= 6500 e categoria selezionata), attiva Responsabilità + categoria
   let inDettaglio = scrollY >= 6500 && categoriaSelezionata !== null;
@@ -1137,12 +1187,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
-    // Nascondi la tendina (Conducenti / Non conducenti / Cause esterne e concomitanti) quando sei già nel dettaglio
-    let drop = document.querySelector('.nav-item.dropdown');
-    if (drop) drop.classList.add('dropdown-no-tendina');
+    // Attiva anche il link Responsabilità
+    if (navResponsabilita) navResponsabilita.classList.add('active');
   } else {
-    let drop = document.querySelector('.nav-item.dropdown');
-    if (drop) drop.classList.remove('dropdown-no-tendina');
     navItems.forEach((item, index) => {
       if (index === sezioneAttiva) {
         item.classList.add('active');
@@ -1150,6 +1197,10 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
         item.classList.remove('active');
       }
     });
+    // Attiva Responsabilità quando siamo nella sezione responsabilità (sezione 2)
+    if (navResponsabilita && sezioneAttiva === 2) {
+      navResponsabilita.classList.add('active');
+    }
   }
   
   // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
@@ -1291,18 +1342,25 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   }
 }
 
-// NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio e evidencia voce dropdown attiva
+// NAVBAR CATEGORIA: Aggiorna la visualizzazione della categoria e dei dropdown
 function updateNavbarCategoria() {
   let navCategoria = document.getElementById('nav-categoria');
   let navSeparator = document.getElementById('nav-separator');
+  let dropdownMain = document.getElementById('dropdown-main');
+  let dropdownCategoria = document.getElementById('dropdown-categoria');
   if (!navCategoria) return;
   
-  // Mostra/nascondi in base a se siamo nella sezione dettaglio
+  // Se siamo nella sezione dettaglio (categoria selezionata)
   if (categoriaSelezionata !== null && scrollY >= 6500) {
-    navCategoria.style.display = 'block';
-    if (navSeparator) navSeparator.style.display = 'inline';
+    // Mostra separatore e categoria
+    navSeparator.style.display = 'inline';
+    navCategoria.style.display = 'inline';
     
-    // Aggiorna il testo in base alla categoria
+    // Nascondi dropdown principale, mostra dropdown categoria
+    if (dropdownMain) dropdownMain.style.display = 'none';
+    if (dropdownCategoria) dropdownCategoria.style.display = '';
+    
+    // Aggiorna il testo della categoria
     if (categoriaSelezionata === 'conducenti') {
       navCategoria.textContent = 'Conducenti';
     } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
@@ -1310,9 +1368,34 @@ function updateNavbarCategoria() {
     } else if (categoriaSelezionata === 'non-conducenti') {
       navCategoria.textContent = 'Non conducenti';
     }
+    
+    // Nascondi nel dropdown categoria solo la categoria corrente
+    if (dropdownCategoria) {
+      let items = dropdownCategoria.querySelectorAll('.dropdown-item');
+      items.forEach(item => {
+        if (item.dataset.categoria === categoriaSelezionata) {
+          item.classList.add('hidden');
+        } else {
+          item.classList.remove('hidden');
+        }
+      });
+    }
   } else {
+    // Nascondi separatore e categoria
+    navSeparator.style.display = 'none';
     navCategoria.style.display = 'none';
-    if (navSeparator) navSeparator.style.display = 'none';
+    
+    // Mostra dropdown principale, nascondi dropdown categoria
+    if (dropdownMain) dropdownMain.style.display = '';
+    if (dropdownCategoria) dropdownCategoria.style.display = 'none';
+    
+    // Mostra tutte le categorie nel dropdown principale
+    if (dropdownMain) {
+      let items = dropdownMain.querySelectorAll('.dropdown-item');
+      items.forEach(item => {
+        item.classList.remove('hidden');
+      });
+    }
   }
 }
 
@@ -1422,9 +1505,9 @@ function drawSezioneGrigliaIncidenti() {
     grigliaIncidentiSottotitoloOpacita = 0;
   }
   
-  // Layout griglia
-  let dimensioneQuadratino = width * 0.008;
-  dimensioneQuadratino = constrain(dimensioneQuadratino, 8, 15);
+  // Layout griglia: usa la variabile globale per coerenza (evita valori non inizializzati)
+  dimensioneQuadratino = width * 0.008;
+  dimensioneQuadratino = constrain(dimensioneQuadratino, 8, 18);
   let spaziatura = dimensioneQuadratino * 0.5;
   let quadratiniPerRiga = floor(width * 0.4 / (dimensioneQuadratino + spaziatura));
   quadratiniPerRiga = constrain(quadratiniPerRiga, 30, 60);
@@ -2324,14 +2407,21 @@ function drawTransizioneSezioneOttava() {
   let fadeInUI = map(easedProgress, 0.5, 1, 0, 255);
   fadeInUI = constrain(fadeInUI, 0, 255);
   
-  // Disegna titolo con fade in
+  // Disegna titolo con fade in (allineato a sezione 8)
   if (fadeInUI > 0) {
     push();
     fill(255, 255, 255, fadeInUI);
     textFont(lcdFont);
-    textSize(40);
+    // Titolo responsivo (approx 40px @ 1920)
+    let titleSize = constrain(width * 0.021, 20, 48);
+    textSize(titleSize);
     textAlign(LEFT, TOP);
-    text(categoriaSelezionata.toUpperCase(), 100, 100);
+    let margin = SEZIONE_MARGIN;
+    let titolo = categoriaSelezionata.replace(/-/g, ' ');
+    if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      titolo = 'cause esterne e concomitanti';
+    }
+    text(titolo.toUpperCase(), margin, margin);
     pop();
   }
   
@@ -2442,7 +2532,9 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     const margin = SEZIONE_MARGIN; // spazio interno su tutti i lati
     fill(255, 255, 255, 255);
     textFont(lcdFont);
-    textSize(40);
+    // Titolo responsive (coerente con transizione)
+    let titleSize = constrain(width * 0.021, 20, 48);
+    textSize(titleSize);
     textAlign(LEFT, TOP);
     let yPos = margin;
     let titolo = categoriaSelezionata.replace(/-/g, ' ');
@@ -2450,15 +2542,15 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       titolo = 'cause esterne e concomitanti';
     }
     text(titolo.toUpperCase(), margin, yPos);
-    yPos += 80;
+    yPos += titleSize * 1.8;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
     let categoryColor = getOverlayColor(categoriaSelezionata);
     let numRows = categoryData.getRowCount();
     let baseQuadSize = dimensioneQuadratino || 30; // Usa la variabile calcolata nella sezione 7, fallback a 30 se non definita
 
-    // Desired spacing between squares; we'll reduce it if total width overflows the available area
-    const DESIRED_SPACING = 80;
+    // Desired spacing between squares; responsive based on viewport and base quad size
+    const DESIRED_SPACING = max(baseQuadSize * 2.2, constrain(width * 0.0417, 40, 160));
 
     // Pre-calcola le dimensioni dei cubi (diagonale del quadrato) e la somma delle larghezze
     let sizes = [];
@@ -2779,4 +2871,8 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   // Aumenta altezza per includere sezione 8 con transizione più lunga (fino a ~6700px)
   document.body.style.height = (windowHeight * 4) + 'px';
+  // Ricalcola margine e dimensione quadratini in modo responsive, così
+  // anche se si salta la sezione 7 i calcoli della sezione 8 saranno corretti.
+  SEZIONE_MARGIN = constrain(floor(windowWidth * 0.052), 40, 160); // ~100px @1920
+  dimensioneQuadratino = constrain(windowWidth * 0.008, 8, 18);
 }

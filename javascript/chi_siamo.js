@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function startCounterAnimation() {
-    // Aggiornamento in tempo reale come in sketch.js
+    // Aggiornamento in tempo reale senza animazione
     function updateCounter() {
       let now = new Date();
       let secondiOggi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -316,10 +316,10 @@ document.addEventListener('DOMContentLoaded', function() {
       let targetMorti = mortiOggi * progress;
       let targetFeriti = feritiOggi * progress;
       
-      // Animazione smooth verso i valori target
-      animIncidenti += (targetIncidenti - animIncidenti) * 0.03;
-      animMorti += (targetMorti - animMorti) * 0.03;
-      animFeriti += (targetFeriti - animFeriti) * 0.03;
+      // Imposta direttamente i valori senza animazione
+      animIncidenti = targetIncidenti;
+      animMorti = targetMorti;
+      animFeriti = targetFeriti;
       
       updateNavbarCounter();
       

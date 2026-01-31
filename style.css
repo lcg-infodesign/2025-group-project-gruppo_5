@@ -203,6 +203,11 @@ h3{
   color: var(--orange);
 }
 
+.nav-button.active {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
 .nav-item:hover {
   color: var(--orange);
   opacity: 0.5;
@@ -246,8 +251,8 @@ h3{
 .dropdown-menu {
   display: none; /* Nascondi la tendina di default */
   position: absolute;
-  top: 100%; 
-  left: 0;
+  top: 0; 
+  left: 100%;
   background-color: #000;
   border: none;
   border-radius: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */

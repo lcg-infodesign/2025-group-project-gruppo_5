@@ -48,19 +48,40 @@ function loadCSVData() {
         mortiOggi = Math.floor(mortiTotali / 366);
         feritiOggi = Math.floor(feritiTotali / 366);
         
-        // Aggiorna il counter nella navbar
-        updateNavbarCounter();
-        updateCounterTooltip();
+        // Avvia l'aggiornamento in tempo reale
+        startRealtimeCounter();
         break;
       }
     }
   });
 }
 
-function updateNavbarCounter() {
-  document.getElementById('nav-incidenti').textContent = incidentiOggi;
-  document.getElementById('nav-morti').textContent = mortiOggi;
-  document.getElementById('nav-feriti').textContent = feritiOggi;
+function startRealtimeCounter() {
+  // Aggiornamento in tempo reale del counter
+  function updateCounter() {
+    let now = new Date();
+    let secondiOggi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    let secondiTotali = 24 * 3600;
+    let progress = secondiOggi / secondiTotali;
+    
+    let currentIncidenti = Math.floor(incidentiOggi * progress);
+    let currentMorti = Math.floor(mortiOggi * progress);
+    let currentFeriti = Math.floor(feritiOggi * progress);
+    
+    // Aggiorna il counter nella navbar
+    updateNavbarCounter(currentIncidenti, currentMorti, currentFeriti);
+    updateCounterTooltip();
+    
+    requestAnimationFrame(updateCounter);
+  }
+  
+  updateCounter();
+}
+
+function updateNavbarCounter(incidenti, morti, feriti) {
+  document.getElementById('nav-incidenti').textContent = incidenti;
+  document.getElementById('nav-morti').textContent = morti;
+  document.getElementById('nav-feriti').textContent = feriti;
 }
 
 function updateCounterTooltip() {
