@@ -54,7 +54,7 @@ Laurea Triennale in Design della Comunicazione
 
 
 <p>
-  <span style="display: inline-block; height: 140px; padding: 10px 16px; vertical-align: middle;">
+  <span style="display: inline-block; height: 120px; padding: 10px 16px; vertical-align: middle;">
     <img src="./Assets/Images/LOGO.densitydesign.svg" alt="DensityDesign Lab" style="height: 100%;">
   </span>
   &nbsp;&nbsp;&nbsp;&nbsp;
