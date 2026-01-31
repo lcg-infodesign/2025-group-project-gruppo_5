@@ -19,16 +19,59 @@ function setup() {
     button.mousePressed(() => {
       // Accedi all'elemento HTML nativo
       let buttonElement = button.elt;
-      let oldCategory = buttonElement.nextElementSibling;
-      
-      if (oldCategory && oldCategory.classList.contains('oldCategory')) {
-        if (oldCategory.style.display === "block") {
-          oldCategory.style.display = "none";
-          buttonElement.classList.remove("active");
-        } else {
-          oldCategory.style.display = "block";
-          buttonElement.classList.add("active");
+
+      // Cerca il prossimo sibling con classe 'oldCategory' (salta nodi intermedi)
+      function findOldCategory(el) {
+        let sib = el.nextElementSibling;
+        while (sib) {
+          if (sib.classList && sib.classList.contains('oldCategory')) return sib;
+          sib = sib.nextElementSibling;
         }
+        return null;
+      }
+
+      let oldCategory = findOldCategory(buttonElement);
+      if (!oldCategory) return;
+
+      // Accordion behaviour: chiudi tutte le altre tendine per evitare spostamenti multipli
+      const allOld = document.querySelectorAll('.oldCategory');
+      allOld.forEach(oc => {
+        if (oc !== oldCategory) {
+          oc.style.display = 'none';
+          // rimuovi eventuali stili inline impostati in precedenza
+          oc.style.marginLeft = '';
+          oc.style.width = '';
+          oc.style.maxWidth = '';
+          oc.style.paddingLeft = '';
+        }
+      });
+      // Rimuovi active da tutti i bottoni prima di impostare lo stato sul clickato
+      document.querySelectorAll('.newCategory').forEach(b => b.classList.remove('active'));
+
+      // Toggle della tendina associata
+      if (oldCategory.style.display === 'block') {
+        oldCategory.style.display = 'none';
+        // reset inline styles
+        oldCategory.style.marginLeft = '';
+        oldCategory.style.width = '';
+        oldCategory.style.maxWidth = '';
+        oldCategory.style.paddingLeft = '';
+        buttonElement.classList.remove('active');
+      } else {
+        // copia i valori di padding/margin/width dal bottone per allineare layout
+        try {
+          const cs = window.getComputedStyle(buttonElement);
+          // applica margin-left e larghezza calcolata per mantenere l'allineamento
+          oldCategory.style.marginLeft = cs.marginLeft;
+          oldCategory.style.width = cs.width;
+          oldCategory.style.maxWidth = cs.maxWidth;
+          oldCategory.style.paddingLeft = cs.paddingLeft;
+          oldCategory.style.boxSizing = 'border-box';
+        } catch (e) {
+          // se qualcosa va storto, non interrompere l'apertura
+        }
+        oldCategory.style.display = 'block';
+        buttonElement.classList.add('active');
       }
     });
   });

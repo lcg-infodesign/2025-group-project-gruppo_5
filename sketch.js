@@ -19,7 +19,8 @@ let scrollCheckpoints = [
   800,    // Sezione 2: Quadrato
   1400,   // Sezione 3: "Ma sai quanti sono"
   2900,   // Sezione 4: Griglia incidenti
-  3300,   // Sezione 5: Cubo feriti
+  3100,   // Sezione 5a: Quadrato 2D fermo
+  3300,   // Sezione 5b: Animazione cubo 3D
   3850,   // Sezione 6: Counter giornaliero (500px dopo sez 5)
   4300,   // Dopo counter - "Ma di chi è la colpa?"
   4900,    // Sezione 7: Griglia responsabilità
@@ -55,12 +56,18 @@ let grigliaIncidentiSottotitoloOpacita = 0; // Opacità sottotitolo finale incid
 let numeroTotaleIncidenti = 0;
 let counterAttuale = 0;
 
-// Sezione 5: Cubo feriti
-let quintaSezioneCaratteriVisibili = 0;
-let quintaSezioneTestoCompleto = 'E OGNUNO DI QUESTI \n HA PROVOCATO MORTI E FERITI';
+// Sezione 5a (3100): Testo introduttivo al cubo
+let sezione5aCaratteriVisibili = 0;
+let sezione5aTestoCompleto = 'MA VEDIAMO IL FENOMENO A 360 GRADI';
+let sezione5aOpacita = 0;
+// Sezione 5b (3300): Animazione cubo
+let sezione5bCaratteriVisibili = 0;
+let sezione5bTestoCompleto = 'OGNI INCIDENTE \n HA PROVOCATO MORTI E FERITI';
+let sezione5bOpacita = 0;
 let cuboRotazione = 0;
 let cuboAnimazioneAutomatica = false;
 let cuboAnimazioneInizio = 0;
+let cuboAnimazioneReverse = false;
 
 // Sezione 6: Counter giornaliero
 let incidentiOggi = 0;
@@ -260,6 +267,26 @@ function setup() {
   let scrollArrowDown = document.getElementById('scroll-arrow-down');
   if (scrollArrowDown) {
     scrollArrowDown.addEventListener('click', function() {
+      // Blocca checkpoint 0 (intro) finché testo non è completo
+      if (currentCheckpointIndex === 0 && introCaratteriVisibili < introTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 1 (quadrato) finché testo non è completo
+      if (currentCheckpointIndex === 1 && quadratoCaratteriVisibili < quadratoTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 2 (terza sezione) finché testo non è completo
+      if (currentCheckpointIndex === 2 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 4 (5a) finché testo non è completo
+      if (currentCheckpointIndex === 4 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length) {
+        return;
+      }
+      // Blocca checkpoint 5 (5b) finché testo non è completo
+      if (currentCheckpointIndex === 5 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length) {
+        return;
+      }
       // Vai al prossimo checkpoint
       if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
         currentCheckpointIndex++;
@@ -323,8 +350,8 @@ function setup() {
   // Aggiungi un listener per le frecce su e giù della tastiera
 document.addEventListener('keydown', function(event) {
   if (event.key === 'ArrowUp') {
-    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 9)
-    if (currentCheckpointIndex >= 9) {
+    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 10)
+    if (currentCheckpointIndex >= 10) {
       return; // Impedisci scroll indietro dal dettaglio
     }
     // Simula il click su scrollArrowUp
@@ -335,8 +362,28 @@ document.addEventListener('keydown', function(event) {
       scrollAccumulator = 0;
     }
   } else if (event.key === 'ArrowDown') {
+    // Blocca checkpoint 0 (intro) finché testo non è completo
+    if (currentCheckpointIndex === 0 && introCaratteriVisibili < introTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 1 (quadrato) finché testo non è completo
+    if (currentCheckpointIndex === 1 && quadratoCaratteriVisibili < quadratoTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 2 (terza sezione) finché testo non è completo
+    if (currentCheckpointIndex === 2 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 4 (5a) finché testo non è completo
+    if (currentCheckpointIndex === 4 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length) {
+      return;
+    }
+    // Blocca checkpoint 5 (5b) finché testo non è completo
+    if (currentCheckpointIndex === 5 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length) {
+      return;
+    }
     // Blocca freccia giù a 5200 se non ha cliccato una categoria
-    if (currentCheckpointIndex === 8 && !hasClickedCategory) {
+    if (currentCheckpointIndex === 9 && !hasClickedCategory) {
       return; // Impedisci scroll in avanti oltre 5200
     }
     // Simula il click su scrollArrowDown
@@ -464,8 +511,39 @@ function mouseWheel(event) {
     return false;
   }
   
-  // Blocca scroll a 5200 (checkpoint index 8) se non ha cliccato una categoria
-  if (currentCheckpointIndex === 8 && !hasClickedCategory && event.delta > 0) {
+  // Blocca checkpoint 0 (intro) finché testo non è completo
+  if (currentCheckpointIndex === 0 && introCaratteriVisibili < introTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 1 (quadrato) finché testo non è completo
+  if (currentCheckpointIndex === 1 && quadratoCaratteriVisibili < quadratoTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 2 (terza sezione) finché testo non è completo
+  if (currentCheckpointIndex === 2 && terzaSezioneCaratteriVisibili < terzaSezioneTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 4 (5a) finché testo non è completo
+  if (currentCheckpointIndex === 4 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length && event.delta > 0) {
+    // Impedisci scroll in avanti da 5a a 5b
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca checkpoint 5 (5b) finché testo non è completo
+  if (currentCheckpointIndex === 5 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length && event.delta > 0) {
+    scrollAccumulator = 0;
+    return false;
+  }
+  
+  // Blocca scroll a 5200 (checkpoint index 9) se non ha cliccato una categoria
+  if (currentCheckpointIndex === 9 && !hasClickedCategory && event.delta > 0) {
     // Impedisci scroll in avanti oltre 5200 e resetta accumulatore
     scrollAccumulator = 0;
     return false;
@@ -563,6 +641,11 @@ function handleAutoScroll() { //scroll automatico verso i checkpoint
       currentVelocita = 100; // Molto più veloce quando si torna indietro da 6500 a 5200
     }
     
+    // Rallenta lo scroll tra 2900 e 3850 per passare attraverso 3100 e 3300
+    if ((scrollY >= 2900 && scrollY <= 3850) || (scrollTarget >= 3100 && scrollTarget <= 3300)) {
+      currentVelocita = 4; // Scroll più lento per non saltare i checkpoint intermedi
+    }
+    
     if (abs(scrollY - scrollTarget) > currentVelocita) {
       if (scrollY < scrollTarget) {
         scrollY += currentVelocita;
@@ -644,18 +727,30 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
     terzaSezioneSottotitoloOpacita = 0;
   }
   
-  // Quinta sezione testo
+  // Quinta sezione testo - RIMOSSO (sostituito da sezione5a e sezione5b)
+  
+  // Sezione 5a (3100): Testo "MA VEDIAMO IL FENOMENO A 360 GRADI"
+  if (scrollY > 3000 && scrollY < 3300) {
+    if (frameCount % 2 === 0 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length) {
+      sezione5aCaratteriVisibili++;
+    }
+  } else if (scrollY >= 3300) {
+    sezione5aCaratteriVisibili = sezione5aTestoCompleto.length;
+  } else {
+    sezione5aCaratteriVisibili = 0;
+  }
+  
+  // Sezione 5b (3300): Testo "E OGNUNO DI QUESTI HA PROVOCATO MORTI E FERITI"
   if (scrollY > 3200 && scrollY < 3600) {
-    if (frameCount % 2 === 0 && quintaSezioneCaratteriVisibili < quintaSezioneTestoCompleto.length) {
-      quintaSezioneCaratteriVisibili++;
+    if (frameCount % 2 === 0 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length) {
+      sezione5bCaratteriVisibili++;
     }
   } else if (scrollY >= 3600) {
-    quintaSezioneCaratteriVisibili = quintaSezioneTestoCompleto.length;
-  } else if (scrollY > 3000 && quintaSezioneCaratteriVisibili > 0) {
-    // Mantieni il testo già scritto tra 3000-3200 per il fade out (non riscrivere)
-    // Non cambiare quintaSezioneCaratteriVisibili
+    sezione5bCaratteriVisibili = sezione5bTestoCompleto.length;
+  } else if (scrollY > 3100 && sezione5bCaratteriVisibili > 0) {
+    // Mantieni il testo già scritto tra 3100-3200 per il fade out
   } else {
-    quintaSezioneCaratteriVisibili = 0;
+    sezione5bCaratteriVisibili = 0;
   }
 }
 
@@ -935,21 +1030,45 @@ function calcTerzaSezioneFadeOut() {
 
 function updateAnimations() {
   // Animazione cubo
-  if (scrollY >= 3150 && !cuboAnimazioneAutomatica) {
-    cuboAnimazioneAutomatica = true;
-    cuboAnimazioneInizio = frameCount;
-  } else if (scrollY < 3000) {
+  if (scrollY >= 3300) {
+    if (!cuboAnimazioneAutomatica || cuboAnimazioneReverse) {
+      cuboAnimazioneAutomatica = true;
+      cuboAnimazioneReverse = false;
+      cuboAnimazioneInizio = frameCount;
+    }
+  } else if (scrollY >= 3100 && scrollY < 3300) {
+    // Tra 3100 e 3300: animazione in reverse
+    if (cuboAnimazioneAutomatica && !cuboAnimazioneReverse) {
+      cuboAnimazioneReverse = true;
+      cuboAnimazioneInizio = frameCount;
+    }
+  } else if (scrollY < 3100) {
+    // Reset completo sotto 3100
     cuboAnimazioneAutomatica = false;
+    cuboAnimazioneReverse = false;
     cuboRotazione = 0;
   }
   
-  if (cuboAnimazioneAutomatica) {
+  if (cuboAnimazioneAutomatica && !cuboAnimazioneReverse) {
+    // Animazione forward (da 2D a 3D)
     let framePassati = frameCount - cuboAnimazioneInizio;
-    cuboRotazione = map(framePassati, 0, 240, 0, 1);
-    cuboRotazione = constrain(cuboRotazione, 0, 1);
-  } else if (scrollY > 3000 && scrollY < 3150) {
-    cuboRotazione = map(scrollY, 3000, 3150, 0, 0.02);
-    cuboRotazione = constrain(cuboRotazione, 0, 0.02);
+    cuboRotazione = map(framePassati, 0, 240, 0.02, 1);
+    cuboRotazione = constrain(cuboRotazione, 0.02, 1);
+  } else if (cuboAnimazioneReverse) {
+    // Animazione reverse (da 3D a 2D)
+    let framePassati = frameCount - cuboAnimazioneInizio;
+    cuboRotazione = map(framePassati, 0, 240, cuboRotazione, 0.02);
+    cuboRotazione = constrain(cuboRotazione, 0.02, 1);
+    
+    // Ferma il reverse quando torna a 0.02
+    if (cuboRotazione <= 0.02) {
+      cuboRotazione = 0.02;
+      cuboAnimazioneReverse = false;
+      cuboAnimazioneAutomatica = false;
+    }
+  } else if (scrollY >= 3100 && scrollY < 3300) {
+    // Tra 3100 e 3300: quadrato 2D fermo
+    cuboRotazione = 0.02;
   }
   
   // Animazione counter giornaliero
@@ -1267,9 +1386,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     detailArrowRight.classList.remove('visible');
   }
   
-  // Freccia giù: nascondi quando sei al checkpoint 4900 (indice 7) o oltre
+  // Freccia giù: nascondi quando sei al checkpoint 5200 (indice 9) o oltre (se non ha cliccato categoria)
   if (scrollArrowDown) {
-    if (currentCheckpointIndex >= 8) {
+    if ((currentCheckpointIndex === 9 && !hasClickedCategory) || currentCheckpointIndex >= 10) {
       scrollArrowDown.style.opacity = '0';
       scrollArrowDown.style.pointerEvents = 'none';
     } else {
@@ -1532,45 +1651,87 @@ function drawSezioneGrigliaIncidenti() {
 }
 
 function drawSezioneQuinta() {
-  // Opacità
-  let quintaSezioneOpacita = 0;
+  // Fade in del cubo (graduale da 3000 a 3100)
+  let cuboOpacita = 0;
   if (scrollY > 3000 && scrollY < 3100) {
-    quintaSezioneOpacita = map(scrollY, 3000, 3100, 0, 255);
-    quintaSezioneOpacita = constrain(quintaSezioneOpacita, 0, 255);
+    cuboOpacita = map(scrollY, 3000, 3100, 0, 255);
+    cuboOpacita = constrain(cuboOpacita, 0, 255);
   } else if (scrollY >= 3100) {
-    quintaSezioneOpacita = 255;
+    cuboOpacita = 255;
   }
   
-  // Fade out (veloce come il testo)
+  // Fade out del cubo (veloce da 3301 a 3450)
   let quintaSezioneFadeOut = 255;
-  if (scrollY > 3350) {
-    quintaSezioneFadeOut = map(scrollY, 3350, 3400, 255, 0);
+  if (scrollY > 3301 && scrollY < 3450) {
+    quintaSezioneFadeOut = map(scrollY, 3301, 3450, 255, 0);
     quintaSezioneFadeOut = constrain(quintaSezioneFadeOut, 0, 255);
+  } else if (scrollY >= 3450) {
+    quintaSezioneFadeOut = 0;
   }
   
-  // Cubo (mostra solo quando ha iniziato l'animazione 3D per evitare flash)
-  if (cuboRotazione > 0.02) {
-    drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut);
+  // Cubo (mostra da scrollY 3000 in poi con fade in e fade out)
+  if (scrollY >= 3000 && quintaSezioneFadeOut > 0) {
+    drawCubo(min(cuboOpacita, quintaSezioneFadeOut));
   }
   
-  // Testo (ora sotto il cubo)
-  if (quintaSezioneCaratteriVisibili > 0 && quintaSezioneOpacita > 0) {
-    push();
-    textFont(lcdFont);
-    textAlign(CENTER, CENTER);
-    let txtSize = width * 0.03;
-    txtSize = constrain(txtSize, 16, 70);
-    textSize(txtSize);
-    textLeading(txtSize * 1.4);
-    let orangeColor = getCSSColor('--orange');
-    fill(red(orangeColor), green(orangeColor), blue(orangeColor), min(quintaSezioneOpacita, quintaSezioneFadeOut));
-    let testoMostrato = quintaSezioneTestoCompleto.substring(0, quintaSezioneCaratteriVisibili);
-    text(testoMostrato, width / 2, height / 2 + 180);
-    pop();
+  // Sezione 5a (3100): Testo "MA VEDIAMO IL FENOMENO A 360 GRADI"
+  if (scrollY >= 3000 && scrollY < 3300) {
+    let sezione5aOpacita = 0;
+    if (scrollY > 3000 && scrollY < 3100) {
+      sezione5aOpacita = map(scrollY, 3000, 3100, 0, 255);
+    } else if (scrollY >= 3100 && scrollY < 3200) {
+      sezione5aOpacita = 255;
+    } else if (scrollY >= 3200 && scrollY < 3300) {
+      sezione5aOpacita = map(scrollY, 3200, 3300, 255, 0);
+    }
+    sezione5aOpacita = constrain(sezione5aOpacita, 0, 255);
+    
+    if (sezione5aCaratteriVisibili > 0 && sezione5aOpacita > 0) {
+      push();
+      textFont(lcdFont);
+      textAlign(CENTER, CENTER);
+      let txtSize = width * 0.025;
+      txtSize = constrain(txtSize, 14, 60);
+      textSize(txtSize);
+      let orangeColor = getCSSColor('--orange');
+      fill(red(orangeColor), green(orangeColor), blue(orangeColor), min(sezione5aOpacita, quintaSezioneFadeOut));
+      let testoMostrato = sezione5aTestoCompleto.substring(0, sezione5aCaratteriVisibili);
+      text(testoMostrato, width / 2, height / 2 + 180);
+      pop();
+    }
+  }
+  
+  // Sezione 5b (3300): Testo "E OGNUNO DI QUESTI HA PROVOCATO MORTI E FERITI"
+  if (scrollY >= 3200) {
+    let sezione5bOpacita = 0;
+    if (scrollY > 3200 && scrollY < 3300) {
+      sezione5bOpacita = map(scrollY, 3200, 3300, 0, 255);
+    } else if (scrollY >= 3300 && scrollY < 3301) {
+      sezione5bOpacita = 255;
+    } else if (scrollY >= 3301 && scrollY < 3450) {
+      // Fade out veloce del testo 5b
+      sezione5bOpacita = map(scrollY, 3301, 3450, 255, 0);
+    }
+    sezione5bOpacita = constrain(sezione5bOpacita, 0, 255);
+    
+    if (sezione5bCaratteriVisibili > 0 && sezione5bOpacita > 0) {
+      push();
+      textFont(lcdFont);
+      textAlign(CENTER, CENTER);
+      let txtSize = width * 0.025;
+      txtSize = constrain(txtSize, 14, 60);
+      textSize(txtSize);
+      textLeading(txtSize * 1.4);
+      let orangeColor = getCSSColor('--orange');
+      fill(red(orangeColor), green(orangeColor), blue(orangeColor), min(sezione5bOpacita, quintaSezioneFadeOut));
+      let testoMostrato = sezione5bTestoCompleto.substring(0, sezione5bCaratteriVisibili);
+      text(testoMostrato, width / 2, height / 2 + 180);
+      pop();
+    }
   }
 }
 
-function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
+function drawCubo(fadeOut) {
   push();
   translate(width / 2, height / 2 - 140);
   
@@ -1602,7 +1763,7 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   // Facce arancioni (mostra solo se hanno un'altezza significativa)
   if (altezzaLatiVerticali > 5) {
     let orangeColor = getCSSColor('--orange');
-    fill(red(orangeColor), green(orangeColor), blue(orangeColor), quintaSezioneFadeOut);
+    fill(red(orangeColor), green(orangeColor), blue(orangeColor), fadeOut);
     
     // Faccia sinistra
     quad(
@@ -1630,9 +1791,9 @@ function drawCubo(quintaSezioneOpacita, quintaSezioneFadeOut) {
   }
   
   // Top bianco (con stesso fadeOut delle facce laterali)
-  fill(255, 255, 255, quintaSezioneFadeOut);
+  fill(255, 255, 255, fadeOut);
   // Aggiungi un bordo sottile al top per coerenza con la giunzione
-  stroke(0, quintaSezioneFadeOut);
+  stroke(0, fadeOut);
   strokeWeight(2);
   strokeJoin(ROUND);
   quad(
