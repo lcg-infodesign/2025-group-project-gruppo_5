@@ -1386,9 +1386,9 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     detailArrowRight.classList.remove('visible');
   }
   
-  // Freccia giù: nascondi quando sei al checkpoint 5200 (indice 9) o oltre (se non ha cliccato categoria)
+  // Freccia giù: nascondi quando sei a 5200 (scrollY >= 5200) o oltre
   if (scrollArrowDown) {
-    if ((currentCheckpointIndex === 9 && !hasClickedCategory) || currentCheckpointIndex >= 10) {
+    if (scrollY >= 5200) {
       scrollArrowDown.style.opacity = '0';
       scrollArrowDown.style.pointerEvents = 'none';
     } else {
