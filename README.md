@@ -53,16 +53,17 @@ Laurea Triennale in Design della Comunicazione
 - Nazzari Alessandro  
 
 
-<table>
-  <tr>
-    <td style="vertical-align: middle; padding-right: 24px;">
+<table style="border-collapse: collapse; border: none;">
+  <tr style="border: none;">
+    <td style="vertical-align: middle; padding-right: 24px; border: none;">
       <img src="./Assets/Images/LOGO.densitydesign.svg" alt="DensityDesign Lab" height="140">
     </td>
-    <td style="vertical-align: middle; background: white; padding: 10px 16px;">
+    <td style="vertical-align: middle; background: white; padding: 10px 16px; border: none;">
       <img src="./Assets/Images/LOGO.NECST.svg" alt="NECST Lab" height="120">
     </td>
   </tr>
 </table>
+
 
 
 
