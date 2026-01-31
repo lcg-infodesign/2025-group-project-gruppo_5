@@ -19,8 +19,8 @@
   --bg: #000;
   --txt: #fff;
 
-  --orange: #ff8b43;
-  --blue: #18a7ff;
+  --orange: #ec6613;
+  --blue: #00a1f1;
   --green: #33bb44;
   --pink: #fd73ed;
 
@@ -396,7 +396,7 @@ h3{
 }
 
 .scroll-arrow:hover {
-  background: rgba(255, 139, 67, 0.2);
+  background: color-mix(in srgb, var(--orange) 20%, transparent);
   border-color: var(--orange);
 }
 
@@ -458,7 +458,7 @@ h3{
 }
 
 .back-arrow:hover {
-  background: rgba(255, 139, 67, 0.2);
+  background: color-mix(in srgb, var(--orange) 20%, transparent);
   border-color: var(--orange);
   transform: translateX(-3px);
 }
@@ -822,7 +822,7 @@ h3{
   gap: clamp(40px, 3.13vw, 60px); /* 60px @ 1920px */
   margin-bottom: clamp(30px, 2.08vw, 40px); /* 40px @ 1920px */
   padding-bottom: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
-  border-bottom: 1px solid rgba(255, 139, 67, 0.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--orange) 30%, transparent);
   align-items: flex-start;
 }
 
@@ -865,7 +865,7 @@ h3{
 .crediti-license {
   margin-bottom: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
   padding: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
-  background: rgba(255, 139, 67, 0.05);
+  background: color-mix(in srgb, var(--orange) 5%, transparent);
   border-left: clamp(2px, 0.16vw, 3px) solid var(--orange); /* 3px @ 1920px */
 }
 
