@@ -892,7 +892,7 @@ function updateLegendVisibility() {
         h.style.color = 'white';
         h.style.margin = '0';
         h.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-        h.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
+        h.style.fontSize = '1.1em';
         h.textContent = 'Legenda';
         legend.appendChild(h);
 
@@ -917,7 +917,7 @@ function updateLegendVisibility() {
         r1.appendChild(rectWrapper);
         let t1 = document.createElement('div');
         t1.style.color = 'white';
-        t1.textContent = 'area proporzionale al numero di incidenti';
+        t1.textContent = 'Area proporzionale al numero di incidenti';
         r1.appendChild(t1);
         legend.appendChild(r1);
 
@@ -943,7 +943,7 @@ function updateLegendVisibility() {
         r2.appendChild(emptyWrapper);
         let t2 = document.createElement('div');
         t2.style.color = 'white';
-        t2.textContent = 'numero di incidenti inferiore a 300';
+        t2.textContent = 'Numero di incidenti inferiore a 300';
         r2.appendChild(t2);
         legend.appendChild(r2);
       } else {
@@ -953,7 +953,7 @@ function updateLegendVisibility() {
         h.style.color = 'white';
         h.style.margin = '0';
         h.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-        h.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
+        h.style.fontSize = '1.1em';
         h.textContent = 'Legenda';
         legend.appendChild(h);
 
@@ -975,7 +975,7 @@ function updateLegendVisibility() {
         let t1 = document.createElement('div');
         t1.style.color = 'white';
         t1.style.flex = '1';
-        t1.textContent = 'altezza proporzionale al numero di soggetti lesi';
+        t1.textContent = 'Altezza proporzionale al numero di soggetti lesi';
         r1.appendChild(t1);
         legend.appendChild(r1);
 
@@ -995,13 +995,13 @@ function updateLegendVisibility() {
         grad.style.width = '100%';
         grad.style.height = '0.5em';
         grad.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
-        grad.style.background = 'linear-gradient(to right, #ffffff, var(--orange))';
+        grad.style.background = 'linear-gradient(to right, #ffffff, #ff8b43)';
         gradWrapper.appendChild(grad);
         r2.appendChild(gradWrapper);
         let t2 = document.createElement('div');
         t2.style.color = 'white';
         t2.style.flex = '1';
-        t2.textContent = 'opacità proporzionale alla percentuale di incidenti mortali';
+        t2.textContent = 'Gradiente proporzionale alla percentuale di incidenti mortali';
         r2.appendChild(t2);
         legend.appendChild(r2);
       }
@@ -2917,10 +2917,10 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
           testoIstruzione = "Seleziona un'area per visualizzare i dettagli";
         } else if (sezioneOttavaTrans > 0.5) {
           // Categoria selezionata e colonne completamente visibili
-          testoIstruzione = "Passa sopra una colonna per visualizzare i dettagli";
+          testoIstruzione = "Muoviti o clicca su una colonna per visualizzare i dettagli";
         } else {
           // Categoria selezionata ma colonne ancora in animazione
-          testoIstruzione = "Seleziona un'area per visualizzare i dettagli";
+          testoIstruzione = "Muoviti o clicca su un quadrato per visualizzare i dettagli";
         }
         
         catContainer.innerHTML = `
