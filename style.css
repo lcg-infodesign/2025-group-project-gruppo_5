@@ -1291,14 +1291,6 @@ h3 {
    FOOTER - Chi siamo
    ======================================== */
 :root {
-  /* base desiderata ~3rem, responsiva */
-  --base: clamp(1.8rem, 1.2rem + 1.4vw, 3rem);
-
-  /* scala testo */
-  --t-xs: calc(var(--base) * 0.34);
-  --t-sm: calc(var(--base) * 0.42);
-  --t-md: calc(var(--base) * 0.50);
-
   --radius: 0.25rem;
 
   /* === CONTROLLI RAPIDI === */
@@ -1309,13 +1301,10 @@ h3 {
 
 .credits-page {
   box-sizing: border-box;
-  padding: 5em;
-  /* un po' più aria sopra */
-  min-height: 100vh;
+  padding: 0 5em;
   display: flex;
   flex-direction: column;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size: var(--base);
+  font-size: 3rem;
   line-height: 1.4;
 }
 
@@ -1374,15 +1363,12 @@ h3 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* centra verticalmente (con footer sotto) */
-  /* e in più lo abbassa */
 }
 
 .credits-intro {
   margin: 0 0 1.2rem 0;
-  color: var(--muted);
-  font-size: var(--t-md);
-  line-height: 1.5;
+  font-size: 0.50em;
+  line-height: 1.2;
 }
 
 .credits-cols {
@@ -1395,9 +1381,8 @@ h3 {
 
 .credits-section-title {
   margin: 0 0 0.55rem 0;
-  font-weight: 700;
-  font-size: var(--t-md);
-  opacity: .95;
+  font-weight: bold;
+  font-size: 0.50em;
 }
 
 .credits-block {
@@ -1420,8 +1405,7 @@ ul.credits-clean {
   padding: 0;
   display: grid;
   gap: 0.35rem;
-  color: var(--muted);
-  font-size: var(--t-sm);
+  font-size: 0.42em;
   line-height: 1.35;
 }
 
@@ -1435,9 +1419,9 @@ ul.credits-clean {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: var(--muted);
+  color: var(--txt);
   text-decoration: none;
-  font-size: var(--t-sm);
+  font-size: 0.42em;
   line-height: 1.35;
 }
 
@@ -1459,8 +1443,8 @@ ul.credits-clean {
 .credits-footer {
   margin-top: auto;
   padding-top: 0.8rem;
-  color: #a9a9a9;
-  font-size: var(--t-xs);
+  color: var(--muted);
+  font-size: 0.34em;
   line-height: 1.55;
   opacity: .95;
 }
