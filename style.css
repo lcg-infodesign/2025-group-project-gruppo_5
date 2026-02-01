@@ -209,7 +209,7 @@ h3{
   color: var(--orange);
 }
 
-.nav-item:hover {
+.nav-item:hover:not(.dropdown) {
   color: var(--orange);
   opacity: 0.5;
   transition: color 0.3s ease, text-decoration 0.3s ease;
@@ -236,6 +236,16 @@ h3{
   position: relative;
 }
 
+/* Bridge invisibile per facilitare il passaggio al menu */
+.nav-item.dropdown::before {
+  content: '';
+  position: absolute;
+  top: -1rem;
+  left: 0;
+  right: -2rem; /* Estende l'area verso destra per coprire il gap */
+  bottom: -1rem;
+}
+
 /* Stile per il link principale "Responsabilità" */
 .dropdown-link {
   text-decoration: none;
@@ -252,8 +262,8 @@ h3{
 .dropdown-menu {
   display: none; /* Nascondi la tendina di default */
   position: absolute;
-  top: 0; 
-  left: 100%;
+  top: -0.9rem; 
+  left: calc(100% + 0.7rem);
   background-color: #000;
   border: none;
   border-radius: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */
@@ -279,13 +289,14 @@ h3{
   color: var(--txt);
   text-decoration: none;
   font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
 
-/* Cambia colore al passaggio del mouse sugli elementi della tendina */
+/* L'elemento in hover si opacizza */
 .dropdown-item:hover {
   background: var(--hover);
   color: var(--orange);
+  opacity: 0.9;
 }
 
 
@@ -296,7 +307,7 @@ h3{
 .navbar-counter {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: calc(50% + 5px); /* Leggermente più in basso per allineare con nav-button */
   transform: translate(-50%, -50%);
   display: flex;
   gap: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
@@ -341,7 +352,7 @@ h3{
 /* Testo informativo fisso sotto il counter */
 .counter-info {
   position: absolute;
-  top: calc(87%);
+  top: calc(87% + 5px);
   left: 50%;
   transform: translateX(-50%);
   color: var(--txt);
@@ -438,18 +449,15 @@ h3{
   position: absolute;
   top: calc(100px + 15px); /* SEZIONE_MARGIN (100px) + metà textSize (20px, ma un po' meno per allineamento ottico) */
   left: clamp(30px, 3vw, 60px);
-  width: clamp(28px, 2.5vw, 34px);
-  height: clamp(28px, 2.5vw, 34px);
+  width: clamp(40px, 3.5vw, 50px);
+  height: clamp(40px, 3.5vw, 50px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid var(--txt);
-  border-radius: 50%;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 998;
 }
 
@@ -459,14 +467,13 @@ h3{
 }
 
 .back-arrow:hover {
-  background: color-mix(in srgb, var(--orange) 20%, transparent);
-  border-color: var(--orange);
   transform: translateX(-3px);
 }
 
 .back-arrow svg {
-  width: clamp(18px, 1.04vw, 20px); /* 20px @ 1920px */
-  height: clamp(18px, 1.04vw, 20px);
+  width: clamp(24px, 1.4vw, 27px);
+  height: clamp(24px, 1.4vw, 27px);
+  stroke-width: 2.5; /* Freccia più spessa */
 }
 
 .back-arrow:hover svg path {

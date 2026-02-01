@@ -18,7 +18,14 @@
       <div class="nav-left">
         <a href="../index.html" class="nav-item" data-section="0" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Intro</a>
         <a href="../index.html#incidenti" class="nav-item" data-section="1" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Incidenti</a>
-        <a href="../index.html#responsabilita" class="nav-item" data-section="2" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
+        <div class="nav-item dropdown" data-section="2">
+          <a href="../index.html#responsabilita" class="dropdown-link nav-item" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
+          <div class="dropdown-menu" id="dropdown-responsabilita-menu">
+            <a href="../index.html#conducenti" class="dropdown-item" data-categoria="conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Conducenti</a>
+            <a href="../index.html#cause-esterne-concomitanti" class="dropdown-item" data-categoria="cause-esterne-concomitanti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Cause esterne e concomitanti</a>
+            <a href="../index.html#non-conducenti" class="dropdown-item" data-categoria="non-conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Non conducenti</a>
+          </div>
+        </div>
         <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
         <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3" style="display: none;">Dettaglio</a>
       </div>
@@ -64,6 +71,12 @@
       dall'avvenimento, e feriti. Per la realizzazione del sito è stata presa in
       esame la <i>tavola 2.13</i>, non tenendo conto della suddivisione per tipo di
       strada.
+    </p>
+    <p class="description-dati">Oltre ai dati ufficiali dell’ISTAT, 
+      abbiamo calcolato la "percentuale di incidenti mortali", ottenuta dal
+      rapporto tra il numero di morti moltiplicato per 100 
+      e il totale degli incidenti (entrambi i dati non sono generali,
+       ma relativi alla categoria analizzata).
     </p>
     <p class="description-dati">
       Di seguito la rielaborazione delle differenti categorie per tipo di
