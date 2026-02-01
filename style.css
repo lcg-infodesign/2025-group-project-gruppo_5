@@ -694,13 +694,25 @@ h3 {
   transition: opacity 0.1s ease-out;
 }
 
+#chi-siamo {
+  opacity: 1;
+}
+
+.sezione-dati:nth-of-type(2) {
+  opacity: 0;
+  pointer-events: none;
+}
+
 #sezione-testo {
   z-index: 1;
+  opacity: 1;
 }
 
 #sezione-categorie {
   z-index: 2;
   transform: translateY(-5vh);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .Listadati {

@@ -218,9 +218,8 @@ function updateArrowsVisibility() {
   let upVisible = false;
   let downVisible = false;
   
-  // Freccia GIÙ (copiato da sketch.js)
-  if (scrollY >= 600) {
-    // Nascondi freccia down all'ultima sezione
+  // Freccia giù: visibile solo se non sei all'ultimo checkpoint
+  if (currentCheckpointIndex >= scrollCheckpoints.length - 1) {
     scrollArrowDown.style.opacity = '0';
     scrollArrowDown.style.pointerEvents = 'none';
   } else {
