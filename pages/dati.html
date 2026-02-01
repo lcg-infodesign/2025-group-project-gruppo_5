@@ -18,14 +18,7 @@
       <div class="nav-left">
         <a href="../index.html" class="nav-item" data-section="0" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Intro</a>
         <a href="../index.html#incidenti" class="nav-item" data-section="1" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Incidenti</a>
-        <div class="nav-item dropdown" data-section="2">
-          <a href="../index.html#responsabilita" class="dropdown-link nav-item" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
-          <div class="dropdown-menu" id="dropdown-responsabilita-menu">
-            <a href="../index.html#conducenti" class="dropdown-item" data-categoria="conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Conducenti</a>
-            <a href="../index.html#cause-esterne-concomitanti" class="dropdown-item" data-categoria="cause-esterne-concomitanti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Cause esterne e concomitanti</a>
-            <a href="../index.html#non-conducenti" class="dropdown-item" data-categoria="non-conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Non conducenti</a>
-          </div>
-        </div>
+        <a href="../index.html#responsabilita" class="nav-item" data-section="2" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
         <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
         <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3" style="display: none;">Dettaglio</a>
       </div>
@@ -55,36 +48,49 @@
       </div>
     </nav>
     
-    <p class="description-dati">
-      L'<i>ISTAT</i> ogni anno raccoglie i dati riguardanti l'insieme degli incidenti
-      stradali verbalizzati da un'autorità di polizia, avvenuti su strade aperte
-      alla pubblica circolazione, che hanno causato lesioni alle persone. Questa
-      è una rilevazione statistica di interesse pubblico volta a informare gli
-      organi nazionali e locali per comprendere come predisporre al meglio dei
-      piani di prevenzione e sicurezza stradale.
-    </p>
-    <p class="description-dati">
-      Il nostro lavoro riguarda esclusivamente l'anno solare 2024, con specifico
-      interesse verso le circostanze scatenanti, accertate o presunte, degli
-      incidenti. Le condizioni dei soggetti trattati si distinguono in morti,
-      sia al momento dell'incidente che entro e non oltre i 30 giorni
-      dall'avvenimento, e feriti. Per la realizzazione del sito è stata presa in
-      esame la <i>tavola 2.13</i>, non tenendo conto della suddivisione per tipo di
-      strada.
-    </p>
-    <p class="description-dati">Oltre ai dati ufficiali dell’ISTAT, 
-      abbiamo calcolato la "percentuale di incidenti mortali", ottenuta dal
-      rapporto tra il numero di morti moltiplicato per 100 
-      e il totale degli incidenti (entrambi i dati non sono generali,
-       ma relativi alla categoria analizzata).
-    </p>
-    <p class="description-dati">
-      Di seguito la rielaborazione delle differenti categorie per tipo di
-      responsabilità:
-    </p>
+    <!-- Frecce fisse per navigazione checkpoint -->
+    <div class="scroll-arrows-container">
+      <div id="scroll-arrow-up" class="scroll-arrow scroll-arrow-up">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 19L12 5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div id="scroll-arrow-down" class="scroll-arrow scroll-arrow-down">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
     
-    <!--CONDUCENTI-->  
-  <div class="Listadati">
+    <!-- SEZIONE 1: Testo descrittivo -->
+    <div id="sezione-testo" class="sezione-dati" style="display: block;">
+      <p class="description-dati">
+        L'<i>ISTAT</i> ogni anno raccoglie i dati riguardanti l'insieme degli incidenti
+        stradali verbalizzati da un'autorità di polizia, avvenuti su strade aperte
+        alla pubblica circolazione, che hanno causato lesioni alle persone. Questa
+        è una rilevazione statistica di interesse pubblico volta a informare gli
+        organi nazionali e locali per comprendere come predisporre al meglio dei
+        piani di prevenzione e sicurezza stradale.
+      </p>
+      <p class="description-dati">
+        Il nostro lavoro riguarda esclusivamente l'anno solare 2024, con specifico
+        interesse verso le circostanze scatenanti, accertate o presunte, degli
+        incidenti. Le condizioni dei soggetti trattati si distinguono in morti,
+        sia al momento dell'incidente che entro e non oltre i 30 giorni
+        dall'avvenimento, e feriti. Per la realizzazione del sito è stata presa in
+        esame la <i>tavola 2.13</i>, non tenendo conto della suddivisione per tipo di
+        strada.
+      </p>
+      <p class="description-dati">
+        Di seguito la rielaborazione delle differenti categorie per tipo di
+        responsabilità:
+      </p>
+    </div>
+    
+    <!-- SEZIONE 2: Liste categorie con menu a tendina -->
+    <div id="sezione-categorie" class="sezione-dati" style="display: none;">
+      <!--CONDUCENTI-->  
+      <div class="Listadati">
     <div class="bigCategory">
       <h2>CONDUCENTI</h2>
       <div class="catList">
@@ -246,7 +252,8 @@
             </ul>
           </div>
         </div>
+      </div>
+      </div>
     </div>
-  </div>
   </body>
 </html>

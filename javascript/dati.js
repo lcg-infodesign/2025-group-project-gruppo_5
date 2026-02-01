@@ -1,15 +1,49 @@
 //========= creare una tendina che si apre al click con p5.js ==========
 
+// Variabili per scroll con checkpoint
+let scrollY = 0;
+let scrollTarget = -1;
+let scrollVelocita = 8;
+let scrollSnapEnabled = true;
+let scrollCheckpoints = [
+  0,      // Sezione 1: Testo descrittivo
+  800     // Sezione 2: Liste categorie
+];
+let currentCheckpointIndex = 0;
+let isScrolling = false;
+let scrollAccumulator = 0;
+let scrollThreshold = 100;
+
 // Valori counter - calcolati dai dati ISTAT
 let incidentiOggi = 0;
 let mortiOggi = 0;
 let feritiOggi = 0;
 
 function setup() {
-  noCanvas(); // Non serve canvas, usiamo solo p5 per le interazioni
+  // Crea un canvas per il sistema di scroll
+  let canvas = createCanvas(windowWidth, windowHeight);
+  canvas.style('position', 'fixed');
+  canvas.style('top', '0');
+  canvas.style('left', '0');
+  canvas.style('z-index', '5');
+  canvas.style('pointer-events', 'none');
+  background(0, 0);
+  
+  // Imposta l'altezza del body per permettere lo scroll
+  document.body.style.height = '1600px';
+  document.body.style.overflow = 'auto';
   
   // Carica i dati e aggiorna il counter
   loadCSVData();
+  
+  // Setup frecce di navigazione
+  setupScrollArrows();
+  
+  // Setup navigazione da tastiera
+  setupKeyboardNavigation();
+  
+  // Aggiorna visibilità sezioni in base allo scroll
+  updateSectionVisibility();
   
   // Seleziona tutti i bottoni delle categorie usando p5
   let buttons = selectAll('.newCategory');
@@ -139,3 +173,153 @@ function updateCounterTooltip() {
   
   tooltip.innerHTML = `Statistiche medie del<br>${giorno}/${mese}/2024 alle ore ${ore}:${minuti}`;
 }
+
+// ========================================
+// FUNZIONI SCROLL CON CHECKPOINT
+// ========================================
+
+function draw() {
+  clear();
+  handleAutoScroll();
+  updateSectionVisibility();
+  drawDebugInfo();
+}
+
+function handleAutoScroll() {
+  if (scrollTarget > -1) {
+    isScrolling = true;
+    
+    let currentVelocita = scrollVelocita;
+    
+    if (abs(scrollY - scrollTarget) > currentVelocita) {
+      if (scrollY < scrollTarget) {
+        scrollY += currentVelocita;
+      } else {
+        scrollY -= currentVelocita;
+      }
+    } else {
+      scrollY = scrollTarget;
+      scrollTarget = -1;
+      isScrolling = false;
+      
+      // Aggiorna il checkpoint corrente basandosi sulla posizione finale
+      for (let i = 0; i < scrollCheckpoints.length; i++) {
+        if (abs(scrollY - scrollCheckpoints[i]) < 10) {
+          currentCheckpointIndex = i;
+          break;
+        }
+      }
+    }
+  } else {
+    isScrolling = false;
+  }
+}
+
+function mouseWheel(event) {
+  if (scrollTarget !== -1) {
+    // Se c'è già un'animazione in corso, ignora lo scroll
+    return false;
+  }
+  
+  // Accumula lo scroll
+  scrollAccumulator += event.delta;
+  
+  // Controlla se abbiamo superato la soglia per cambiare checkpoint
+  if (abs(scrollAccumulator) >= scrollThreshold) {
+    if (scrollAccumulator > 0) {
+      // Scroll verso il basso - vai al checkpoint successivo
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+      }
+    } else {
+      // Scroll verso l'alto - vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+      }
+    }
+    
+    // Reset dell'accumulatore dopo aver cambiato checkpoint
+    scrollAccumulator = 0;
+  }
+  
+  return false;
+}
+
+function updateSectionVisibility() {
+  let sezioneTestoEl = document.getElementById('sezione-testo');
+  let sezioneCategorieEl = document.getElementById('sezione-categorie');
+  
+  if (!sezioneTestoEl || !sezioneCategorieEl) return;
+  
+  // Mostra/nascondi sezioni in base al checkpoint corrente
+  if (currentCheckpointIndex === 0) {
+    sezioneTestoEl.style.display = 'block';
+    sezioneCategorieEl.style.display = 'none';
+  } else if (currentCheckpointIndex === 1) {
+    sezioneTestoEl.style.display = 'none';
+    sezioneCategorieEl.style.display = 'block';
+  }
+}
+
+function setupScrollArrows() {
+  let scrollArrowDown = document.getElementById('scroll-arrow-down');
+  if (scrollArrowDown) {
+    scrollArrowDown.addEventListener('click', function() {
+      // Vai al prossimo checkpoint
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    });
+  }
+  
+  let scrollArrowUp = document.getElementById('scroll-arrow-up');
+  if (scrollArrowUp) {
+    scrollArrowUp.addEventListener('click', function() {
+      // Vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    });
+  }
+}
+
+function setupKeyboardNavigation() {
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowUp') {
+      // Vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    } else if (event.key === 'ArrowDown') {
+      // Vai al prossimo checkpoint
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    }
+  });
+}
+
+function drawDebugInfo() {
+  push();
+  textFont('Courier');
+  textAlign(RIGHT, BOTTOM);
+  textSize(14);
+  fill(255, 165, 0, 150); // Colore arancione con opacità
+  text('scrollY: ' + floor(scrollY), width - 10, height - 10);
+  pop();
+}
+
