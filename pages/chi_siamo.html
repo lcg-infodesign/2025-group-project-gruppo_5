@@ -1,145 +1,459 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chi Siamo - Incidenti Stradali</title>
-  <link rel="stylesheet" href="../style.css">
-  <!-- p5 PRIMA del file chi_siamo.js -->
-  <script src="../libraries/p5.min.js"></script>
-  <script src="../libraries/p5.sound.min.js"></script>
-  <script src="../javascript/chi_siamo.js"></script>
-</head>
-<body class="scroll">
-  <!-- Navbar -->
-  <nav id="navbar" class="visible">
-    <div class="nav-left">
-      <a href="../index.html" class="nav-item" data-section="0" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Intro</a>
-      <a href="../index.html#incidenti" class="nav-item" data-section="1" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Incidenti</a>
-      <div class="nav-item dropdown" data-section="2">
-        <a href="../index.html#responsabilita" class="dropdown-link nav-item" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
-        <div class="dropdown-menu" id="dropdown-responsabilita-menu">
-          <a href="../index.html#conducenti" class="dropdown-item" data-categoria="conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Conducenti</a>
-          <a href="../index.html#cause-esterne-concomitanti" class="dropdown-item" data-categoria="cause-esterne-concomitanti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Cause esterne e concomitanti</a>
-          <a href="../index.html#non-conducenti" class="dropdown-item" data-categoria="non-conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Non conducenti</a>
-        </div>
-      </div>
-      <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
-      <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3" style="display: none;">Dettaglio</a>
-    </div>
-
-    <!-- Counter centrale che appare dopo la sezione 6 -->
-    <div id="navbar-counter" class="navbar-counter visible">
-      <div class="counter-item">
-        <span class="counter-number" id="nav-incidenti">0</span>
-        <span class="counter-label">Incidenti</span>
-      </div>
-      <div class="counter-item">
-        <span class="counter-number" id="nav-morti">0</span>
-        <span class="counter-label">Morti</span>
-      </div>
-      <div class="counter-item">
-        <span class="counter-number" id="nav-feriti">0</span>
-        <span class="counter-label">Feriti</span>
-      </div>
-    </div>
-    
-    <!-- Testo informativo sotto il counter -->
-    <div class="counter-info" id="counter-tooltip"></div>
-
-    <div class="nav-right">
-      <a class="nav-button active" href="chi_siamo.html">Chi siamo</a>
-      <a class="nav-button" href="dati.html">I dati</a>
-    </div>
-  </nav>
-
-  <!-- Sezione combinata Chi Siamo e Team -->
-  <section id="chi-siamo" class="section">
-    <div class="two-column-layout">
-      <!-- Colonna sinistra: Chi Siamo -->
-      <div class="left-column">
-        <h1 class="team-title">CHI SIAMO</h1>
-        <p class="description">
-          Siamo un gruppo di ragazzi che, osservando ogni giorno i rischi legati alla circolazione stradale, 
-          ha deciso di approfondire il tema della sicurezza stradale. 
-          Il progetto nasce dal desiderio di comprendere meglio le dinamiche degli incidenti in Italia, 
-          analizzandone cause e circostanze.
-        </p>
-        <p class="description">
-         Attraverso lo studio del dataset ISTAT e la realizzazione di visualizzazioni interattive, 
-         i dati diventano uno strumento per raccontare diversi scenari di rischio e 
-         favorire una maggiore consapevolezza e responsabilizzazione nei comportamenti quotidiani.
-        </p>
-      </div>
-
-      <!-- Colonna destra: Team -->
-      <div class="right-column">
-        <h2 class="team-title">IL TEAM:</h2>
-        <div class="team-grid">
-          <div class="team-card">
-            <img src="../Assets/Images/giorgia.png" alt="Giorgia Barbetta" class="team-photo">
-            <div class="card-name">
-              <span>Giorgia</span>
-              <span>Barbetta</span>
-            </div>
-          </div>
-          <div class="team-card">
-            <img src="../Assets/Images/letizia.png" alt="Letizia Dell'Oro" class="team-photo">
-            <div class="card-name">
-              <span>Letizia</span>
-              <span>Dell'Oro</span>
-            </div>
-          </div>
-          <div class="team-card">
-            <img src="../Assets/Images/marta.png" alt="Marta Fontana" class="team-photo">
-            <div class="card-name">
-              <span>Marta</span>
-              <span>Fontana</span>
-            </div>
-          </div>
-          <div class="team-card">
-            <img src="../Assets/Images/viola.png" alt="Viola Sabbatini" class="team-photo">
-            <div class="card-name">
-              <span>Viola</span>
-              <span>Sabbatini</span>
-            </div>
-          </div>
-          <div class="team-card">
-            <img src="../Assets/Images/luca.png" alt="Luca Golinelli" class="team-photo">
-            <div class="card-name">
-              <span>Luca</span>
-              <span>Golinelli</span>
-            </div>
-          </div>
-          <div class="team-card">
-            <img src="../Assets/Images/giacomo.png" alt="Giacomo Rosa" class="team-photo">
-            <div class="card-name">
-              <span>Giacomo</span>
-              <span>Rosa</span>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi Siamo - Incidenti Stradali</title>
+    <link rel="stylesheet" href="../style.css" />
+    <!-- p5 PRIMA del file chi_siamo.js -->
+    <script src="../libraries/p5.min.js"></script>
+    <script src="../libraries/p5.sound.min.js"></script>
+    <script src="../javascript/chi_siamo.js"></script>
+  </head>
+  <body class="scroll">
+    <!-- Navbar -->
+    <nav id="navbar" class="visible">
+      <div class="nav-left">
+        <a
+          href="../index.html"
+          class="nav-item"
+          data-section="0"
+          onclick="sessionStorage.setItem('skipCounterAnimation', 'true')"
+          >Intro</a
+        >
+        <a
+          href="../index.html#incidenti"
+          class="nav-item"
+          data-section="1"
+          onclick="sessionStorage.setItem('skipCounterAnimation', 'true')"
+          >Incidenti</a
+        >
+        <div class="nav-item dropdown" data-section="2">
+          <a
+            href="../index.html#responsabilita"
+            class="dropdown-link nav-item"
+            onclick="sessionStorage.setItem('skipCounterAnimation', 'true')"
+            >Responsabilità</a
+          >
+          <div class="dropdown-menu" id="dropdown-responsabilita-menu">
+            <a
+              href="../index.html#conducenti"
+              class="dropdown-item"
+              data-categoria="conducenti"
+              onclick="sessionStorage.setItem('skipCounterAnimation', 'true')"
+              >Conducenti</a
+            >
+            <a
+              href="../index.html#cause-esterne-concomitanti"
+              class="dropdown-item"
+              data-categoria="cause-esterne-concomitanti"
+              onclick="sessionStorage.setItem('skipCounterAnimation', 'true')"
+              >Cause esterne e concomitanti</a
+            >
+            <a
+              href="../index.html#non-conducenti"
+              class="dropdown-item"
+              data-categoria="non-conducenti"
+              onclick="sessionStorage.setItem('skipCounterAnimation', 'true')"
+              >Non conducenti</a
+            >
           </div>
         </div>
+        <span class="nav-separator" id="nav-separator" style="display: none"
+          >/</span
+        >
+        <a
+          href="#dettaglio"
+          class="nav-item nav-item-sub"
+          id="nav-categoria"
+          data-section="3"
+          style="display: none"
+          >Dettaglio</a
+        >
+      </div>
+
+      <!-- Counter centrale che appare dopo la sezione 6 -->
+      <div id="navbar-counter" class="navbar-counter visible">
+        <div class="counter-item">
+          <span class="counter-number" id="nav-incidenti">0</span>
+          <span class="counter-label">Incidenti</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-number" id="nav-morti">0</span>
+          <span class="counter-label">Morti</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-number" id="nav-feriti">0</span>
+          <span class="counter-label">Feriti</span>
+        </div>
+      </div>
+
+      <!-- Testo informativo sotto il counter -->
+      <div class="counter-info" id="counter-tooltip"></div>
+
+      <div class="nav-right">
+        <a class="nav-button active" href="chi_siamo.html">Chi siamo</a>
+        <a class="nav-button" href="dati.html">I dati</a>
+      </div>
+    </nav>
+
+    <!-- Sezione combinata Chi Siamo e Team -->
+    <section id="chi-siamo" class="section">
+      <div class="two-column-layout">
+        <!-- Colonna sinistra: Chi Siamo -->
+        <div class="left-column">
+          <a href="javascript:history.back()">←</a>
+          <h1 class="team-title">CHI SIAMO</h1>
+          <p class="description">
+            Siamo un gruppo di ragazzi che, osservando ogni giorno i rischi
+            legati alla circolazione stradale e la frequenza con cui si
+            verificano incidenti, ha deciso di approfondire il tema della
+            sicurezza stradale per comprenderne la reale portata. La presenza
+            costante di episodi sulle strade italiane ci ha spinto a
+            interrogarci sulla dimensione del problema e sulle sue conseguenze.
+          </p>
+          <p class="description">
+            Il progetto nasce dal desiderio di analizzare in modo approfondito
+            le dinamiche degli incidenti stradali in Italia, mettendo in
+            evidenza cause, circostanze e contesti in cui si verificano con
+            maggiore frequenza.
+          </p>
+          <p class="description">
+            Attraverso lo studio del dataset ISTAT e la realizzazione di
+            visualizzazioni interattive, i dati diventano uno strumento per
+            raccontare diversi scenari di rischio e favorire una maggiore
+            consapevolezza e responsabilizzazione nei comportamenti quotidiani.
+          </p>
+        </div>
+
+        <!-- Colonna destra: Team -->
+        <div class="right-column">
+          <div class="team-grid">
+            <div class="team-card">
+              <img
+                src="../Assets/Images/giorgia.png"
+                alt="Giorgia Barbetta"
+                class="team-photo"
+              />
+              <div class="card-name">
+                <span>Giorgia</span>
+                <span>Barbetta</span>
+              </div>
+            </div>
+            <div class="team-card">
+              <img
+                src="../Assets/Images/letizia.png"
+                alt="Letizia Dell'Oro"
+                class="team-photo"
+              />
+              <div class="card-name">
+                <span>Letizia</span>
+                <span>Dell'Oro</span>
+              </div>
+            </div>
+            <div class="team-card">
+              <img
+                src="../Assets/Images/marta.png"
+                alt="Marta Fontana"
+                class="team-photo"
+              />
+              <div class="card-name">
+                <span>Marta</span>
+                <span>Fontana</span>
+              </div>
+            </div>
+            <div class="team-card">
+              <img
+                src="../Assets/Images/viola.png"
+                alt="Viola Sabbatini"
+                class="team-photo"
+              />
+              <div class="card-name">
+                <span>Viola</span>
+                <span>Sabbatini</span>
+              </div>
+            </div>
+            <div class="team-card">
+              <img
+                src="../Assets/Images/luca.png"
+                alt="Luca Golinelli"
+                class="team-photo"
+              />
+              <div class="card-name">
+                <span>Luca</span>
+                <span>Golinelli</span>
+              </div>
+            </div>
+            <div class="team-card">
+              <img
+                src="../Assets/Images/giacomo.png"
+                alt="Giacomo Rosa"
+                class="team-photo"
+              />
+              <div class="card-name">
+                <span>Giacomo</span>
+                <span>Rosa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Freccia sezione 1 -->
+    <div class="scroll-arrows-container" id="arrow-container-1">
+      <div id="scroll-arrow-1" class="scroll-arrow scroll-arrow-down">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 5L12 19M12 19L19 12M12 19L5 12"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </div>
     </div>
-  </section>
 
-  <!-- Freccia sezione 1 -->
-  <div class="scroll-arrows-container" id="arrow-container-1">
-    <div id="scroll-arrow-1" class="scroll-arrow scroll-arrow-down">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <!--Freccia sezione 2 -->
+    <div class="scroll-arrows-container" id="arrow-container-2">
+      <div id="scroll-arrow-2" class="scroll-arrow scroll-arrow-down">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 5L12 19M12 19L19 12M12 19L5 12"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
     </div>
-  </div>
 
-  <!--Freccia sezione 2 --> 
-  <div class="scroll-arrows-container" id="arrow-container-2">
-    <div id="scroll-arrow-2" class="scroll-arrow scroll-arrow-down">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-  </div>
-  
-</body>
+    <!--FOOTER-->
+    <main class="credits-page">
+      <div class="credits-top-line"></div>
+
+      <header class="credits-header">
+        <div class="credits-brand-left">
+          <img
+            class="credits-logo-polimi"
+            src="../Assets/Images/logo_politecnico.svg"
+            alt="Politecnico di Milano"
+          />
+        </div>
+
+        <div class="credits-brand-right">
+          <img
+            class="credits-logo-necst"
+            src="../Assets/Images/logo_NECTS.svg"
+            alt="NECST Laboratory"
+          />
+          <img
+            class="credits-logo-density"
+            src="../Assets/Images/logo_DensityDesign.svg"
+            alt="DENSITY GN+"
+          />
+        </div>
+      </header>
+
+      <!-- CONTENUTO CENTRATO/ABBASSATO -->
+      <div class="credits-content">
+        <section class="credits-intro">
+          Laurea Triennale in Design della Comunicazione<br />
+          Laboratorio di Computer Grafica per l’Information Design<br />
+          Anno Accademico 2025/2026
+        </section>
+
+        <section class="credits-cols" aria-label="Crediti e risorse">
+          <div>
+            <h3 class="credits-section-title">Docenti</h3>
+            <div class="credits-block">
+              <div class="credits-bar" style="height: 1.7rem"></div>
+              <div>
+                <ul class="credits-clean">
+                  <li>Conficconi Davide</li>
+                  <li>Mauri Michele</li>
+                </ul>
+              </div>
+            </div>
+
+            <h3 class="credits-section-title" style="margin-top: 0.9rem">
+              Cultori della materia
+            </h3>
+            <div class="credits-block">
+              <div class="credits-bar" style="height: 1.7rem"></div>
+              <div>
+                <ul class="credits-clean">
+                  <li>Facchini Alessandra</li>
+                  <li>Nazzari Alessandro</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="credits-section-title">Progetto a cura di</h3>
+            <div class="credits-block">
+              <div class="credits-bar" style="height: 4.9rem"></div>
+              <div>
+                <ul class="credits-clean">
+                  <li>Barbetta Giorgia</li>
+                  <li>Dell’Oro Letizia</li>
+                  <li>Fontana Marta</li>
+                  <li>Golinelli Luca</li>
+                  <li>Rosa Giacomo</li>
+                  <li>Sabbatini Viola</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="credits-section-title">Per approfondire</h3>
+            <div class="credits-block">
+              <div class="credits-bar" style="height: 3rem"></div>
+              <div class="credits-links">
+                <a
+                  href="https://www.istat.it/comunicato-stampa/incidenti-stradali-in-italia-2024/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Visita il sito dell’ISTAT
+                  <svg
+                    class="credits-ext"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M14 5h5v5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M10 14L19 5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M19 14v5H5V5h5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+
+                <a
+                  href="https://www.istat.it/wp-content/uploads/2025/07/REPORT_INCIDENTI_STRADALI_2024.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Visualizza report del 2024
+                  <svg
+                    class="credits-ext"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M14 5h5v5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M10 14L19 5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M19 14v5H5V5h5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+
+                <a
+                  href="https://docs.google.com/spreadsheets/d/1hCYG5egUPgJF1pFeJl0nH7oTFf1VtAod-id41BWjpTE/edit?usp=sharing"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Consulta il dataset da noi riordinato
+                  <svg
+                    class="credits-ext"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M14 5h5v5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M10 14L19 5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M19 14v5H5V5h5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="credits-footer">
+        <div class="credits-copy">© CC-BY 4.0 Gli autori / The authors</div>
+        <div class="credits-lang">
+          <div>
+            [ENG] Except where otherwise noted, all content on this website is
+            licensed under the Creative Commons Attribution 4.0 International
+            License (CC BY 4.0). You are free to share and adapt the material,
+            including for commercial use, provided appropriate credit is given.
+          </div>
+          <div>
+            [ITA] Salvo diversa indicazione, tutti i contenuti di questo sito
+            web sono concessi in licenza Creative Commons Attribution 4.0
+            International License (CC BY 4.0). Sei libero di condividere e
+            adattare il materiale, anche per scopi commerciali, a condizione di
+            menzionare i creatori come autori originali dell’opera.
+          </div>
+        </div>
+      </footer>
+    </main>
+  </body>
 </html>
