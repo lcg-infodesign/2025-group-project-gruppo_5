@@ -158,7 +158,7 @@ function startRealtimeCounter() {
     let currentFeriti = Math.floor(feritiOggi * progress);
     
     // Aggiorna il counter nella navbar
-    updateNavbarCounter(currentIncidenti, currentMorti, currentFeriti);
+    updateNavbarCounterValues(currentIncidenti, currentMorti, currentFeriti);
     updateCounterTooltip();
     
     requestAnimationFrame(updateCounter);
@@ -167,7 +167,7 @@ function startRealtimeCounter() {
   updateCounter();
 }
 
-function updateNavbarCounter(incidenti, morti, feriti) {
+function updateNavbarCounterValues(incidenti, morti, feriti) {
   document.getElementById('nav-incidenti').textContent = incidenti;
   document.getElementById('nav-morti').textContent = morti;
   document.getElementById('nav-feriti').textContent = feriti;
