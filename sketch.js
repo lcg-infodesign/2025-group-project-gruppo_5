@@ -52,6 +52,7 @@ let terzaSezioneTestoCompleto = 'MA SAI QUANTI SONO OGNI ANNO?';
 // Sezione 4: Griglia incidenti
 let numeroTotaleQuadratini = 0;
 let grigliaIncidentiSottotitoloOpacita = 0; // Opacità sottotitolo finale incidenti
+let grigliaIncidentiLeggendaOpacita = 0; // Opacità leggenda "300 incidenti"
 let numeroTotaleIncidenti = 0;
 let counterAttuale = 0;
 
@@ -88,6 +89,7 @@ let animRegroupTarget = 0;
 let dimensioneQuadratino = 0; // Dimensione dei quadratini, calcolata in sezione 7
 let ctaFadeStartTime = -1; // Timestamp inizio fade in del testo CTA
 let ctaFadeOpacity = 0; // Opacità corrente del testo CTA
+let legendFadeOpacity = 0; // Opacità corrente della leggenda "300 incidenti"
 
 // Sezione 8: visualizzazione di dettaglio (NON più overlay)
 let sezioneOttavaHitboxes = [];
@@ -122,6 +124,7 @@ let categorieArray = ['conducenti', 'cause-esterne-concomitanti', 'non-conducent
 let transizioneAttiva = false; // true quando è in corso la transizione
 let transizioneProgress = 0; // 0 = inizio (5200), 1 = fine (6500)
 let quadratiniTransizione = []; // array con posizioni iniziali e finali di ogni quadratino
+let transizioneFadeInUI = 0; // Opacità fade in UI durante la transizione (sincronizzato con titolo)
 
 // =========================================
 // SETUP E PRELOAD
@@ -878,10 +881,27 @@ function updateLegendVisibility() {
   let legend = document.getElementById('legend');
   let catCausa = document.getElementById('catCausaContainer');
 
-  // Mostra la legenda dinamicamente solo nella sezione 8
-  if (scrollY >= 6500 && scrollY < 6700 && categoriaSelezionata !== null) {
+  // Mostra la legenda solo quando l'opacity è significativa (> 0.01) per evitare flash
+  let legendOpacity = 0;
+  let shouldShow = false;
+  
+  if (categoriaSelezionata !== null) {
+    if (scrollY >= 6500) {
+      // Nella sezione 8, mostra sempre
+      legendOpacity = 1;
+      shouldShow = true;
+    } else if (transizioneAttiva && transizioneFadeInUI > 5) {
+      // Durante la transizione, mostra solo se fadeInUI è sopra una soglia minima
+      legendOpacity = transizioneFadeInUI / 255;
+      legendOpacity = constrain(legendOpacity, 0, 1);
+      shouldShow = legendOpacity > 0.02; // Mostra solo se opacity > 2%
+    }
+  }
+  
+  if (shouldShow) {
     if (legend) {
       legend.style.display = 'flex';
+      legend.style.opacity = legendOpacity;
       legend.style.left = SEZIONE_MARGIN + 'px';
       legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Allineata con categoria selezionata
 
@@ -1008,7 +1028,10 @@ function updateLegendVisibility() {
       }
     }
 
-    if (catCausa) catCausa.style.display = 'block';
+    if (catCausa) {
+      catCausa.style.display = 'block';
+      catCausa.style.opacity = legendOpacity;
+    }
   } else {
     if (legend) legend.style.display = 'none';
     if (catCausa) catCausa.style.display = 'none';
@@ -1363,25 +1386,31 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   let upVisible = false;
   let downVisible = false;
   
-  // BACK ARROW: Mostra nella sezione dettaglio
+  // BACK ARROW: Mostra nella sezione dettaglio con fade in durante transizione
   if (backArrow) {
-    if (scrollY >= 6500 && categoriaSelezionata !== null) {
-      backArrow.classList.add('visible');
+    if (categoriaSelezionata !== null && (scrollY >= 6500 || (transizioneAttiva && scrollY > 5200))) {
+      // Durante transizione: fade in progressivo, dopo: completamente visibile
+      if (scrollY >= 6500) {
+        backArrow.style.opacity = '1';
+        backArrow.style.pointerEvents = 'all';
+      } else if (transizioneAttiva && transizioneFadeInUI > 5) {
+        // Sincronizza con fade in delle legende e del titolo
+        backArrow.style.opacity = (transizioneFadeInUI / 255).toString();
+        backArrow.style.pointerEvents = transizioneFadeInUI > 128 ? 'all' : 'none';
+      }
     } else {
-      backArrow.classList.remove('visible');
+      backArrow.style.opacity = '0';
+      backArrow.style.pointerEvents = 'none';
     }
   }
   
-  // DETAIL ARROWS: Gestisci visibilità e colori dinamici
+  // DETAIL ARROWS: Gestisci visibilità e colori dinamici con fade in
   let detailArrowLeft = document.getElementById('detail-arrow-left');
   let detailArrowRight = document.getElementById('detail-arrow-right');
   
   if (detailArrowLeft && detailArrowRight && categoriaSelezionata !== null) {
     // Mostra le frecce nella sezione dettaglio
-    if (scrollY >= 6500) {
-      detailArrowLeft.classList.add('visible');
-      detailArrowRight.classList.add('visible');
-      
+    if (scrollY >= 6500 || (transizioneAttiva && scrollY > 5200)) {
       // Calcola categoria precedente e successiva
       let currentIndex = categorieArray.indexOf(categoriaSelezionata);
       let prevIndex = (currentIndex - 1 + categorieArray.length) % categorieArray.length;
@@ -1401,13 +1430,32 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
       
       detailArrowRight.style.borderColor = nextRGB;
       detailArrowRight.querySelector('svg path').setAttribute('stroke', nextRGB);
+      
+      // Gestisci opacità con fade in progressivo
+      if (scrollY >= 6500) {
+        detailArrowLeft.style.opacity = '1';
+        detailArrowLeft.style.pointerEvents = 'all';
+        detailArrowRight.style.opacity = '1';
+        detailArrowRight.style.pointerEvents = 'all';
+      } else if (transizioneAttiva && transizioneFadeInUI > 5) {
+        // Sincronizza con fade in delle legende e del titolo
+        let arrowOpacity = (transizioneFadeInUI / 255).toString();
+        detailArrowLeft.style.opacity = arrowOpacity;
+        detailArrowLeft.style.pointerEvents = transizioneFadeInUI > 128 ? 'all' : 'none';
+        detailArrowRight.style.opacity = arrowOpacity;
+        detailArrowRight.style.pointerEvents = transizioneFadeInUI > 128 ? 'all' : 'none';
+      }
     } else {
-      detailArrowLeft.classList.remove('visible');
-      detailArrowRight.classList.remove('visible');
+      detailArrowLeft.style.opacity = '0';
+      detailArrowLeft.style.pointerEvents = 'none';
+      detailArrowRight.style.opacity = '0';
+      detailArrowRight.style.pointerEvents = 'none';
     }
   } else if (detailArrowLeft && detailArrowRight) {
-    detailArrowLeft.classList.remove('visible');
-    detailArrowRight.classList.remove('visible');
+    detailArrowLeft.style.opacity = '0';
+    detailArrowLeft.style.pointerEvents = 'none';
+    detailArrowRight.style.opacity = '0';
+    detailArrowRight.style.pointerEvents = 'none';
   }
   
   // Freccia giù: nascondi quando sei a 5200 (scrollY >= 5200) o oltre
@@ -1604,10 +1652,16 @@ function drawSezioneGrigliaIncidenti() {
       grigliaIncidentiSottotitoloOpacita += 3; // fade-in veloce
       grigliaIncidentiSottotitoloOpacita = constrain(grigliaIncidentiSottotitoloOpacita, 0, 255);
     }
+    // Attiva fade in leggenda dopo il sottotitolo
+    if (grigliaIncidentiSottotitoloOpacita >= 255 && grigliaIncidentiLeggendaOpacita < 255) {
+      grigliaIncidentiLeggendaOpacita += 5; // fade-in veloce
+      grigliaIncidentiLeggendaOpacita = constrain(grigliaIncidentiLeggendaOpacita, 0, 255);
+    }
   } else {
     numeroQuadratiniVisibili = 0;
     counterAttuale = 0;
     grigliaIncidentiSottotitoloOpacita = 0;
+    grigliaIncidentiLeggendaOpacita = 0;
   }
   
   // Layout griglia: usa la variabile globale per coerenza (evita valori non inizializzati)
@@ -1671,6 +1725,30 @@ function drawSezioneGrigliaIncidenti() {
       rect(x, y, dimensioneQuadratino, dimensioneQuadratino);
     }
     pop();
+    
+    // Leggenda: piccolo quadrato con "300 incidenti" (con fade in)
+    if (grigliaIncidentiLeggendaOpacita > 0) {
+      push();
+      let legendX = width - 150; // Posizione a destra
+      let legendY = height - 100; // In basso a destra
+      let legendSquareSize = dimensioneQuadratino; // Stessa dimensione dei quadrati della griglia
+      
+      // Opacità combinata con fade out della griglia
+      let legendOpacity = min(grigliaIncidentiLeggendaOpacita, grigliaFadeOut);
+      
+      // Disegna il quadrato della leggenda
+      fill(255, 255, 255, legendOpacity);
+      noStroke();
+      rect(legendX, legendY, legendSquareSize, legendSquareSize);
+      
+      // Testo "300 incidenti"
+      textFont(transportFont);
+      textAlign(LEFT, CENTER);
+      textSize(14);
+      fill(255, 255, 255, legendOpacity);
+      text('300 incidenti', legendX + legendSquareSize + 10, legendY + legendSquareSize / 2);
+      pop();
+    }
   }
 }
 
@@ -2503,10 +2581,38 @@ function drawSezioneSettima() {
       text("Clicca su una categoria per scoprire le cause degli incidenti più nello specifico", width / 2, bottomY + bounceOffset);
       pop();
     }
+    
+    // Fade in leggenda dopo che il testo CTA è completamente visibile
+    if (ctaFadeOpacity >= grigliaFadeIn && legendFadeOpacity < grigliaFadeIn) {
+      legendFadeOpacity += 5; // fade-in veloce
+      legendFadeOpacity = constrain(legendFadeOpacity, 0, grigliaFadeIn);
+    }
   } else {
     // Reset quando non è visibile
     ctaFadeStartTime = -1;
     ctaFadeOpacity = 0;
+    legendFadeOpacity = 0;
+  }
+  
+  // Leggenda: piccolo quadrato con "300 incidenti" (appare con fade in dopo il testo CTA)
+  if (legendFadeOpacity > 0 && scrollY < 6500) {
+    push();
+    let legendX = width - 150; // Posizione a destra
+    let legendY = height - 100; // In basso a destra
+    let legendSquareSize = quadSize; // Stessa dimensione dei quadrati della griglia
+    
+    // Disegna il quadrato della leggenda
+    fill(255, 255, 255, legendFadeOpacity);
+    noStroke();
+    rect(legendX, legendY, legendSquareSize, legendSquareSize);
+    
+    // Testo "300 incidenti"
+    textFont(transportFont);
+    textAlign(LEFT, CENTER);
+    textSize(14);
+    fill(255, 255, 255, legendFadeOpacity);
+    text('300 incidenti', legendX + legendSquareSize + 10, legendY + legendSquareSize / 2);
+    pop();
   }
   
   pop(); // Fine isolamento stile sezione 7
@@ -2514,9 +2620,13 @@ function drawSezioneSettima() {
 
 function drawTransizioneSezioneOttava() {
   // Mostra la transizione solo tra scroll 5200 e 6500 quando transizioneAttiva è true
-  if (!transizioneAttiva) return;
+  if (!transizioneAttiva) {
+    transizioneFadeInUI = 0; // Reset fade in UI
+    return;
+  }
   if (scrollY < 5200 || scrollY >= 6500) {
     transizioneAttiva = false;
+    transizioneFadeInUI = 0; // Reset fade in UI
     return;
   }
   
@@ -2586,7 +2696,9 @@ function drawTransizioneSezioneOttava() {
   let blueStartX = (width - totalGroupWidth) / 2;
   let greenStartX = blueStartX + blueDims.cols * (quadSize + quadSpacing) - quadSpacing + groupSpacing;
   let pinkStartX = greenStartX + greenDims.cols * (quadSize + quadSpacing) - quadSpacing + groupSpacing;
-  let topY = height * 0.35;
+  
+  // Usa la stessa formula della sezione 7 per allineare perfettamente le posizioni iniziali
+  let topY = height / 2 - max(blueDims.rows, greenDims.rows, pinkDims.rows) * (quadSize + quadSpacing) / 2 + 120;
   
   // Determina posizioni iniziali in base alla categoria
   let startX, startDims;
@@ -2633,6 +2745,7 @@ function drawTransizioneSezioneOttava() {
   // Fade in elementi UI (titolo) progressivamente durante l'animazione
   let fadeInUI = map(easedProgress, 0.5, 1, 0, 255);
   fadeInUI = constrain(fadeInUI, 0, 255);
+  transizioneFadeInUI = fadeInUI; // Salva in variabile globale per sincronizzare con legende
   
   // Disegna titolo con fade in (allineato a sezione 8)
   if (fadeInUI > 0) {
@@ -2642,13 +2755,18 @@ function drawTransizioneSezioneOttava() {
     // Titolo responsivo (approx 40px @ 1920)
     let titleSize = constrain(width * 0.021, 20, 48);
     textSize(titleSize);
-    textAlign(LEFT, TOP);
+    textAlign(LEFT, CENTER);
     let margin = SEZIONE_MARGIN;
+    
+    // Allinea il centro del titolo al centro della freccia back-arrow (come in sezione 8)
+    let arrowHeight = constrain(width * 0.035, 40, 50); // clamp(40px, 3.5vw, 50px)
+    let titleYPos = 115 + arrowHeight / 2;
+    
     let titolo = categoriaSelezionata.replace(/-/g, ' ');
     if (categoriaSelezionata === 'cause-esterne-concomitanti') {
       titolo = 'cause esterne e concomitanti';
     }
-    text(titolo.toUpperCase(), margin, margin);
+    text(titolo.toUpperCase(), margin, titleYPos);
     pop();
   }
   
@@ -2718,6 +2836,34 @@ function drawTransizioneSezioneOttava() {
     }
     
     xPos += cubeWidth + finalQuadSpacing;
+  }
+  
+  // Disegna la linea di base e la scritta "Incidenti" con fade in
+  if (fadeInUI > 0) {
+    // Linea orizzontale bianca di base
+    push();
+    stroke(255, fadeInUI);
+    strokeWeight(1);
+    line(SEZIONE_MARGIN, baselineY, width - SEZIONE_MARGIN, baselineY);
+    pop();
+    
+    // Label "Incidenti" sotto la linea
+    push();
+    fill(255, fadeInUI);
+    if (typeof transportFont !== 'undefined' && transportFont) textFont(transportFont); else textFont(lcdFont);
+    textSize(16);
+    textAlign(CENTER, CENTER);
+    text('Incidenti', width / 2, height - 50);
+    pop();
+  }
+  
+  // Popola il contenuto del catCausa durante la transizione
+  const catContainer = placeCatCausaContainer();
+  if (catContainer && fadeInUI > 0) {
+    catContainer.style.backgroundColor = 'transparent';
+    catContainer.innerHTML = `
+      <h3 style="color: white; margin: 0;">Muoviti o clicca su un quadrato per visualizzare i dettagli</h3>
+    `;
   }
   
   pop();
@@ -2872,9 +3018,16 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     // Reset xPos per la seconda passata (centro, come sopra)
     xPos = SEZIONE_MARGIN + (availableWidth - totalWidth) / 2;
     
+    // Calcola opacità per fade in durante transizione
+    let baselineOpacity = 255;
+    if (transizioneAttiva && scrollY >= 5200 && scrollY < 6500) {
+      // Durante transizione: usa transizioneFadeInUI per sincronizzare con gli altri elementi
+      baselineOpacity = transizioneFadeInUI;
+    }
+    
     // Disegna la linea orizzontale bianca PRIMA dei parallelepipedi (così stanno sopra)
     push();
-    stroke(255);
+    stroke(255, baselineOpacity);
     strokeWeight(1);
     line(SEZIONE_MARGIN, height - 100, width - SEZIONE_MARGIN, height - 100);
     pop();
@@ -3016,8 +3169,14 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   }
 
   // Label 'Incidenti' riferita alla linea (70px sotto la linea)
+  // Calcola opacità per fade in durante transizione (sincronizzata con baseline)
+  let incidentiTextOpacity = 255;
+  if (transizioneAttiva && scrollY >= 5200 && scrollY < 6500) {
+    incidentiTextOpacity = transizioneFadeInUI;
+  }
+  
   push();
-  fill(255);
+  fill(255, incidentiTextOpacity);
   if (typeof transportFont !== 'undefined' && transportFont) textFont(transportFont); else textFont(lcdFont);
   textSize(16);
   textAlign(CENTER, CENTER);
