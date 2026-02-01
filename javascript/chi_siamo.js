@@ -80,51 +80,48 @@ document.addEventListener('DOMContentLoaded', function() {
   // Avvia il loop di aggiornamento
   startAnimationLoop();
   
-  // Carica i dati dal CSV per calcolare i valori giornalieri
-  loadCSVData();
-  
   // Variabili per tracciare il countdown
   let previousSecondsDisplay = -1;
   let maxSecondsForColor = 60;
 
-    fetch('../Assets/Datasets/Incidenti-totale.csv')
-      .then(response => response.text())
-      .then(data => {
-        const lines = data.split('\n');
-        for (let i = 1; i < lines.length; i++) {
-          const row = lines[i].split(',');
-          if (row[0] && row[0].trim() === 'Totale') {
-            const incidentiTotali = parseInt(row[1].replace(/[\s.]/g, '').trim());
-            const mortiTotali = parseInt(row[3].replace(/[\s.]/g, '').trim());
-            const feritiTotali = parseInt(row[4].replace(/[\s.]/g, '').trim());
-            
-            incidentiOggi = Math.floor(incidentiTotali / 366);
-            mortiOggi = Math.floor(mortiTotali / 366);
-            feritiOggi = Math.floor(feritiTotali / 366);
-            
-            console.log('Dati caricati:', {
-              incidentiTotali,
-              mortiTotali,
-              feritiTotali,
-              incidentiOggi,
-              mortiOggi,
-              feritiOggi
-            });
-            break;
-          }
+  // Carica i dati dal CSV per calcolare i valori giornalieri
+  fetch('../Assets/Datasets/Incidenti-totale.csv')
+    .then(response => response.text())
+    .then(data => {
+      const lines = data.split('\n');
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        if (row[0] && row[0].trim() === 'Totale') {
+          const incidentiTotali = parseInt(row[1].replace(/[\s.]/g, '').trim());
+          const mortiTotali = parseInt(row[3].replace(/[\s.]/g, '').trim());
+          const feritiTotali = parseInt(row[4].replace(/[\s.]/g, '').trim());
+          
+          incidentiOggi = Math.floor(incidentiTotali / 366);
+          mortiOggi = Math.floor(mortiTotali / 366);
+          feritiOggi = Math.floor(feritiTotali / 366);
+          
+          console.log('Dati caricati:', {
+            incidentiTotali,
+            mortiTotali,
+            feritiTotali,
+            incidentiOggi,
+            mortiOggi,
+            feritiOggi
+          });
+          break;
         }
-        // Avvia l'animazione del counter
-        startCounterAnimation();
-      })
-      .catch(error => {
-        console.error('Errore caricamento CSV:', error);
-        // Usa valori di fallback
-        incidentiOggi = 460;
-        mortiOggi = 8;
-        feritiOggi = 627;
-        startCounterAnimation();
-      });
-  });
+      }
+      // Avvia l'animazione del counter
+      startCounterAnimation();
+    })
+    .catch(error => {
+      console.error('Errore caricamento CSV:', error);
+      // Usa valori di fallback
+      incidentiOggi = 460;
+      mortiOggi = 8;
+      feritiOggi = 627;
+      startCounterAnimation();
+    });
   
   function startCounterAnimation() {
     // Aggiungi fade in del counter dopo un breve delay
@@ -252,6 +249,7 @@ function updateCounterCountdown() {
       countdown.innerHTML = `Aggiornamento<br>in corso...`;
     }
   }
+});
 
 // ========================================
 // FUNZIONE DI GESTIONE SCROLL MOUSE
