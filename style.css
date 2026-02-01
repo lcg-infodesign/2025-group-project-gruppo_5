@@ -52,7 +52,8 @@ body {
 
 .scroll {
   /*pagina dei dati ha bisogno di scrollare*/
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 canvas {
@@ -794,10 +795,7 @@ h3{
   justify-content: flex-start;
   /* remove horizontal padding so inner containers center correctly */
   padding: clamp(40px, 2.6vw, 50px) 0 clamp(48px, 3.13vw, 60px); /* 50px 60px @ 1920px */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   box-sizing: border-box;
   width: 100%;
   transition: opacity 0.3s ease;
@@ -819,6 +817,51 @@ h3{
   max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
   text-align: center;
   margin: 0 auto;
+  width: 100%;
+}
+
+/* Layout a due colonne per Chi Siamo */
+.two-column-layout {
+  display: flex;
+  gap: clamp(40px, 4vw, 80px); /* 80px @ 1920px */
+  align-items: flex-start;
+  width: 100%;
+  max-width: clamp(1200px, 80vw, 1600px); /* 1600px @ 1920px */
+  margin: 0 auto;
+  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px); /* 40px laterale, 80px sotto @ 1920px */
+}
+
+.left-column {
+  flex: 0 0 30%;
+  text-align: left;
+}
+
+.left-column .team-title {
+  text-align: left;
+  margin-left: 0;
+}
+
+.left-column .description {
+  text-align: left;
+  margin-left: 0;
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.right-column .team-title {
+  text-align: left;
+  margin-left: 0;
+  width: 100%;
+}
+
+.right-column .team-grid {
+  margin-left: 0;
+  padding: 0;
   width: 100%;
 }
 
@@ -993,7 +1036,7 @@ h3{
 /* Team Grid */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(12px, 0.83vw, 16px); /* 16px @ 1920px */
   width: 100%;
   max-width: clamp(1000px, 72.92vw, 1400px); /* 1400px @ 1920px */
