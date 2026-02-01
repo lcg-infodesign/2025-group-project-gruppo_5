@@ -23,7 +23,6 @@ let scrollCheckpoints = [
   3300,   // Sezione 5b: Animazione cubo 3D
   3850,   // Sezione 6: Counter giornaliero (500px dopo sez 5)
   4300,   // Dopo counter - "Ma di chi è la colpa?"
-  4900,    // Sezione 7: Griglia responsabilità
   5200,   // Sezione 7: divisione per responsabilità
   6500,   // Sezione 8: Dettaglio categoria selezionata (dopo animazione completa)
 ];
@@ -87,6 +86,8 @@ let animRegroupActive = false;
 let animRegroupProgress = 0;
 let animRegroupTarget = 0;
 let dimensioneQuadratino = 0; // Dimensione dei quadratini, calcolata in sezione 7
+let ctaFadeStartTime = -1; // Timestamp inizio fade in del testo CTA
+let ctaFadeOpacity = 0; // Opacità corrente del testo CTA
 
 // Sezione 8: visualizzazione di dettaglio (NON più overlay)
 let sezioneOttavaHitboxes = [];
@@ -350,8 +351,8 @@ function setup() {
   // Aggiungi un listener per le frecce su e giù della tastiera
 document.addEventListener('keydown', function(event) {
   if (event.key === 'ArrowUp') {
-    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 10)
-    if (currentCheckpointIndex >= 10) {
+    // Blocca freccia su quando si è nel dettaglio (checkpoint >= 9, ossia 6500)
+    if (currentCheckpointIndex >= 9) {
       return; // Impedisci scroll indietro dal dettaglio
     }
     // Simula il click su scrollArrowUp
@@ -383,7 +384,7 @@ document.addEventListener('keydown', function(event) {
       return;
     }
     // Blocca freccia giù a 5200 se non ha cliccato una categoria
-    if (currentCheckpointIndex === 9 && !hasClickedCategory) {
+    if (currentCheckpointIndex === 8 && !hasClickedCategory) {
       return; // Impedisci scroll in avanti oltre 5200
     }
     // Simula il click su scrollArrowDown
@@ -542,14 +543,14 @@ function mouseWheel(event) {
     return false;
   }
   
-  // Blocca scroll a 5200 (checkpoint index 9) se non ha cliccato una categoria
-  if (currentCheckpointIndex === 9 && !hasClickedCategory && event.delta > 0) {
+  // Blocca scroll a 5200 (checkpoint index 8) se non ha cliccato una categoria
+  if (currentCheckpointIndex === 8 && !hasClickedCategory && event.delta > 0) {
     // Impedisci scroll in avanti oltre 5200 e resetta accumulatore
     scrollAccumulator = 0;
     return false;
   }
   
-  // Blocca scroll verso l'alto quando si è nel dettaglio (checkpoint 9, scrollY >= 6500)
+  // Blocca scroll verso l'alto quando si è nel dettaglio (checkpoint >= 9, scrollY >= 6500)
   if (currentCheckpointIndex >= 9 && event.delta < 0) {
     // Impedisci scroll indietro dal dettaglio
     scrollAccumulator = 0;
@@ -2258,7 +2259,7 @@ function drawSezioneSettima() {
                    greenDims.cols * (quadSize + quadSpacing) + groupSpacing + 
                    pinkDims.cols * (quadSize + quadSpacing);
   let startX = (width - totalWidth) / 2;
-  let topY = height / 2 - max(blueDims.rows, greenDims.rows, pinkDims.rows) * (quadSize + quadSpacing) / 2 + 60;
+  let topY = height / 2 - max(blueDims.rows, greenDims.rows, pinkDims.rows) * (quadSize + quadSpacing) / 2 + 120;
   
   let blueStartX = startX;
   let greenStartX = blueStartX + blueDims.cols * (quadSize + quadSpacing) + groupSpacing;
@@ -2400,13 +2401,13 @@ function drawSezioneSettima() {
     let blueCenterX = blueStartX + (blueDims.cols * (quadSize + quadSpacing)) / 2;
     let blueOpacity = hoveredGridIndex === -1 || hoveredGridIndex === 0 ? numberOpacity : numberOpacity * 0.3;
     fill(0, 161, 241, blueOpacity);
-    text(currentConducenti.toLocaleString('it-IT'), blueCenterX, topY - 30);
+    text(currentConducenti.toLocaleString('it-IT'), blueCenterX, topY - 40);
     
     // Label sotto il numero
     textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, blueOpacity);
-    text('Conducenti', blueCenterX, topY - 10);
+    text('Conducenti', blueCenterX, topY - 15);
     
     // Numero gruppo VERDE (Cause esterne e concomitanti)
     let greenCenterX = greenStartX + (greenDims.cols * (quadSize + quadSpacing)) / 2;
@@ -2414,12 +2415,12 @@ function drawSezioneSettima() {
     textFont(lcdFont);
     textSize(txtSize);
     fill(51, 187, 68, greenOpacity);
-    text(currentCauseEsterne.toLocaleString('it-IT'), greenCenterX, topY - 30);
+    text(currentCauseEsterne.toLocaleString('it-IT'), greenCenterX, topY - 40);
     
     textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, greenOpacity);
-    text('Cause esterne e concomitanti', greenCenterX, topY - 10);
+    text('Cause esterne e concomitanti', greenCenterX, topY - 15);
     
     // Numero gruppo ROSA (Non conducenti)
     let pinkCenterX = pinkStartX + (pinkDims.cols * (quadSize + quadSpacing)) / 2;
@@ -2427,33 +2428,85 @@ function drawSezioneSettima() {
     textFont(lcdFont);
     textSize(txtSize);
     fill(253, 115, 237, pinkOpacity);
-    text(currentNonConducenti.toLocaleString('it-IT'), pinkCenterX, topY - 30);
+    text(currentNonConducenti.toLocaleString('it-IT'), pinkCenterX, topY - 40);
     
     textFont(transportFont);
     textSize(txtSize * 0.4);
     fill(255, 255, 255, pinkOpacity);
-    text('Non conducenti', pinkCenterX, topY - 10);
+    text('Non conducenti', pinkCenterX, topY - 15);
     
     pop();
   }
   
-  // Testo informativo sotto le griglie (appare con l'animazione)
-  if (animRegroupProgress > 0.5) {
-    let ctaOpacity = map(animRegroupProgress, 0.5, 1, 0, grigliaFadeIn);
-    ctaOpacity = constrain(ctaOpacity, 0, grigliaFadeIn);
+  // Testo informativo sotto "MA DI CHI È LA COLPA?" (appare con l'animazione)
+  if (animRegroupProgress > 0.5 && scrollY < 6500) {
+    // Inizializza timer se non è ancora partito
+    if (ctaFadeStartTime === -1) {
+      ctaFadeStartTime = millis();
+    }
     
-    push();
-    textAlign(CENTER, TOP);
-    textFont(transportFont);
-    textSize(txtSize * 0.4);
-    fill(255, 255, 255, ctaOpacity);
+    // Calcola tempo trascorso dal primo trigger
+    let elapsed = millis() - ctaFadeStartTime;
+    let delayMs = 1000; // 1 secondo di delay
+    let fadeDuration = 500; // 500ms per fade in
     
-    // Calcola posizione sotto la griglia più bassa
-    let maxRows = max(blueDims.rows, greenDims.rows, pinkDims.rows);
-    let bottomY = topY + maxRows * (quadSize + quadSpacing) + 15;
+    // Fade in dopo 1 secondo
+    if (elapsed < delayMs) {
+      ctaFadeOpacity = 0;
+    } else if (elapsed < delayMs + fadeDuration) {
+      ctaFadeOpacity = map(elapsed, delayMs, delayMs + fadeDuration, 0, grigliaFadeIn);
+    } else {
+      ctaFadeOpacity = grigliaFadeIn;
+    }
     
-    text("Clicca e scopri le cause degli incidenti più nello specifico", width / 2, bottomY);
-    pop();
+    if (ctaFadeOpacity > 0) {
+      push();
+      textAlign(CENTER, TOP);
+      textFont(transportFont);
+      textSize(txtSize * 0.42); // 2 punti più grande (era 0.4)
+      fill(255, 255, 255, ctaFadeOpacity);
+      
+      // Posiziona sotto "MA DI CHI È LA COLPA?"
+      // colpaPosY è in height * 0.2 quando la griglia è visibile
+      let bottomY = height * 0.2 + 50; // 50px sotto il titolo
+      
+      // Aggiungi bounce effect leggero e smooth
+      let bounceTime = (elapsed - delayMs - fadeDuration) / 1000; // tempo in secondi dopo fade in
+      let bounceOffset = 0;
+      if (bounceTime > 0) {
+        // Ciclo bounce di 2 secondi con easing smooth
+        let cycle = (bounceTime % 2) / 2; // 0 a 1 ogni 2 secondi
+        if (cycle < 0.4) {
+          // 0% a 40%: sale a -3px con ease out
+          let t = cycle / 0.4;
+          t = 1 - pow(1 - t, 2); // ease out quadratic
+          bounceOffset = -3 * t;
+        } else if (cycle < 0.5) {
+          // 40% a 50%: scende a 0 con ease in
+          let t = (cycle - 0.4) / 0.1;
+          t = pow(t, 2); // ease in quadratic
+          bounceOffset = -3 * (1 - t);
+        } else if (cycle < 0.6) {
+          // 50% a 60%: sale a -1.5px con ease out
+          let t = (cycle - 0.5) / 0.1;
+          t = 1 - pow(1 - t, 2);
+          bounceOffset = -1.5 * t;
+        } else if (cycle < 0.8) {
+          // 60% a 80%: scende a 0 con ease in
+          let t = (cycle - 0.6) / 0.2;
+          t = pow(t, 2);
+          bounceOffset = -1.5 * (1 - t);
+        }
+        // 80% a 100%: resta a 0
+      }
+      
+      text("Clicca su una categoria per scoprire le cause degli incidenti più nello specifico", width / 2, bottomY + bounceOffset);
+      pop();
+    }
+  } else {
+    // Reset quando non è visibile
+    ctaFadeStartTime = -1;
+    ctaFadeOpacity = 0;
   }
   
   pop(); // Fine isolamento stile sezione 7
