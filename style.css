@@ -40,14 +40,16 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; /* no scrollbar */
+  overflow: hidden;
+  /* no scrollbar */
 
   background: var(--bg);
   color: var(--txt);
 
   /*testi*/
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
 }
 
 .scroll {
@@ -71,27 +73,32 @@ p {
 h1 {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: clamp(28px, 2.08vw, 40px); /* 40px @ 1920px */
+  font-size: clamp(28px, 2.08vw, 40px);
+  /* 40px @ 1920px */
   margin: 2rem;
 }
 
 h2 {
   font-family: "LCD", monospace;
-  font-size: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
+  font-size: clamp(18px, 1.25vw, 24px);
+  /* 24px @ 1920px */
   margin: 2em 0 0.5em 2rem;
 }
 
-h3{
+h3 {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  font-size: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   margin: 2em 0 0.5em 2rem;
 }
 
 .main-title {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: clamp(28px, 2.08vw, 40px); /* 40px @ 1920px */
-  margin: clamp(80px, 6.25vw, 120px) 2rem 2rem; /* 120px @ 1920px */
+  font-size: clamp(28px, 2.08vw, 40px);
+  /* 40px @ 1920px */
+  margin: clamp(80px, 6.25vw, 120px) 2rem 2rem;
+  /* 120px @ 1920px */
 }
 
 /* ========================================
@@ -102,7 +109,8 @@ h3{
   top: 0;
   left: 0;
   width: 100%;
-  height: clamp(60px, 4.17vw, 80px); /* 80px @ 1920px */
+  height: clamp(60px, 4.17vw, 80px);
+  /* 80px @ 1920px */
   /*background: transparent;*/
   background-color: #000;
   display: flex;
@@ -124,7 +132,8 @@ h3{
 /* Lato sinistro: link sezioni */
 .nav-left {
   display: flex;
-  gap: clamp(30px, 2.6vw, 50px); /* 50px @ 1920px */
+  gap: clamp(30px, 2.6vw, 50px);
+  /* 50px @ 1920px */
   align-items: center;
   flex-shrink: 0;
 }
@@ -133,7 +142,8 @@ h3{
   color: var(--txt);
   text-decoration: none;
   position: relative;
-  padding-bottom: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */
+  padding-bottom: clamp(6px, 0.42vw, 8px);
+  /* 8px @ 1920px */
   transition: color 0.3s ease;
   white-space: nowrap;
 }
@@ -143,15 +153,19 @@ h3{
   color: var(--txt);
   opacity: 0.5;
   margin: 0 clamp(3px, 0.21vw, 4px);
-  margin-left: clamp(-30px, -2.08vw, -40px); /* -40px @ 1920px */
-  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
+  margin-left: clamp(-30px, -2.08vw, -40px);
+  /* -40px @ 1920px */
+  font-size: clamp(12px, 0.73vw, 14px);
+  /* 14px @ 1920px */
 }
 
 /* Stile per link sottocategoria */
 .nav-item-sub {
-  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
+  font-size: clamp(12px, 0.73vw, 14px);
+  /* 14px @ 1920px */
   opacity: 0.85;
-  margin-left: clamp(-30px, -2.08vw, -40px); /* -40px @ 1920px */
+  margin-left: clamp(-30px, -2.08vw, -40px);
+  /* -40px @ 1920px */
 }
 
 /* Sottolineatura arancione per sezione attiva */
@@ -182,7 +196,8 @@ h3{
 /* Lato destro: bottoni */
 .nav-right {
   display: flex;
-  gap: clamp(15px, 1.04vw, 20px); /* 20px @ 1920px */
+  gap: clamp(15px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   flex-shrink: 0;
 }
 
@@ -190,8 +205,10 @@ h3{
   background: transparent;
   border: 1.5px solid var(--txt);
   color: var(--txt);
-  padding: clamp(8px, 0.52vw, 10px) clamp(18px, 1.25vw, 24px); /* 10px 24px @ 1920px */
-  border-radius: clamp(10px, 0.63vw, 12px); /* 12px @ 1920px */
+  padding: clamp(8px, 0.52vw, 10px) clamp(18px, 1.25vw, 24px);
+  /* 10px 24px @ 1920px */
+  border-radius: clamp(10px, 0.63vw, 12px);
+  /* 12px @ 1920px */
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -222,11 +239,11 @@ h3{
   left: 0;
   width: 100%;
   height: 2px;
-  background: var(--orange); 
+  background: var(--orange);
 }
 
 /*TENDINA CATEGORIE RESPONSABILITÀ*/
-.nav-item.active, 
+.nav-item.active,
 .nav-item.active .dropdown-link {
   color: var(--orange) !important;
 }
@@ -242,7 +259,8 @@ h3{
   position: absolute;
   top: -1rem;
   left: 0;
-  right: -2rem; /* Estende l'area verso destra per coprire il gap */
+  right: -2rem;
+  /* Estende l'area verso destra per coprire il gap */
   bottom: -1rem;
 }
 
@@ -260,13 +278,15 @@ h3{
 
 /* Stile per il menu della tendina */
 .dropdown-menu {
-  display: none; /* Nascondi la tendina di default */
+  display: none;
+  /* Nascondi la tendina di default */
   position: absolute;
-  top: -0.9rem; 
+  top: -0.9rem;
   left: calc(100% + 0.7rem);
   background-color: #000;
   border: none;
-  border-radius: clamp(6px, 0.42vw, 8px); /* 8px @ 1920px */
+  border-radius: clamp(6px, 0.42vw, 8px);
+  /* 8px @ 1920px */
   padding: clamp(8px, 0.52vw, 10px) 0;
   z-index: 1000;
 }
@@ -285,10 +305,12 @@ h3{
 /* Stile per gli elementi della tendina */
 .dropdown-item {
   display: block;
-  padding: clamp(6px, 0.42vw, 8px) clamp(12px, 0.83vw, 16px); /* 8px 16px @ 1920px */
+  padding: clamp(6px, 0.42vw, 8px) clamp(12px, 0.83vw, 16px);
+  /* 8px 16px @ 1920px */
   color: var(--txt);
   text-decoration: none;
-  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
+  font-size: clamp(12px, 0.73vw, 14px);
+  /* 14px @ 1920px */
   transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
 
@@ -307,15 +329,19 @@ h3{
 .navbar-counter {
   position: absolute;
   left: 50%;
-  top: calc(50% + 5px); /* Leggermente più in basso per allineare con nav-button */
+  top: calc(50% + 5px);
+  /* Leggermente più in basso per allineare con nav-button */
   transform: translate(-50%, -50%);
   display: flex;
-  gap: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
+  gap: clamp(20px, 1.56vw, 30px);
+  /* 30px @ 1920px */
   align-items: center;
-  padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 20px); /* 8px 20px @ 1920px */
+  padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 20px);
+  /* 8px 20px @ 1920px */
   background: transparent;
   border: 1.5px solid var(--txt);
-  border-radius: clamp(12px, 0.78vw, 15px); /* 15px @ 1920px */
+  border-radius: clamp(12px, 0.78vw, 15px);
+  /* 15px @ 1920px */
   opacity: 0;
   transition: all 0.3s ease;
   pointer-events: none;
@@ -334,7 +360,8 @@ h3{
 
 .counter-number {
   font-family: "LCD", monospace;
-  font-size: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  font-size: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   font-weight: 400;
   color: var(--orange);
   line-height: 1;
@@ -342,7 +369,8 @@ h3{
 }
 
 .counter-label {
-  font-size: clamp(9px, 0.57vw, 11px); /* 11px @ 1920px */
+  font-size: clamp(9px, 0.57vw, 11px);
+  /* 11px @ 1920px */
   font-weight: 400;
   color: var(--txt);
   text-transform: capitalize;
@@ -356,7 +384,8 @@ h3{
   left: 50%;
   transform: translateX(-50%);
   color: var(--txt);
-  font-size: clamp(8px, 0.52vw, 10px); /* 10px @ 1920px */
+  font-size: clamp(8px, 0.52vw, 10px);
+  /* 10px @ 1920px */
   font-weight: 400;
   line-height: 1.3;
   text-align: center;
@@ -365,7 +394,7 @@ h3{
   transition: opacity 0.3s ease;
 }
 
-.navbar-counter.visible ~ .counter-info {
+.navbar-counter.visible~.counter-info {
   opacity: 1;
 }
 
@@ -374,18 +403,21 @@ h3{
    ======================================== */
 .scroll-arrows-container {
   position: fixed;
-  bottom: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
+  bottom: clamp(20px, 1.56vw, 30px);
+  /* 30px @ 1920px */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: clamp(10px, 0.63vw, 12px); /* 12px @ 1920px */
+  gap: clamp(10px, 0.63vw, 12px);
+  /* 12px @ 1920px */
   align-items: center;
   z-index: 999;
   transition: all 0.3s ease;
 }
 
 .scroll-arrow {
-  width: clamp(28px, 1.67vw, 32px); /* 32px @ 1920px */
+  width: clamp(28px, 1.67vw, 32px);
+  /* 32px @ 1920px */
   height: clamp(28px, 1.67vw, 32px);
   display: flex;
   align-items: center;
@@ -422,7 +454,8 @@ h3{
 }
 
 .scroll-arrow svg {
-  width: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  width: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   height: clamp(14px, 0.83vw, 16px);
 }
 
@@ -431,12 +464,19 @@ h3{
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
+
   40% {
     transform: translateY(-10px);
   }
+
   60% {
     transform: translateY(-5px);
   }
@@ -447,7 +487,8 @@ h3{
    ======================================== */
 .back-arrow {
   position: absolute;
-  top: calc(100px + 15px); /* SEZIONE_MARGIN (100px) + metà textSize (20px, ma un po' meno per allineamento ottico) */
+  top: calc(100px + 15px);
+  /* SEZIONE_MARGIN (100px) + metà textSize (20px, ma un po' meno per allineamento ottico) */
   left: clamp(30px, 3vw, 60px);
   width: clamp(40px, 3.5vw, 50px);
   height: clamp(40px, 3.5vw, 50px);
@@ -473,7 +514,8 @@ h3{
 .back-arrow svg {
   width: clamp(24px, 1.4vw, 27px);
   height: clamp(24px, 1.4vw, 27px);
-  stroke-width: 2.5; /* Freccia più spessa */
+  stroke-width: 2.5;
+  /* Freccia più spessa */
 }
 
 .back-arrow:hover svg path {
@@ -483,7 +525,8 @@ h3{
 /* Frecce navigazione tra categorie di dettaglio */
 .detail-arrow {
   position: absolute;
-  top: 66.67vh; /* 2/3 dell'altezza dello schermo */
+  top: 66.67vh;
+  /* 2/3 dell'altezza dello schermo */
   width: clamp(35px, 3vw, 45px);
   height: clamp(35px, 3vw, 45px);
   display: flex;
@@ -500,11 +543,13 @@ h3{
 }
 
 .detail-arrow-left {
-  left: clamp(35px, 2.6vw, 50px); /* 50px @ 1920px */
+  left: clamp(35px, 2.6vw, 50px);
+  /* 50px @ 1920px */
 }
 
 .detail-arrow-right {
-  right: clamp(35px, 2.6vw, 50px); /* 50px @ 1920px */
+  right: clamp(35px, 2.6vw, 50px);
+  /* 50px @ 1920px */
 }
 
 .detail-arrow.visible {
@@ -525,7 +570,8 @@ h3{
 }
 
 .detail-arrow svg {
-  width: clamp(20px, 1.15vw, 22px); /* 22px @ 1920px */
+  width: clamp(20px, 1.15vw, 22px);
+  /* 22px @ 1920px */
   height: clamp(20px, 1.15vw, 22px);
 }
 
@@ -537,9 +583,11 @@ h3{
 .container {
   /*box e sfondo*/
   background-color: var(--ovGray);
-  width: clamp(250px, 15.63vw, 300px); /* 300px @ 1920px */
+  width: clamp(250px, 15.63vw, 300px);
+  /* 300px @ 1920px */
   padding: 1.5em;
-  border-radius: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  border-radius: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   /*disposizione contenuti*/
   display: flex;
   flex-direction: column;
@@ -547,11 +595,14 @@ h3{
   gap: 1em;
 
   position: fixed;
-  top: clamp(120px, 10.42vw, 200px); /* ~10em @ 1920px */
-  left: clamp(60px, 5.21vw, 100px); /* ~5em @ 1920px */
+  top: clamp(120px, 10.42vw, 200px);
+  /* ~10em @ 1920px */
+  left: clamp(60px, 5.21vw, 100px);
+  /* ~5em @ 1920px */
 }
 
-.riga { /*le singole righe di contenuto*/
+.riga {
+  /*le singole righe di contenuto*/
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -560,32 +611,36 @@ h3{
   gap: 1em;
 }
 
-.rect{
+.rect {
   width: 2em;
   height: 2em;
   background-color: var(--txt);
 }
 
-.emptyRect{
+.emptyRect {
   width: 0.5em;
   height: 0.5em;
-  border: clamp(1.5px, 0.1vw, 2px) solid var(--txt); /* 2px @ 1920px */
+  border: clamp(1.5px, 0.1vw, 2px) solid var(--txt);
+  /* 2px @ 1920px */
 }
 
-.gradiente{
+.gradiente {
   width: 10em;
   height: 0.5em;
-  border-radius: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  border-radius: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   background: linear-gradient(to right, var(--txt), var(--orange));
 }
 
 /*nome e dati causa*/
-.catCausa p, .catCausa h3{
+.catCausa p,
+.catCausa h3 {
   margin: 0;
 }
 
-.catCausa{
-  width: clamp(320px, 20.83vw, 400px); /* 400px @ 1920px */
+.catCausa {
+  width: clamp(320px, 20.83vw, 400px);
+  /* 400px @ 1920px */
   padding: 1.5em;
   /**/
   display: flex;
@@ -594,8 +649,10 @@ h3{
   gap: 1em;
   /**/
   position: fixed;
-  top: clamp(120px, 10.42vw, 200px); /* ~10em @ 1920px */
-  left: clamp(380px, 31.25vw, 600px); /* ~30em @ 1920px */
+  top: clamp(120px, 10.42vw, 200px);
+  /* ~10em @ 1920px */
+  left: clamp(380px, 31.25vw, 600px);
+  /* ~30em @ 1920px */
 }
 
 
@@ -628,7 +685,7 @@ h3{
   transform: translateY(-5vh);
 }
 
-.Listadati{
+.Listadati {
   /*margin-left: clamp(180px, 25vw, 480px); /* 25vw @ 1920px */
   display: flex;
   flex-direction: row;
@@ -642,7 +699,8 @@ h3{
 
 .bigCategory {
   display: flex;
-  flex-direction: column; /* h2 sopra .catList */
+  flex-direction: column;
+  /* h2 sopra .catList */
   gap: 0.6rem;
   align-items: flex-start;
 }
@@ -650,20 +708,26 @@ h3{
 .bigCategory h2 {
   font-family: "LCD", monospace;
   color: var(--txt);
-  font-size: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
+  font-size: clamp(18px, 1.25vw, 24px);
+  /* 24px @ 1920px */
   font-weight: 400;
   letter-spacing: 0.2em;
-  margin-left: clamp(28px, 2.08vw, 40px); /* Allineato con i bottoni */
+  margin-left: clamp(28px, 2.08vw, 40px);
+  /* Allineato con i bottoni */
 }
 
 .newCategory {
   /*sfondo bottone*/
   background-color: var(--bg);
   width: 60vw;
-  max-width: clamp(550px, 41.67vw, 800px); /* ~40em @ 1920px */
-  padding: clamp(14px, 1.04vw, 20px); /* ~1em @ 1920px */
-  margin: clamp(8px, 0.52vw, 10px) 0 0 clamp(28px, 2.08vw, 40px); /* 0.5em, 2rem @ 1920px */
-  border-radius: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  max-width: clamp(550px, 41.67vw, 800px);
+  /* ~40em @ 1920px */
+  padding: clamp(14px, 1.04vw, 20px);
+  /* ~1em @ 1920px */
+  margin: clamp(8px, 0.52vw, 10px) 0 0 clamp(28px, 2.08vw, 40px);
+  /* 0.5em, 2rem @ 1920px */
+  border-radius: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   border: 0.1rem solid var(--txt);
   cursor: pointer;
   /*disposizione dei contenuti*/
@@ -672,7 +736,8 @@ h3{
   align-items: center;
   /*testo interno*/
   color: var(--txt);
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   font-weight: 600;
   text-align: left;
 }
@@ -686,6 +751,7 @@ h3{
 .newCategory span {
   transition: transform 0.25s;
 }
+
 .newCategory.active span {
   transform: rotate(-90deg);
 }
@@ -837,7 +903,8 @@ h3{
   align-items: center;
   justify-content: flex-start;
   /* remove horizontal padding so inner containers center correctly */
-  padding: clamp(40px, 2.6vw, 50px) 0 clamp(48px, 3.13vw, 60px); /* 50px 60px @ 1920px */
+  padding: clamp(40px, 2.6vw, 50px) 0 clamp(48px, 3.13vw, 60px);
+  /* 50px 60px @ 1920px */
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -847,17 +914,20 @@ h3{
 .section-team {
   justify-content: center;
   /* keep small horizontal padding inside section content, not on fixed section */
-  padding: clamp(8px, 0.52vw, 10px) clamp(16px, 1.04vw, 20px) clamp(60px, 4.17vw, 80px); /* 10px 20px 80px @ 1920px */
+  padding: clamp(8px, 0.52vw, 10px) clamp(16px, 1.04vw, 20px) clamp(60px, 4.17vw, 80px);
+  /* 10px 20px 80px @ 1920px */
 }
 
 .section-crediti {
   justify-content: flex-start;
-  padding: clamp(80px, 5.21vw, 100px) clamp(30px, 2.08vw, 40px) clamp(160px, 10.42vw, 200px); /* 100px 40px 200px @ 1920px */
+  padding: clamp(80px, 5.21vw, 100px) clamp(30px, 2.08vw, 40px) clamp(160px, 10.42vw, 200px);
+  /* 100px 40px 200px @ 1920px */
   min-height: 100vh;
 }
 
 .section-content {
-  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
+  max-width: clamp(700px, 47.92vw, 920px);
+  /* 920px @ 1920px */
   text-align: center;
   margin: 0 auto;
   width: 100%;
@@ -866,12 +936,16 @@ h3{
 /* Layout a due colonne per Chi Siamo */
 .two-column-layout {
   display: flex;
-  gap: clamp(40px, 4vw, 80px); /* 80px @ 1920px */
-  align-items: flex-start;
+  gap: clamp(40px, 4vw, 80px);
+  /* 80px @ 1920px */
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: clamp(1200px, 80vw, 1600px); /* 1600px @ 1920px */
+  max-width: clamp(1200px, 80vw, 1600px);
+  /* 1600px @ 1920px */
   margin: 0 auto;
-  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px); /* 40px laterale, 80px sotto @ 1920px */
+  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px);
+  /* 40px laterale, 80px sotto @ 1920px */
 }
 
 .left-column {
@@ -893,7 +967,9 @@ h3{
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+  padding-top: 15em;
 }
 
 .right-column .team-title {
@@ -910,7 +986,8 @@ h3{
 
 /* Stili sezione crediti */
 .crediti-content {
-  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
+  max-width: clamp(700px, 47.92vw, 920px);
+  /* 920px @ 1920px */
   margin: 0 auto;
   width: 100%;
   text-align: left;
@@ -918,26 +995,34 @@ h3{
 
 .crediti-top {
   display: flex;
-  gap: clamp(40px, 3.13vw, 60px); /* 60px @ 1920px */
-  margin-bottom: clamp(30px, 2.08vw, 40px); /* 40px @ 1920px */
-  padding-bottom: clamp(20px, 1.56vw, 30px); /* 30px @ 1920px */
+  gap: clamp(40px, 3.13vw, 60px);
+  /* 60px @ 1920px */
+  margin-bottom: clamp(30px, 2.08vw, 40px);
+  /* 40px @ 1920px */
+  padding-bottom: clamp(20px, 1.56vw, 30px);
+  /* 30px @ 1920px */
   border-bottom: 1px solid color-mix(in srgb, var(--orange) 30%, transparent);
   align-items: flex-start;
 }
 
 .crediti-header {
   flex: 0 0 auto;
-  max-width: clamp(250px, 18.23vw, 350px); /* 350px @ 1920px */
-  margin-top: clamp(40px, 3.13vw, 60px); /* 60px @ 1920px */
-  margin-left: clamp(-250px, -18.23vw, -350px); /* -350px @ 1920px */
+  max-width: clamp(250px, 18.23vw, 350px);
+  /* 350px @ 1920px */
+  margin-top: clamp(40px, 3.13vw, 60px);
+  /* 60px @ 1920px */
+  margin-left: clamp(-250px, -18.23vw, -350px);
+  /* -350px @ 1920px */
 }
 
 .corso-info {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   line-height: 1.6;
   color: var(--txt);
-  margin: clamp(4px, 0.26vw, 5px) 0; /* 5px @ 1920px */
+  margin: clamp(4px, 0.26vw, 5px) 0;
+  /* 5px @ 1920px */
 }
 
 .crediti-autori {
@@ -947,41 +1032,52 @@ h3{
 .crediti-title {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
+  font-size: clamp(18px, 1.25vw, 24px);
+  /* 24px @ 1920px */
   font-weight: 400;
-  margin-bottom: clamp(12px, 0.78vw, 15px); /* 15px @ 1920px */
-  margin-top: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  margin-bottom: clamp(12px, 0.78vw, 15px);
+  /* 15px @ 1920px */
+  margin-top: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   letter-spacing: 0.05em;
 }
 
 .autori-list {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   line-height: 1.8;
   color: var(--txt);
 }
 
 .crediti-license {
-  margin-bottom: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
-  padding: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  margin-bottom: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
+  padding: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   background: color-mix(in srgb, var(--orange) 5%, transparent);
-  border-left: clamp(2px, 0.16vw, 3px) solid var(--orange); /* 3px @ 1920px */
+  border-left: clamp(2px, 0.16vw, 3px) solid var(--orange);
+  /* 3px @ 1920px */
 }
 
 .copyright {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(12px, 0.73vw, 14px); /* 14px @ 1920px */
+  font-size: clamp(12px, 0.73vw, 14px);
+  /* 14px @ 1920px */
   color: var(--orange);
-  margin-bottom: clamp(12px, 0.78vw, 15px); /* 15px @ 1920px */
+  margin-bottom: clamp(12px, 0.78vw, 15px);
+  /* 15px @ 1920px */
   font-weight: 600;
 }
 
 .license-text p {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(11px, 0.68vw, 13px); /* 13px @ 1920px */
+  font-size: clamp(11px, 0.68vw, 13px);
+  /* 13px @ 1920px */
   line-height: 1.6;
   color: var(--txt);
-  margin: clamp(8px, 0.52vw, 10px) 0; /* 10px @ 1920px */
+  margin: clamp(8px, 0.52vw, 10px) 0;
+  /* 10px @ 1920px */
 }
 
 .license-text strong {
@@ -990,10 +1086,12 @@ h3{
 
 .crediti-docenti {
   display: flex;
-  gap: clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
-  margin: 0 auto; 
-  max-width: 100%; 
-  padding: 0 clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  gap: clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 0 clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   box-sizing: border-box;
   /*margin-bottom: 40px;*/
 }
@@ -1005,7 +1103,8 @@ h3{
 
 .docenti-col p {
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   line-height: 1.8;
   color: var(--txt);
   margin: 5px 0;
@@ -1015,9 +1114,11 @@ h3{
 .orange-title {
   font-family: "Transport", Arial, Helvetica, sans-serif;
   color: var(--orange);
-  font-size: clamp(36px, 2.5vw, 48px); /* 48px @ 1920px */
+  font-size: clamp(36px, 2.5vw, 48px);
+  /* 48px @ 1920px */
   font-weight: 600;
-  margin-bottom: clamp(48px, 3.33vw, 64px); /* 64px @ 1920px */
+  margin-bottom: clamp(48px, 3.33vw, 64px);
+  /* 64px @ 1920px */
   letter-spacing: -0.01em;
   line-height: 1.2;
   text-align: center;
@@ -1029,16 +1130,19 @@ h3{
 .team-title {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: clamp(36px, 2.5vw, 48px); /* 48px @ 1920px */
+  font-size: clamp(36px, 2.5vw, 48px);
+  /* 48px @ 1920px */
   font-weight: 400;
-  margin-top: clamp(60px, 4.17vw, 80px); /* 80px @ 1920px */
-  margin-bottom: clamp(18px, 1.25vw, 24px); /* 24px @ 1920px */
+  margin-top: clamp(60px, 4.17vw, 80px);
+  /* 80px @ 1920px */
+  margin-bottom: clamp(18px, 1.25vw, 24px);
+  /* 24px @ 1920px */
   letter-spacing: 0.2em;
   text-align: center;
   line-height: 3;
   margin-left: auto;
   margin-right: auto;
-  text-shadow: 
+  text-shadow:
     2px 0 0 var(--bg),
     -2px 0 var(--bg),
     0 2px 0 var(--bg),
@@ -1051,39 +1155,48 @@ h3{
 
 /* Description text */
 .description {
-  font-size: clamp(18px, 0.99vw, 19px); /* 19px @ 1920px */
+  font-size: clamp(18px, 0.99vw, 19px);
+  /* 19px @ 1920px */
   line-height: 1.65;
   color: var(--txt);
-  margin-bottom: clamp(8px, 0.52vw, 10px); /* 10px @ 1920px */
+  margin-bottom: clamp(8px, 0.52vw, 10px);
+  /* 10px @ 1920px */
   font-weight: 400;
   letter-spacing: 0.005em;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
+  max-width: clamp(700px, 47.92vw, 920px);
+  /* 920px @ 1920px */
 }
 
 .description-dati {
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   line-height: 1.65;
   color: var(--txt);
-  margin-bottom: clamp(8px, 0.52vw, 10px); /* 10px @ 1920px */
+  margin-bottom: clamp(8px, 0.52vw, 10px);
+  /* 10px @ 1920px */
   font-weight: 400;
   letter-spacing: 0.005em;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  max-width: clamp(700px, 47.92vw, 920px); /* 920px @ 1920px */
+  max-width: clamp(700px, 47.92vw, 920px);
+  /* 920px @ 1920px */
 }
 
 /* Team Grid */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 0.83vw, 16px); /* 16px @ 1920px */
+  gap: clamp(12px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   width: 100%;
-  max-width: clamp(1000px, 72.92vw, 1400px); /* 1400px @ 1920px */
-  padding: 0 clamp(16px, 1.04vw, 20px); /* 20px @ 1920px */
+  max-width: clamp(1000px, 72.92vw, 1400px);
+  /* 1400px @ 1920px */
+  padding: 0 clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
   margin: 0 auto;
   justify-items: center;
 }
@@ -1093,12 +1206,14 @@ h3{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(8px, 0.63vw, 12px); /* 12px @ 1920px */
+  gap: clamp(8px, 0.63vw, 12px);
+  /* 12px @ 1920px */
 }
 
 .team-photo {
   width: 100%;
-  max-width: clamp(120px, 9.38vw, 180px); /* 180px @ 1920px */
+  max-width: clamp(120px, 9.38vw, 180px);
+  /* 180px @ 1920px */
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
@@ -1115,7 +1230,8 @@ h3{
 }
 
 .card-name span {
-  font-size: clamp(14px, 0.83vw, 16px); /* 16px @ 1920px */
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
   font-weight: 600;
   color: var(--txt);
   line-height: 1.2;
@@ -1129,6 +1245,222 @@ h3{
   animation: fadeInUp 0.6s ease forwards;
 }
 
+/* ========================================
+   FOOTER - Chi siamo
+   ======================================== */
+:root {
+  /* base desiderata ~3rem, responsiva */
+  --base: clamp(1.8rem, 1.2rem + 1.4vw, 3rem);
+
+  /* scala testo */
+  --t-xs: calc(var(--base) * 0.34);
+  --t-sm: calc(var(--base) * 0.42);
+  --t-md: calc(var(--base) * 0.50);
+
+  --radius: 0.25rem;
+
+  /* === CONTROLLI RAPIDI === */
+  --logo-polimi: 20rem;
+  --logo-right: 5rem;
+  --content-shift: 5rem;
+}
+
+.credits-page {
+  box-sizing: border-box;
+  padding: 5em;
+  /* un po' più aria sopra */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: var(--base);
+  line-height: 1.4;
+}
+
+.credits-page * {
+  box-sizing: border-box;
+}
+
+.credits-top-line {
+  height: 0.08rem;
+  width: 100%;
+  background: var(--orange);
+  margin-bottom: 1.2rem;
+}
+
+.credits-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-bottom: 1.6rem;
+  /* più spazio sotto i loghi */
+}
+
+.credits-brand-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-width: 12rem;
+}
+
+.credits-logo-polimi {
+  width: var(--logo-polimi);
+  height: auto;
+  display: block;
+  opacity: .95;
+  flex: 0 0 auto;
+}
+
+.credits-brand-right {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.0rem;
+}
+
+.credits-logo-necst,
+.credits-logo-density {
+  height: var(--logo-right);
+  width: auto;
+  display: block;
+  opacity: .98;
+}
+
+/* Wrapper per centrare meglio il contenuto nella pagina */
+.credits-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* centra verticalmente (con footer sotto) */
+  padding-top: 3em;
+  /* e in più lo abbassa */
+}
+
+.credits-intro {
+  margin: 0 0 1.2rem 0;
+  color: var(--muted);
+  font-size: var(--t-md);
+  line-height: 1.5;
+}
+
+.credits-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2.2rem;
+  align-items: start;
+  margin-bottom: 1.1rem;
+}
+
+.credits-section-title {
+  margin: 0 0 0.55rem 0;
+  font-weight: 700;
+  font-size: var(--t-md);
+  opacity: .95;
+}
+
+.credits-block {
+  display: flex;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+}
+
+.credits-bar {
+  width: 0.12rem;
+  background: var(--orange);
+  border-radius: var(--radius);
+  margin-top: 0.10rem;
+  flex: 0 0 auto;
+}
+
+ul.credits-clean {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: var(--t-sm);
+  line-height: 1.35;
+}
+
+.credits-links {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.05rem;
+}
+
+.credits-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--t-sm);
+  line-height: 1.35;
+}
+
+.credits-links a:hover {
+  color: var(--txt);
+  text-decoration: underline;
+  text-decoration-thickness: 0.06rem;
+  text-underline-offset: 0.18rem;
+}
+
+.credits-ext {
+  width: 1rem;
+  height: 1rem;
+  opacity: .9;
+  flex: 0 0 auto;
+  transform: translateY(0.03rem);
+}
+
+.credits-footer {
+  margin-top: auto;
+  padding-top: 0.8rem;
+  color: #a9a9a9;
+  font-size: var(--t-xs);
+  line-height: 1.55;
+  opacity: .95;
+}
+
+.credits-footer .credits-copy {
+  margin-bottom: 0.35rem;
+}
+
+.credits-footer .credits-lang {
+  display: grid;
+  gap: 0.25rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 60rem) {
+  .credits-cols {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .credits-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .credits-brand-right {
+    margin-top: 0.7rem;
+  }
+
+  :root {
+    --content-shift: 1.2rem;
+    /* su mobile non abbassare troppo */
+    --logo-polimi: 3.0rem;
+    --logo-right: 2.6rem;
+  }
+}
+
+/* ========================================
+   MEDIA QUERIES
+   ======================================== */
+
 @keyframes fadeInUp {
   to {
     opacity: 1;
@@ -1141,9 +1473,11 @@ h3{
   .orange-title {
     font-size: 64px;
   }
+
   .team-title {
     font-size: 56px;
   }
+
   .description {
     font-size: 21px;
     line-height: 1.7;
@@ -1155,6 +1489,7 @@ h3{
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
+
   .team-photo {
     max-width: 150px;
   }
@@ -1165,6 +1500,7 @@ h3{
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
+
   .team-photo {
     max-width: 140px;
   }
@@ -1174,19 +1510,24 @@ h3{
   .orange-title {
     font-size: 36px;
   }
+
   .team-title {
     font-size: 36px;
   }
+
   .description {
     font-size: 18px;
   }
+
   .team-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
+
   .team-photo {
     max-width: 120px;
   }
+
   .card-name span {
     font-size: 14px;
   }
@@ -1198,6 +1539,7 @@ h3{
     gap: 16px;
     padding: 0 24px;
   }
+
   .team-photo {
     max-width: 100px;
   }
@@ -1208,11 +1550,12 @@ h3{
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
+
   .team-photo {
     max-width: 80px;
   }
+
   .card-name span {
     font-size: 12px;
   }
 }
-
