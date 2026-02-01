@@ -7,7 +7,7 @@ let scrollVelocita = 8;
 let scrollSnapEnabled = true;
 let scrollCheckpoints = [
   0,      // Sezione 1: Testo descrittivo
-  800     // Sezione 2: Liste categorie
+  600     // Sezione 2: Liste categorie
 ];
 let currentCheckpointIndex = 0;
 let isScrolling = false;
@@ -182,6 +182,8 @@ function draw() {
   clear();
   handleAutoScroll();
   updateSectionVisibility();
+  updateSectionOpacity();
+  updateScrollArrowsVisibility();
   drawDebugInfo();
 }
 
@@ -253,14 +255,43 @@ function updateSectionVisibility() {
   
   if (!sezioneTestoEl || !sezioneCategorieEl) return;
   
-  // Mostra/nascondi sezioni in base al checkpoint corrente
-  if (currentCheckpointIndex === 0) {
-    sezioneTestoEl.style.display = 'block';
-    sezioneCategorieEl.style.display = 'none';
-  } else if (currentCheckpointIndex === 1) {
-    sezioneTestoEl.style.display = 'none';
-    sezioneCategorieEl.style.display = 'block';
+  // Entrambe le sezioni sono sempre display: block per permettere il fade
+  sezioneTestoEl.style.display = 'block';
+  sezioneCategorieEl.style.display = 'block';
+}
+
+function updateSectionOpacity() {
+  let sezioneTestoEl = document.getElementById('sezione-testo');
+  let sezioneCategorieEl = document.getElementById('sezione-categorie');
+  
+  if (!sezioneTestoEl || !sezioneCategorieEl) return;
+  
+  let opacitaSez1 = 1;
+  let opacitaSez2 = 0;
+  
+  // Fade out sezione 1: da scroll 0 a 300
+  if (scrollY >= 0 && scrollY <= 300) {
+    opacitaSez1 = map(scrollY, 0, 300, 1, 0);
+    opacitaSez2 = 0;
   }
+  // Fade in sezione 2: da scroll 300 a 600
+  else if (scrollY > 300 && scrollY <= 600) {
+    opacitaSez1 = 0;
+    opacitaSez2 = map(scrollY, 300, 600, 0, 1);
+  }
+  // Dopo 600: sezione 2 completamente visibile
+  else if (scrollY > 600) {
+    opacitaSez1 = 0;
+    opacitaSez2 = 1;
+  }
+  
+  // Applica le opacità
+  sezioneTestoEl.style.opacity = opacitaSez1;
+  sezioneCategorieEl.style.opacity = opacitaSez2;
+  
+  // Gestisci pointer-events per evitare interazioni con elementi invisibili
+  sezioneTestoEl.style.pointerEvents = opacitaSez1 > 0.1 ? 'auto' : 'none';
+  sezioneCategorieEl.style.pointerEvents = opacitaSez2 > 0.1 ? 'auto' : 'none';
 }
 
 function setupScrollArrows() {
@@ -289,6 +320,9 @@ function setupScrollArrows() {
       }
     });
   }
+  
+  // Aggiorna visibilità frecce dopo il setup
+  updateScrollArrowsVisibility();
 }
 
 function setupKeyboardNavigation() {
@@ -311,6 +345,81 @@ function setupKeyboardNavigation() {
       }
     }
   });
+}
+
+function updateScrollArrowsVisibility() {
+  let scrollArrowDown = document.getElementById('scroll-arrow-down');
+  let scrollArrowUp = document.getElementById('scroll-arrow-up');
+  let arrowsContainer = document.querySelector('.scroll-arrows-container');
+  
+  let upVisible = false;
+  let downVisible = false;
+  
+  // Freccia giù: visibile solo se non sei all'ultimo checkpoint
+  if (scrollArrowDown) {
+    if (currentCheckpointIndex >= scrollCheckpoints.length - 1) {
+      scrollArrowDown.style.opacity = '0';
+      scrollArrowDown.style.pointerEvents = 'none';
+    } else {
+      scrollArrowDown.style.opacity = '1';
+      scrollArrowDown.style.pointerEvents = 'all';
+      downVisible = true;
+    }
+    
+    // Freccia giù: bordo sempre bianco, freccia interna sempre arancione
+    scrollArrowDown.style.borderColor = 'rgb(239, 239, 239)';
+    let downSvgPath = scrollArrowDown.querySelector('svg path');
+    if (downSvgPath) {
+      downSvgPath.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--orange').trim());
+    }
+    
+    // Attiva/disattiva animazione bounce: solo al primo checkpoint e quando NON si sta scrollando
+    if (currentCheckpointIndex === 0 && !isScrolling) {
+      scrollArrowDown.classList.add('bounce-active');
+      scrollArrowDown.classList.remove('allow-hover-movement');
+    } else {
+      scrollArrowDown.classList.remove('bounce-active');
+      scrollArrowDown.classList.add('allow-hover-movement');
+    }
+  }
+  
+  // Freccia su: visibile solo se non sei al primo checkpoint
+  if (scrollArrowUp) {
+    if (currentCheckpointIndex <= 0) {
+      scrollArrowUp.style.opacity = '0';
+      scrollArrowUp.style.pointerEvents = 'none';
+    } else {
+      scrollArrowUp.style.opacity = '1';
+      scrollArrowUp.style.pointerEvents = 'all';
+      upVisible = true;
+    }
+    
+    // Freccia su: bordo sempre bianco, freccia interna arancione quando è da sola all'ultimo checkpoint
+    scrollArrowUp.style.borderColor = 'rgb(239, 239, 239)';
+    let upSvgPath = scrollArrowUp.querySelector('svg path');
+    if (upSvgPath) {
+      // Se è all'ultimo checkpoint e la freccia giù non è visibile, diventa arancione
+      if (currentCheckpointIndex === scrollCheckpoints.length - 1 && !downVisible) {
+        upSvgPath.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--orange').trim());
+      } else {
+        upSvgPath.setAttribute('stroke', 'rgb(239, 239, 239)');
+      }
+    }
+  }
+  
+  // Centra il container in base alle frecce visibili
+  if (arrowsContainer) {
+    if (upVisible && downVisible) {
+      // Entrambe visibili: centra la coppia
+      arrowsContainer.style.transform = 'translateX(-50%)';
+    } else if (upVisible) {
+      // Solo freccia su: offset per centrare la singola (22px @ 1920px)
+      arrowsContainer.style.transform = `translateX(calc(-50% + ${width * 0.0115}px))`;
+    } else if (downVisible) {
+      // Solo freccia giù: offset per centrare la singola (22px @ 1920px)
+      arrowsContainer.style.transform = `translateX(calc(-50% - ${width * 0.0115}px))`;
+    }
+  }
 }
 
 function drawDebugInfo() {
