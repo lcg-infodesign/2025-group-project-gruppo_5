@@ -31,7 +31,7 @@ let maxSecondsForColor = 60;
 // ========================================
 
 function setup() {
-  // Crea un canvas trasparente per il sistema di scroll
+  // Crea un canvas per il sistema di scroll
   let canvas = createCanvas(windowWidth, windowHeight);
   canvas.style('position', 'fixed');
   canvas.style('top', '0');
@@ -40,52 +40,21 @@ function setup() {
   canvas.style('pointer-events', 'none');
   background(0, 0);
   
-  // Carica i dati CSV
+  // Carica i dati e aggiorna il counter
   loadCSVData();
   
-  // Setup scroll arrows click handlers
-  let scrollArrowDown = document.getElementById('scroll-arrow-down');
-  if (scrollArrowDown) {
-    scrollArrowDown.addEventListener('click', function() {
-      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
-        currentCheckpointIndex++;
-        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
-        isScrolling = true;
-        scrollAccumulator = 0;
-      }
-    });
-  }
+  // Setup frecce di navigazione
+  setupScrollArrows();
   
-  let scrollArrowUp = document.getElementById('scroll-arrow-up');
-  if (scrollArrowUp) {
-    scrollArrowUp.addEventListener('click', function() {
-      if (currentCheckpointIndex > 0) {
-        currentCheckpointIndex--;
-        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
-        isScrolling = true;
-        scrollAccumulator = 0;
-      }
-    });
-  }
+  // Setup navigazione da tastiera
+  setupKeyboardNavigation();
   
-  // Aggiungi listener per le frecce della tastiera
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowUp') {
-      if (currentCheckpointIndex > 0) {
-        currentCheckpointIndex--;
-        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
-        isScrolling = true;
-        scrollAccumulator = 0;
-      }
-    } else if (event.key === 'ArrowDown') {
-      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
-        currentCheckpointIndex++;
-        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
-        isScrolling = true;
-        scrollAccumulator = 0;
-      }
-    }
-  });
+  // Aggiorna visibilità sezioni in base allo scroll
+  updateSectionVisibility();
+  
+  // Centra orizzontalmente e verticalmente le sezioni
+  centerChiSiamoSection();
+  centerCreditsSection();
 }
 
 // ========================================
@@ -98,7 +67,8 @@ function draw() {
   // Gestione scroll automatico (copiato da sketch.js)
   handleAutoScroll();
   
-  // Aggiorna opacità delle sezioni
+  // Aggiorna visibilità e opacità sezioni
+  updateSectionVisibility();
   updateSectionOpacity();
   
   // Aggiorna visibilità frecce (copiato da sketch.js)
@@ -114,6 +84,7 @@ function draw() {
 
 function mouseWheel(event) {
   if (scrollTarget !== -1) {
+    // Se c'è già un'animazione in corso, ignora lo scroll
     return false;
   }
   
@@ -148,6 +119,7 @@ function mouseWheel(event) {
 function handleAutoScroll() {
   if (scrollTarget > -1) {
     isScrolling = true;
+    
     let currentVelocita = scrollVelocita;
     
     if (abs(scrollY - scrollTarget) > currentVelocita) {
@@ -161,15 +133,32 @@ function handleAutoScroll() {
       scrollTarget = -1;
       isScrolling = false;
       
-      // Aggiorna il checkpoint corrente
+      // Aggiorna il checkpoint corrente basandosi sulla posizione finale
       for (let i = 0; i < scrollCheckpoints.length; i++) {
-        if (abs(scrollY - scrollCheckpoints[i]) < 5) {
+        if (abs(scrollY - scrollCheckpoints[i]) < 10) {
           currentCheckpointIndex = i;
           break;
         }
       }
     }
+  } else {
+    isScrolling = false;
   }
+}
+
+// ========================================
+// UPDATE SECTION VISIBILITY
+// ========================================
+
+function updateSectionVisibility() {
+  let chiSiamoSection = document.getElementById('chi-siamo');
+  let footerSection = document.querySelectorAll('.sezione-dati')[1];
+  
+  if (!chiSiamoSection || !footerSection) return;
+  
+  // Entrambe le sezioni sono sempre display: block per permettere il fade
+  chiSiamoSection.style.display = 'block';
+  footerSection.style.display = 'block';
 }
 
 // ========================================
@@ -201,6 +190,10 @@ function updateSectionOpacity() {
     
     chiSiamoSection.style.opacity = opacitaSez1;
     footerSection.style.opacity = opacitaSez2;
+    
+    // Gestisci pointer-events per evitare interazioni con elementi invisibili
+    chiSiamoSection.style.pointerEvents = opacitaSez1 > 0.1 ? 'auto' : 'none';
+    footerSection.style.pointerEvents = opacitaSez2 > 0.1 ? 'auto' : 'none';
   }
 }
 
@@ -218,9 +211,8 @@ function updateArrowsVisibility() {
   let upVisible = false;
   let downVisible = false;
   
-  // Freccia GIÙ (copiato da sketch.js)
-  if (scrollY >= 600) {
-    // Nascondi freccia down all'ultima sezione
+  // Freccia giù: visibile solo se non sei all'ultimo checkpoint
+  if (currentCheckpointIndex >= scrollCheckpoints.length - 1) {
     scrollArrowDown.style.opacity = '0';
     scrollArrowDown.style.pointerEvents = 'none';
   } else {
@@ -301,6 +293,109 @@ function drawDebugInfo() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  centerChiSiamoSection();
+  centerCreditsSection();
+}
+
+// ========================================
+// SETUP SCROLL ARROWS
+// ========================================
+
+function setupScrollArrows() {
+  let scrollArrowDown = document.getElementById('scroll-arrow-down');
+  if (scrollArrowDown) {
+    scrollArrowDown.addEventListener('click', function() {
+      // Vai al prossimo checkpoint
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    });
+  }
+  
+  let scrollArrowUp = document.getElementById('scroll-arrow-up');
+  if (scrollArrowUp) {
+    scrollArrowUp.addEventListener('click', function() {
+      // Vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    });
+  }
+  
+  // Aggiorna visibilità frecce dopo il setup
+  updateArrowsVisibility();
+}
+
+// ========================================
+// SETUP KEYBOARD NAVIGATION
+// ========================================
+
+function setupKeyboardNavigation() {
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowUp') {
+      // Vai al checkpoint precedente
+      if (currentCheckpointIndex > 0) {
+        currentCheckpointIndex--;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    } else if (event.key === 'ArrowDown') {
+      // Vai al prossimo checkpoint
+      if (currentCheckpointIndex < scrollCheckpoints.length - 1) {
+        currentCheckpointIndex++;
+        scrollTarget = scrollCheckpoints[currentCheckpointIndex];
+        isScrolling = true;
+        scrollAccumulator = 0;
+      }
+    }
+  });
+}
+
+// ========HI SIAMO SECTION
+// ========================================
+
+function centerChiSiamoSection() {
+  let chiSiamoLayout = document.querySelector('#chi-siamo .two-column-layout');
+  if (chiSiamoLayout) {
+    let layoutHeight = chiSiamoLayout.offsetHeight;
+    let windowHeight = window.innerHeight;
+    let layoutWidth = chiSiamoLayout.offsetWidth;
+    let windowWidth = window.innerWidth;
+    
+    let topOffset = (windowHeight - layoutHeight) / 2;
+    let leftOffset = (windowWidth - layoutWidth) / 2;
+    
+    chiSiamoLayout.style.marginTop = topOffset + 'px';
+    chiSiamoLayout.style.marginLeft = leftOffset + 'px';
+  }
+}
+
+// ========================================
+// CENTER C================================
+// CENTER CREDITS SECTION
+// ========================================
+
+function centerCreditsSection() {
+  let creditsPage = document.querySelector('.credits-page');
+  if (creditsPage) {
+    let creditsHeight = creditsPage.offsetHeight;
+    let windowHeight = window.innerHeight;
+    let creditsWidth = creditsPage.offsetWidth;
+    let windowWidth = window.innerWidth;
+    
+    let topOffset = (windowHeight - creditsHeight) / 2;
+    let leftOffset = (windowWidth - creditsWidth) / 2;
+    
+    creditsPage.style.marginTop = topOffset + 'px';
+    creditsPage.style.marginLeft = leftOffset + 'px';
+  }
 }
 
 // ========================================
@@ -330,7 +425,7 @@ function loadCSVData() {
         });
         
         // Avvia il counter
-        startCounterAnimation();
+        startRealtimeCounter();
         break;
       }
     }
@@ -340,11 +435,11 @@ function loadCSVData() {
     incidentiOggi = 460;
     mortiOggi = 8;
     feritiOggi = 627;
-    startCounterAnimation();
+    startRealtimeCounter();
   });
 }
 
-function startCounterAnimation() {
+function startRealtimeCounter() {
   // Mostra il counter con fade-in
   setTimeout(() => {
     let navbarCounter = document.getElementById('navbar-counter');
@@ -366,7 +461,7 @@ function startCounterAnimation() {
     let currentFeriti = floor(feritiOggi * progress);
     
     // Aggiorna il counter nella navbar
-    updateNavbarCounter(currentIncidenti, currentMorti, currentFeriti);
+    updateNavbarCounterValues(currentIncidenti, currentMorti, currentFeriti);
     
     requestAnimationFrame(updateCounter);
   }
@@ -374,7 +469,7 @@ function startCounterAnimation() {
   updateCounter();
 }
 
-function updateNavbarCounter(incidenti, morti, feriti) {
+function updateNavbarCounterValues(incidenti, morti, feriti) {
   document.getElementById('nav-incidenti').textContent = incidenti;
   document.getElementById('nav-morti').textContent = morti;
   document.getElementById('nav-feriti').textContent = feriti;
