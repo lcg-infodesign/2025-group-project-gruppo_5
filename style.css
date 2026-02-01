@@ -672,7 +672,6 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2em;
   transition: opacity 0.1s ease-out;
 }
 
@@ -1333,7 +1332,6 @@ h3 {
   flex-direction: column;
   justify-content: center;
   /* centra verticalmente (con footer sotto) */
-  padding-top: 3em;
   /* e in più lo abbassa */
 }
 
