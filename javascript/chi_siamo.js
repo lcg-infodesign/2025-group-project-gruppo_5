@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         feritiOggi = 627;
         startCounterAnimation();
       });
-  }
+  });
   
   function startCounterAnimation() {
     // Aggiungi fade in del counter dopo un breve delay
@@ -158,16 +158,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateCounter();
   }
+
+function updateNavbarCounter() {
+  document.getElementById('nav-incidenti').textContent = Math.floor(animIncidenti);
+  document.getElementById('nav-morti').textContent = Math.floor(animMorti);
+  document.getElementById('nav-feriti').textContent = Math.floor(animFeriti);
   
-  function updateNavbarCounter() {
-    document.getElementById('nav-incidenti').textContent = Math.floor(animIncidenti);
-    document.getElementById('nav-morti').textContent = Math.floor(animMorti);
-    document.getElementById('nav-feriti').textContent = Math.floor(animFeriti);
-    
-    updateCounterTooltip();
-  }
-  
-  function updateCounterTooltip() {
+  updateCounterTooltip();
+}
+
+function updateCounterTooltip() {
     let tooltip = document.getElementById('counter-tooltip');
     if (!tooltip) return;
     
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCounterCountdown();
   }
   
-  function updateCounterCountdown() {
+function updateCounterCountdown() {
     let countdown = document.getElementById('counter-countdown');
     if (!countdown) return;
     
@@ -252,7 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
       countdown.innerHTML = `Aggiornamento<br>in corso...`;
     }
   }
-});
 
 // ========================================
 // FUNZIONE DI GESTIONE SCROLL MOUSE
