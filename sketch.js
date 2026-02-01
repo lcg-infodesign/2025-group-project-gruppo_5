@@ -1369,7 +1369,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     // Mostra il counter con fade-in (senza animazione di conteggio)
     setTimeout(() => {
       navbarCounter.classList.add('visible');
-    }, 300);
+    }, 50);
   }
   
   // Se il counter è stato attivato, aggiorna i valori in tempo reale
@@ -1571,7 +1571,93 @@ function updateCounterTooltip() {
   let ore = String(now.getHours()).padStart(2, '0');
   let minuti = String(now.getMinutes()).padStart(2, '0');
   
-  tooltip.innerHTML = `Statistiche medie del<br>${giorno}/${mese}/2024 alle ore ${ore}:${minuti}`;
+  tooltip.innerHTML = `Statistiche medie<br>del ${giorno}/${mese}/2024<br>alle ore ${ore}:${minuti}`;
+  
+  // Aggiorna anche il countdown
+  updateCounterCountdown();
+}
+
+// NAVBAR COUNTER COUNTDOWN: Calcola secondi al prossimo cambiamento
+let previousSecondsDisplay = -1; // Per tracciare quando ricomincia il countdown
+let maxSecondsForColor = 60; // Valore massimo dinamico per interpolazione colore
+
+function updateCounterCountdown() {
+  let countdown = document.getElementById('counter-countdown');
+  if (!countdown) return;
+  
+  let now = new Date();
+  let secondiOggi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  let secondiTotali = 24 * 3600;
+  let progress = secondiOggi / secondiTotali;
+  
+  // Calcola i valori target attuali
+  let targetIncidenti = incidentiOggi * progress;
+  let targetMorti = mortiOggi * progress;
+  let targetFeriti = feritiOggi * progress;
+  
+  // Calcola i valori correnti (floor)
+  let currentIncidenti = Math.floor(targetIncidenti);
+  let currentMorti = Math.floor(targetMorti);
+  let currentFeriti = Math.floor(targetFeriti);
+  
+  // Calcola quanto manca al prossimo incremento per ciascuno
+  let progressForNextIncidente = (currentIncidenti + 1) / incidentiOggi;
+  let progressForNextMorto = (currentMorti + 1) / mortiOggi;
+  let progressForNextFerito = (currentFeriti + 1) / feritiOggi;
+  
+  // Converti in secondi dall'inizio del giorno
+  let secondsForNextIncidente = progressForNextIncidente * secondiTotali;
+  let secondsForNextMorto = progressForNextMorto * secondiTotali;
+  let secondsForNextFerito = progressForNextFerito * secondiTotali;
+  
+  // Calcola quanto manca in secondi
+  let secondsUntilIncidente = secondsForNextIncidente - secondiOggi;
+  let secondsUntilMorto = secondsForNextMorto - secondiOggi;
+  let secondsUntilFerito = secondsForNextFerito - secondiOggi;
+  
+  // Trova il minimo (il prossimo che cambierà)
+  let secondsToNextChange = Math.min(
+    secondsUntilIncidente > 0 ? secondsUntilIncidente : Infinity,
+    secondsUntilMorto > 0 ? secondsUntilMorto : Infinity,
+    secondsUntilFerito > 0 ? secondsUntilFerito : Infinity
+  );
+  
+  // Arrotonda per eccesso (mostra secondi interi)
+  let secondsDisplay = Math.ceil(secondsToNextChange);
+  
+  // Rileva quando il countdown ricomincia (secondi aumentano)
+  if (secondsDisplay > previousSecondsDisplay) {
+    maxSecondsForColor = secondsDisplay; // Salva il nuovo valore di partenza
+  }
+  
+  // Flash quando manca 1 secondo
+  if (secondsDisplay === 1 && previousSecondsDisplay !== 1) {
+    let navbarCounter = document.querySelector('.navbar-counter');
+    if (navbarCounter) {
+      navbarCounter.classList.add('flash-outline');
+      setTimeout(() => {
+        navbarCounter.classList.remove('flash-outline');
+      }, 3000);
+    }
+  }
+  
+  previousSecondsDisplay = secondsDisplay;
+  
+  // Calcola il colore progressivo da bianco ad arancione per il NUMERO
+  // Interpola dal valore di partenza (maxSecondsForColor) a 0
+  let colorProgress = maxSecondsForColor > 0 ? secondsDisplay / maxSecondsForColor : 0;
+  
+  // Colori: bianco (255,255,255) → arancione var(--orange) #ec6613 (236,102,19)
+  let r = Math.round(255 * colorProgress + 236 * (1 - colorProgress));
+  let g = Math.round(255 * colorProgress + 102 * (1 - colorProgress));
+  let b = Math.round(255 * colorProgress + 19 * (1 - colorProgress));
+  
+  // Aggiorna il testo con colore dinamico solo sul numero
+  if (secondsDisplay > 0 && secondsDisplay < Infinity) {
+    countdown.innerHTML = `Prossimo<br>aggiornamento<br>tra <span style="color: rgb(${r}, ${g}, ${b})">${secondsDisplay}</span> secondi`;
+  } else {
+    countdown.innerHTML = `Aggiornamento<br>in corso...`;
+  }
 }
 
 // Navbar click: gestito solo in setup() (vedi handler su .nav-item).
