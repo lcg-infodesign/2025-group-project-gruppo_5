@@ -532,8 +532,13 @@ function updateCounterCountdown() {
   
   // Flash quando manca 1 secondo
   if (secondsDisplay === 1 && previousSecondsDisplay !== 1) {
-    countdown.classList.add('flash');
-    setTimeout(() => countdown.classList.remove('flash'), 200);
+    let navbarCounter = document.querySelector('.navbar-counter');
+    if (navbarCounter) {
+      navbarCounter.classList.add('flash-outline');
+      setTimeout(() => {
+        navbarCounter.classList.remove('flash-outline');
+      }, 3000);
+    }
   }
   
   previousSecondsDisplay = secondsDisplay;
