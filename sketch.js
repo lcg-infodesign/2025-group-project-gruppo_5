@@ -89,21 +89,13 @@ let ctaFadeStartTime = -1; // Timestamp inizio fade in del testo CTA
 let ctaFadeOpacity = 0; // Opacità corrente del testo CTA
 let legendFadeOpacity = 0; // Opacità corrente della leggenda "300 incidenti"
 
-// Sezione 8: visualizzazione di dettaglio
+// Hitbox per le 3 griglie della sezione 7
 let sezioneOttavaHitboxes = [];
 let hoveredGridIndex = -1; // Traccia quale griglia è in hover (-1 = nessuna, 0 = blu, 1 = verde, 2 = rosa)
 let hoverScales = [1, 1, 1]; // Scale per ogni griglia (animato con lerp)
-let hoverScaleTarget = [1, 1, 1]; // Target scale per smooth animation
+let hoverScaleTarget = [1, 1, 1]; // Target scale per smooth animation, ora è 1 ma poi viene modificato per far ingrandire la griglia in hover
 
-// Vista corrente dettaglio: navbar → selezionaDaNavbar → qui → drawSezioneOttava
-// --- NOTE: stato e interazioni della Sezione 8 (vista dettaglio) ---
-// Qui vengono memorizzati i flag e le hitbox usati da `drawSezioneOttava()`
-// e dai gestori di hover/click. In pratica questo gruppo tiene traccia di:
-// - quale categoria è selezionata dall'utente
-// - quali elementi sono in hover e le loro scale/opacità per l'animazione
-// - se mostrare i quadrati (vista a griglia) o le barre (istogramma)
-// Non rimuovere queste variabili: sono letture/scritture condivise
-// tra il renderer della sezione e gli handler di input (mouse/DOM).
+// Sezione 8 - Vista  dettaglio: 
 let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
 let hasClickedCategory = false; // Traccia se l'utente ha cliccato su una categoria
 const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
@@ -116,6 +108,7 @@ let hoveredSezioneOttavaItem = null; // traccia quale elemento è in hover
 let sezioneOttavaFadeIn = 0; // fade in della sezione 8
 let sezioneOttavaItemOpacities = {}; // Traccia l'opacità animata per ogni elemento (nome -> opacità corrente)
 let sezioneOttavaItemOpacityTargets = {}; // Target opacità per l'animazione
+
 // Margine usato per il layout interno della sezione 8 e per le legende
 let SEZIONE_MARGIN = 100;
 const SEZIONE_OTTAVA_OPACITY_EASING = 0.06; // Velocità dell'easing per l'opacità (più basso = più lento)
@@ -126,7 +119,8 @@ let categorieArray = ['conducenti', 'cause-esterne-concomitanti', 'non-conducent
 let transizioneAttiva = false; // true quando è in corso la transizione
 let transizioneProgress = 0; // 0 = inizio (5200), 1 = fine (6500)
 let quadratiniTransizione = []; // array con posizioni iniziali e finali di ogni quadratino
-let transizioneFadeInUI = 0; // Opacità fade in UI durante la transizione (sincronizzato con titolo)
+let transizioneFadeInUI = 0; // Opacità fade in di tutti gli elementi UI durante la transizione
+
 
 // =========================================
 // SETUP E PRELOAD
@@ -135,7 +129,7 @@ let transizioneFadeInUI = 0; // Opacità fade in UI durante la transizione (sinc
 function preload() {
   console.log('Preload started...');
   
-  // Carica Fonts con error handling
+  // Caricamento Font
   loadFont('Assets/Fonts/LCD5x7VF.ttf', 
     (font) => { 
       lcdFont = font; 
@@ -158,7 +152,7 @@ function preload() {
     }
   );
   
-  // Carica CSV con error handling
+  // Carica CSV 
   loadTable('Assets/Datasets/Incidenti-totale.csv', 'csv', 'header',
     (table) => { 
       csvData = table; 
@@ -221,7 +215,7 @@ function setup() {
   }
   
   if (!csvData) {
-    console.error('CRITICAL: csvData not loaded! Animation will not work properly.');
+    console.error('CRITICAL: csvData not loaded!');
   }
   
   textAlign(CENTER, CENTER);
@@ -239,6 +233,7 @@ function setup() {
         let mortiTotali = parseInt(csvData.getString(i, 'Morti').replace(/[\s.]/g, ''));
         let feritiTotali = parseInt(csvData.getString(i, 'Feriti').replace(/[\s.]/g, ''));
 
+        // Calcola valori medi giornalieri (su 366 giorni perche 2024 è bisestile)
         incidentiOggi = floor(incidentiTotali / 366);
         mortiOggi = floor(mortiTotali / 366);
         feritiOggi = floor(feritiTotali / 366);
@@ -254,23 +249,27 @@ function setup() {
       }
     }
   } else {
-    console.error('CRITICAL: Cannot process CSV data - file not loaded or empty!');
+    console.error('CRITICAL: Cannot process CSV data');
   }
   
   console.log('Setup completed!');
   
-  document.body.style.height = '7000px'; // Include sezione 8 con transizione più lunga
+  document.body.style.height = '7000px'; // Include sezione 8 
   document.body.style.overflow = 'auto';
   
-  // Crea le legende via JS e inizializza la visibilità
+  // Crea le legende della vis di dettaglio via JS e inizializza la visibilità
   createLegends();
   updateLegendVisibility();
   
-  // Gestisci hash URL per navigazione da altre pagine
+  // Gestisci hash URL per navigazione da altre pagine - così si apre la sezione cliccata
   handleURLHash();
   
+
+ // SCROLL E SCORRIMENTO CON FRECCE UI--------
+
   // Setup scroll arrows click handlers
   let scrollArrowDown = document.getElementById('scroll-arrow-down');
+
   if (scrollArrowDown) {
     scrollArrowDown.addEventListener('click', function() {
       // Blocca checkpoint 0 (intro) finché testo non è completo
@@ -316,7 +315,7 @@ function setup() {
     });
   }
   
-  // Back arrow: torna alla sezione responsabilità (scroll 5200)
+  // Back arrow: torna alla sezione responsabilità con le 3 griglie  (scroll 5200)
   let backArrow = document.getElementById('back-arrow');
   if (backArrow) {
     backArrow.addEventListener('click', function() {
@@ -353,6 +352,9 @@ function setup() {
     });
   }
   
+
+  //SCROLL E SCORRIMENTO CON TASTIERA --------
+
   // Aggiungi un listener per le frecce su e giù della tastiera
 document.addEventListener('keydown', function(event) {
   if (event.key === 'ArrowUp') {
@@ -416,23 +418,34 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
+
+//---------------
   // Setup navbar navigation click handlers
+//---------------
+
+  // Seleziona tutti gli elementi della navbar e registra i click
   let navItems = document.querySelectorAll('.nav-item');
   navItems.forEach(function(item) {
     item.addEventListener('click', function(e) {
+      // Ignora click su voci interne al dropdown
       if (e.target.closest && e.target.closest('.dropdown-item')) return;
-      // Se il link appartiene al container della categoria dettaglio e siamo già nella vista dettaglio, ignora il click sul link
+      // Se siamo già nella vista dettaglio e si clicca la voce categoria, non navigare
       if ((item.id === 'nav-categoria-container' || item.id === 'nav-categoria') && categoriaSelezionata !== null && scrollY >= 6500) {
         e.preventDefault();
         return;
       }
+      // Previeni il comportamento di default del link
       e.preventDefault();
+      // Legge quale sezione è associata all'item (data-section)
       let section = parseInt(item.getAttribute('data-section'));
       
+      // Parametri di default per lo scroll target
       let targetScrollY = 0;
       let targetCheckpoint = 0;
       
+      // Mappa il valore di `section` alla posizione di scroll desiderata
       if (section === 0) {
+        // Sezione intro: reset degli stati di testo/intro/quadrato
         targetScrollY = 0;
         targetCheckpoint = 0;
         introCaratteriVisibili = introTestoCompleto.length;
@@ -441,13 +454,16 @@ document.addEventListener('keydown', function(event) {
         quadratoDimensione = 0;
         quadratoCaratteriVisibili = 0;
       } else if (section === 1) {
+        // Sezione intermedia (griglia/cubo)
         targetScrollY = 2900;
         targetCheckpoint = 3;
       } else if (section === 2) {
+        // Sezione con le griglie responsabilità
         targetScrollY = 5200;
         targetCheckpoint = 8;
       }
       
+      // Applica il target di navigazione e resetta lo stato di scrolling
       currentCheckpointIndex = targetCheckpoint;
       scrollY = targetScrollY;
       scrollTarget = -1;
@@ -456,15 +472,17 @@ document.addEventListener('keydown', function(event) {
     });
   });
 
-  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne e concomitanti → selezionaDaNavbar
+
+
+  // Tendina Responsabilità: click su Conducenti / Non conducenti / Cause esterne e concomitanti
   let dropMenu = document.getElementById('dropdown-responsabilita-menu');
   if (dropMenu) {
     dropMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
       link.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        let cat = link.getAttribute('data-categoria');
-        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
+        e.preventDefault();  
+        e.stopPropagation(); // Evita che il click arrivi al menu principale
+        let cat = link.getAttribute('data-categoria');// Prende il valore della categoria associata al link cliccato
+        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat); // Se esiste una categoria e la funzione esiste, chiama la funzione per aggiornare la vista
       });
     });
   }
@@ -475,19 +493,19 @@ document.addEventListener('keydown', function(event) {
     dropCategoriaMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
       link.addEventListener('click', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-        let cat = link.getAttribute('data-categoria');
-        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
+        e.stopPropagation(); // Evita che il click arrivi al menu principale
+        let cat = link.getAttribute('data-categoria'); // Prende il valore della categoria associata al link cliccato
+        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat); // Se esiste una categoria e la funzione esiste, chiama la funzione per aggiornare la vista
       });
     });
   }
 
-  // Hover su Responsabilità o categoria nella sezione dettaglio: mostra dropdown categorie
-  let navItemResponsabilita = document.querySelector('.nav-item.dropdown[data-section="2"]');
+  // Hover su nav bar bottone Responsabilità o categoria attiva: mostra dropdown con le altre 2 categorie
+  let navItemResponsabilita = document.querySelector('.nav-item.dropdown[data-section="2"]'); // Bottone Responsabilità
   let navCategoriaContainer = document.getElementById('nav-categoria-container');
   let dropdownCategoriaMenu = document.getElementById('dropdown-categoria-menu');
   
-  if (navItemResponsabilita && navCategoriaContainer && dropdownCategoriaMenu) {
+  if (navItemResponsabilita && navCategoriaContainer && dropdownCategoriaMenu) { // se tutti e 3 esistono allora:
     // Funzione per mostrare il dropdown
     function showCategoriaDropdown() {
       if (scrollY >= 6500 && categoriaSelezionata !== null) {
@@ -513,7 +531,7 @@ document.addEventListener('keydown', function(event) {
 }
 
 // Gestisce hash URL: navigazione da altre pagine + permalink categorie
-// Pattern: 1 pagina, navbar → selezionaDaNavbar → categoriaSelezionata → drawSezioneOttava
+
 const HASH_CATEGORIE = ['#conducenti', '#non-conducenti', '#cause-esterne-concomitanti'];
 
 function handleURLHash() {
@@ -522,7 +540,7 @@ function handleURLHash() {
   // Questo evita che un refresh apra automaticamente una categoria di dettaglio
   let navType = null;
   try {
-    const entries = performance.getEntriesByType('navigation');
+    const entries = performance.getEntriesByType('navigation'); //chiede al browser come è stata caricata la pagina (nuova visita, reload, history navigation)
     if (entries && entries.length > 0) navType = entries[0].type;
     else if (performance.navigation) navType = (performance.navigation.type === 1) ? 'reload' : 'navigate';
   } catch (e) {
@@ -547,11 +565,16 @@ function handleURLHash() {
     isScrolling = false;
     scrollAccumulator = 0;
   } else if (HASH_CATEGORIE.indexOf(hash) !== -1) {
-    // Permalink: #conducenti, #non-conducenti, #cause-esterne-concomitanti → dettaglio
+    // Permalink: #conducenti, #non-conducenti, #cause-esterne-concomitanti 
     let cat = hash.slice(1);
     if (typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
   }
 }
+
+
+// ========================================
+// GESTIONE SCROLL CON MOUSE WHEEL
+// ========================================
 
 function mouseWheel(event) {
   if (scrollTarget !== -1) {
@@ -630,8 +653,10 @@ function mouseWheel(event) {
   return false;
 }
 
+
+
 // ========================================
-// DRAW PRINCIPALE
+// FUNZIONE DRAW PRINCIPALE
 // ========================================
 
 function draw() {
@@ -876,7 +901,7 @@ function createLegends() {
     cat.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso, allineata con legenda
     cat.style.color = 'white';
     cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    cat.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
+    cat.style.fontSize = (width * 0.0084) + 'px'; 
     cat.style.lineHeight = '1.2';
     cat.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
     cat.style.pointerEvents = 'none';
