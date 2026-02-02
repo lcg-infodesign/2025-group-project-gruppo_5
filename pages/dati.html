@@ -78,9 +78,10 @@
     </div>
     
     <!-- SEZIONE 1: Testo descrittivo -->
-    <div id="sezione-testo" class="sezione-dati" style="display: block;">
-      <h1 class="team-title">I DATI</h1>
-      <p class="description-dati">
+    <section id="i-dati" class="sezione-dati">
+      <div class="dati-layout">
+        <h1 class="team-title">I DATI</h1>
+        <p class="description-dati">
         L'<i>ISTAT</i> ogni anno raccoglie i dati riguardanti l'insieme degli incidenti
         stradali verbalizzati da un'autorità di polizia, avvenuti su strade aperte
         alla pubblica circolazione, che hanno causato lesioni alle persone. Questa
@@ -99,25 +100,23 @@
       </p>
       <p class="description-dati">
         Di seguito la rielaborazione delle differenti categorie per tipo di
-        responsabilità:
+        responsabilità, segnando le categorie in ordine decrescente di incidenti:
       </p>
-    </div>
-    
+      </div>
+    </section>
+
     <!-- SEZIONE 2: Liste categorie con menu a tendina -->
-    <div id="sezione-categorie" class="sezione-dati" style="display: none;">
-      <!--CONDUCENTI-->  
+    <section id="categorie" class="sezione-dati">
+      <div class="categorie-layout">
+        <!--CONDUCENTI-->  
       <div class="Listadati">
-    <div class="bigCategory">
-      <h2>CONDUCENTI</h2>
-      <div class="catList">
+        <div class="bigCategory">
+        <h2>CONDUCENTI</h2>
+        <div class="catList">
         <button class="newCategory">
           Mancata precedenza/semaforo<span>▼</span>
         </button>
         <div class="oldCategory">
-          <p>
-            Questa categoria comprende, in ordine decrescente per numero di
-            incidenti:
-          </p>
           <ul>
             <li>Procedeva senza rispettare lo stop</li>
             <li>Procedeva senza rispettare il segnale di dare precedenza</li>
@@ -132,10 +131,6 @@
         </div>
         <button class="newCategory">In manovra<span>▼</span></button>
         <div class="oldCategory">
-          <p>
-            Questa categoria comprende, in ordine decrescente per numero di
-            incidenti:
-          </p>
           <ul>
             <li>Manovrava per immettersi nel flusso della circolazione</li>
             <li>
@@ -216,10 +211,6 @@
         <button class="newCategory">Veicolo fermo<span>▼</span>
         </button>
         <div class="oldCategory">
-          <p>
-            Questa categoria comprende, in ordine decrescente per numero di
-            incidenti:
-          </p>
           <ul>
             <li>Veicolo fermo in posizione irregolare (Circostanze riferibili ad ostacoli urtati)</li>
             <li>Veicolo (Circostanze riferibili ad ostacoli evitati)</li>
@@ -269,7 +260,6 @@
           </div>
         </div>
       </div>
-      </div>
-    </div>
-  </body>
+    </section>
+    </body>
 </html>
