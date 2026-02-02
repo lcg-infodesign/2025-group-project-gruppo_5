@@ -884,10 +884,6 @@ b {
    FORMULA MORTALITÀ
    ======================================== */
 
-.formula{
-    padding: 1em 0;
-}
-
 .formula-container {
   display: flex;
   align-items: center;
@@ -1406,16 +1402,13 @@ b {
 }
 
 .credits-page {
-  box-sizing: border-box;
-  padding: 0 5em;
+  max-width: clamp(1200px, 80vw, 1600px);
   display: flex;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px);
   flex-direction: column;
-  font-size: 3rem;
+  font-size: clamp(24px, 2.5vw, 48px);
   line-height: 1.4;
-}
-
-.credits-page * {
-  box-sizing: border-box;
 }
 
 .credits-header {
