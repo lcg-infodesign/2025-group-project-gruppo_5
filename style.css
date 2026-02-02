@@ -195,16 +195,6 @@ b { /*bold*/
   background: var(--orange);
 }
 
-.nav-item.dropdown.active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--orange);
-}
-
 /* Lato destro: bottoni */
 .nav-right {
   display: flex;
@@ -228,7 +218,6 @@ b { /*bold*/
 .nav-external:hover {
   color: var(--orange);
   opacity: 0.5;
-  transition: color 0.3s ease;
 }
 
 .nav-external:hover::after {
@@ -261,7 +250,23 @@ b { /*bold*/
   transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
-.nav-item:hover::after {
+.nav-item:hover:not(.dropdown)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--orange);
+}
+
+/* Hover per dropdown (Responsabilità) */
+.nav-item.dropdown:hover .dropdown-link {
+  color: var(--orange);
+  opacity: 0.5;
+}
+
+.nav-item.dropdown:hover::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -275,11 +280,6 @@ b { /*bold*/
 .nav-item.active,
 .nav-item.active .dropdown-link {
   color: var(--orange) !important;
-}
-
-/*Contenitore tendina categorie responsabilità*/
-.nav-item.dropdown {
-  position: relative;
 }
 
 /* Bridge invisibile per facilitare il passaggio al menu */
@@ -298,11 +298,6 @@ b { /*bold*/
   text-decoration: none;
   color: var(--txt);
   transition: color 0.3s ease;
-}
-
-/* Cambia colore al passaggio del mouse sul link principale */
-.dropdown-link:hover {
-  color: var(--orange);
 }
 
 /* Stile per il menu della tendina */
@@ -378,6 +373,46 @@ b { /*bold*/
 /* Nascondi gli elementi del menu categoria che corrispondono alla categoria corrente */
 #dropdown-categoria-menu .dropdown-item.current-category {
   display: none;
+}
+
+/* Responsive NAVBAR */
+@media (max-width: 768px) {
+  #navbar {
+    padding: 0 30px;
+    height: 70px;
+  }
+
+  .nav-left {
+    gap: 20px;
+  }
+
+  .nav-item {
+    font-size: 13px;
+    padding-bottom: 6px;
+  }
+
+  .nav-right {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  #navbar {
+    padding: 0 20px;
+    height: 60px;
+  }
+
+  .nav-left {
+    gap: 15px;
+  }
+
+  .nav-item {
+    font-size: 12px;
+  }
+
+  .nav-right {
+    gap: 10px;
+  }
 }
 
 
@@ -508,6 +543,37 @@ b { /*bold*/
 
 .navbar-counter.flash-outline {
   animation: flashOutline 3s ease-out;
+}
+
+/* Responsive COUNTER */
+@media (max-width: 768px) {
+  .navbar-counter {
+    gap: clamp(15px, 1.56vw, 20px);
+    padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 18px);
+  }
+
+  .counter-number {
+    font-size: clamp(12px, 1.04vw, 14px);
+  }
+
+  .counter-label {
+    font-size: clamp(8px, 0.57vw, 9px);
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar-counter {
+    gap: clamp(12px, 1.56vw, 15px);
+    padding: clamp(5px, 0.42vw, 6px) clamp(12px, 1.04vw, 15px);
+  }
+
+  .counter-number {
+    font-size: clamp(11px, 1.04vw, 12px);
+  }
+
+  .counter-label {
+    font-size: clamp(7px, 0.57vw, 8px);
+  }
 }
 
 
@@ -945,6 +1011,90 @@ b { /*bold*/
   letter-spacing: 0.01em;
 }
 
+/* Responsive CHI SIAMO */
+@media (min-width: 768px) {
+  h1 {
+    font-size: 56px;
+  }
+
+  p {
+    font-size: 21px;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .team-photo {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .team-photo {
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 36px;
+  }
+
+  p {
+    font-size: 18px;
+  }
+
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .team-photo {
+    max-width: 120px;
+  }
+
+  .card-name span {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 24px;
+  }
+
+  .team-photo {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .team-photo {
+    max-width: 80px;
+  }
+
+  .card-name span {
+    font-size: 12px;
+  }
+}
+
 /* --------------------- FOOTER -------------------------- */
 :root {
   --radius: 0.25rem;
@@ -1297,171 +1447,12 @@ ul.credits-clean {
 }
 
 /* ========================================
-   RESPONSIVE - Adattamento per schermi piccoli
+   ANIMATIONS
    ======================================== */
-@media (max-width: 768px) {
-  #navbar {
-    padding: 0 30px;
-    height: 70px;
-  }
-
-  .nav-left {
-    gap: 20px;
-  }
-
-  .nav-item {
-    font-size: 13px;
-    padding-bottom: 6px;
-  }
-
-  .nav-right {
-    gap: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar-counter {
-    /* Mantiene il clamp responsive invece di valori fissi */
-    gap: clamp(15px, 1.56vw, 20px);
-    padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 18px);
-  }
-
-  .counter-number {
-    font-size: clamp(12px, 1.04vw, 14px);
-  }
-
-  .counter-label {
-    font-size: clamp(8px, 0.57vw, 9px);
-  }
-}
-
-@media (max-width: 600px) {
-  #navbar {
-    padding: 0 20px;
-    height: 60px;
-  }
-
-  .nav-left {
-    gap: 15px;
-  }
-
-  .nav-item {
-    font-size: 12px;
-  }
-
-  .nav-right {
-    gap: 10px;
-  }
-
-  .navbar-counter {
-    /* Mantiene il clamp responsive invece di valori fissi */
-    gap: clamp(12px, 1.56vw, 15px);
-    padding: clamp(5px, 0.42vw, 6px) clamp(12px, 1.04vw, 15px);
-  }
-
-  .counter-number {
-    font-size: clamp(11px, 1.04vw, 12px);
-  }
-
-  .counter-label {
-    font-size: clamp(7px, 0.57vw, 8px);
-  }
-}
-
-
-
-/* ========================================
-   MEDIA QUERIES
-   ======================================== */
-
 @keyframes fadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Responsive - Chi Siamo */
-@media (min-width: 768px) {
-  h1 {
-    font-size: 56px;
-  }
-
-  p {
-    font-size: 21px;
-    line-height: 1.7;
-  }
-}
-
-@media (max-width: 1200px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .team-photo {
-    max-width: 150px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .team-photo {
-    max-width: 140px;
-  }
-}
-
-@media (max-width: 768px) {
-  h1 {
-    font-size: 36px;
-  }
-
-  p {
-    font-size: 18px;
-  }
-
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .team-photo {
-    max-width: 120px;
-  }
-
-  .card-name span {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 640px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 0 24px;
-  }
-
-  .team-photo {
-    max-width: 100px;
-  }
-}
-
-@media (max-width: 480px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  .team-photo {
-    max-width: 80px;
-  }
-
-  .card-name span {
-    font-size: 12px;
   }
 }
 
