@@ -718,15 +718,11 @@ h3 {
 }
 
 .Listadati {
-  /*margin-left: clamp(180px, 25vw, 480px); /* 25vw @ 1920px */
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
   gap: 2em;
-  padding: 2em;
-  padding-bottom: 10em;
-  min-height: 100vh;
+  transform: translateY(-7vh);
 }
 
 .bigCategory {
@@ -777,6 +773,11 @@ h3 {
 .newCategory:hover {
   background-color: var(--hover);
   transition: 0.1s;
+}
+
+.newCategory.active {
+  border-color: var(--orange);
+  background-color: color-mix(in srgb, var(--orange) 15%, transparent);
 }
 
 /*rotazione freccia*/

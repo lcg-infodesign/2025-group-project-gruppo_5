@@ -49,6 +49,10 @@ function setup() {
   // Aggiorna visibilità sezioni in base allo scroll
   updateSectionVisibility();
   
+  // Centra orizzontalmente e verticalmente le sezioni
+  centerDatiSection();
+  centerCategorieSection();
+  
   // Seleziona tutti i bottoni delle categorie usando p5
   let buttons = selectAll('.newCategory');
   
@@ -114,6 +118,50 @@ function setup() {
     });
   });
 }
+
+// ========================================
+// CENTER I DATI SECTION
+// ========================================
+
+function centerDatiSection() {
+  let datiLayout = document.querySelector('#i-dati .dati-layout');
+  if (datiLayout) {
+    let layoutHeight = datiLayout.offsetHeight;
+    let windowHeight = window.innerHeight;
+    let layoutWidth = datiLayout.offsetWidth;
+    let windowWidth = window.innerWidth;
+    
+    let topOffset = (windowHeight - layoutHeight) / 2;
+    let leftOffset = (windowWidth - layoutWidth) / 2;
+    
+    datiLayout.style.marginTop = topOffset + 'px';
+    datiLayout.style.marginLeft = leftOffset + 'px';
+  }
+}
+
+// ========================================
+// CENTER CATEGORIE SECTION
+// ========================================
+
+function centerCategorieSection() {
+  let categorieLayout = document.querySelector('#categorie .categorie-layout');
+  if (categorieLayout) {
+    let layoutHeight = categorieLayout.offsetHeight;
+    let windowHeight = window.innerHeight;
+    let layoutWidth = categorieLayout.offsetWidth;
+    let windowWidth = window.innerWidth;
+    
+    let topOffset = (windowHeight - layoutHeight) / 2;
+    let leftOffset = (windowWidth - layoutWidth) / 2;
+    
+    categorieLayout.style.marginTop = topOffset + 'px';
+    categorieLayout.style.marginLeft = leftOffset + 'px';
+  }
+}
+
+// ========================================
+// CARICAMENTO DATI CSV
+// ========================================
 
 function loadCSVData() {
   // Carica il CSV e calcola i valori giornalieri
@@ -268,7 +316,7 @@ function draw() {
   handleAutoScroll();
   updateSectionVisibility();
   updateSectionOpacity();
-  updateScrollArrowsVisibility();
+  updateArrowsVisibility();
   drawDebugInfo();
 }
 
@@ -335,8 +383,8 @@ function mouseWheel(event) {
 }
 
 function updateSectionVisibility() {
-  let sezioneTestoEl = document.getElementById('sezione-testo');
-  let sezioneCategorieEl = document.getElementById('sezione-categorie');
+  let sezioneTestoEl = document.getElementById('i-dati');
+  let sezioneCategorieEl = document.getElementById('categorie');
   
   if (!sezioneTestoEl || !sezioneCategorieEl) return;
   
@@ -346,8 +394,8 @@ function updateSectionVisibility() {
 }
 
 function updateSectionOpacity() {
-  let sezioneTestoEl = document.getElementById('sezione-testo');
-  let sezioneCategorieEl = document.getElementById('sezione-categorie');
+  let sezioneTestoEl = document.getElementById('i-dati');
+  let sezioneCategorieEl = document.getElementById('categorie');
   
   if (!sezioneTestoEl || !sezioneCategorieEl) return;
   
@@ -407,7 +455,7 @@ function setupScrollArrows() {
   }
   
   // Aggiorna visibilità frecce dopo il setup
-  updateScrollArrowsVisibility();
+  updateArrowsVisibility();
 }
 
 function setupKeyboardNavigation() {
@@ -432,7 +480,7 @@ function setupKeyboardNavigation() {
   });
 }
 
-function updateScrollArrowsVisibility() {
+function updateArrowsVisibility() {
   let scrollArrowDown = document.getElementById('scroll-arrow-down');
   let scrollArrowUp = document.getElementById('scroll-arrow-up');
   let arrowsContainer = document.querySelector('.scroll-arrows-container');
@@ -515,5 +563,15 @@ function drawDebugInfo() {
   fill(255, 165, 0, 150); // Colore arancione con opacità
   text('scrollY: ' + floor(scrollY), width - 10, height - 10);
   pop();
+}
+
+// ========================================
+// WINDOW RESIZE
+// ========================================
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  centerDatiSection();
+  centerCategorieSection();
 }
 
