@@ -1,6 +1,8 @@
-//========= Counter e Navigazione per la pagina Chi Siamo (p5.js) ==========
+//========= 
+// VARIABILI GLOBALI
+//==========
 
-// Valori counter - calcolati dai dati ISTAT
+// Valori counter 
 let incidentiOggi = 0;
 let mortiOggi = 0;
 let feritiOggi = 0;
@@ -11,7 +13,7 @@ let scrollY = 0;
 let scrollTarget = -1;
 let scrollVelocita = 8;
 
-// Scroll Snap - Checkpoint per sezioni
+// Scroll - Checkpoint per sezioni
 let scrollSnapEnabled = true;
 let scrollCheckpoints = [
   0,      // Sezione 0: Chi Siamo
@@ -27,11 +29,10 @@ let previousSecondsDisplay = -1;
 let maxSecondsForColor = 60;
 
 // ========================================
-// SETUP (p5.js)
+// SETUP 
 // ========================================
 
 function setup() {
-  // Crea un canvas per il sistema di scroll
   let canvas = createCanvas(windowWidth, windowHeight);
   canvas.style('position', 'fixed');
   canvas.style('top', '0');
@@ -58,28 +59,26 @@ function setup() {
 }
 
 // ========================================
-// DRAW (p5.js) - Loop principale
+// DRAW
 // ========================================
 
 function draw() {
-  clear();
   
-  // Gestione scroll automatico (copiato da sketch.js)
+  // Gestione scroll automatico 
   handleAutoScroll();
   
   // Aggiorna visibilità e opacità sezioni
   updateSectionVisibility();
   updateSectionOpacity();
   
-  // Aggiorna visibilità frecce (copiato da sketch.js)
+  // Aggiorna visibilità frecce 
   updateArrowsVisibility();
   
-  // Debug info
-  drawDebugInfo();
+
 }
 
 // ========================================
-// MOUSE WHEEL (copiato da sketch.js)
+// MOUSE WHEEL
 // ========================================
 
 function mouseWheel(event) {
@@ -113,7 +112,7 @@ function mouseWheel(event) {
 }
 
 // ========================================
-// HANDLE AUTO SCROLL (copiato da sketch.js)
+// HANDLE AUTO SCROLL 
 // ========================================
 
 function handleAutoScroll() {
@@ -173,7 +172,7 @@ function updateSectionOpacity() {
     let opacitaSez1 = 1;
     let opacitaSez2 = 0;
     
-    // Transizione smooth come richiesto (più veloce di dati.js)
+    // Transizione 
     if (scrollY >= 0 && scrollY <= 250) {
       opacitaSez1 = map(scrollY, 0, 250, 1, 0);
       opacitaSez2 = 0;
@@ -191,14 +190,14 @@ function updateSectionOpacity() {
     chiSiamoSection.style.opacity = opacitaSez1;
     footerSection.style.opacity = opacitaSez2;
     
-    // Gestisci pointer-events per evitare interazioni con elementi invisibili
+    // pointer-events per evitare interazioni con elementi invisibili
     chiSiamoSection.style.pointerEvents = opacitaSez1 > 0.1 ? 'auto' : 'none';
     footerSection.style.pointerEvents = opacitaSez2 > 0.1 ? 'auto' : 'none';
   }
 }
 
 // ========================================
-// UPDATE ARROWS VISIBILITY (copiato da sketch.js)
+// UPDATE ARROWS VISIBILITY
 // ========================================
 
 function updateArrowsVisibility() {
@@ -237,7 +236,7 @@ function updateArrowsVisibility() {
     scrollArrowDown.classList.add('allow-hover-movement');
   }
   
-  // Freccia SU (copiato da sketch.js)
+  // Freccia SU 
   if (currentCheckpointIndex === 0) {
     // Nascondi freccia up al primo checkpoint
     scrollArrowUp.style.opacity = '0';
@@ -252,7 +251,7 @@ function updateArrowsVisibility() {
   scrollArrowUp.style.borderColor = 'rgb(239, 239, 239)';
   let upSvgPath = scrollArrowUp.querySelector('svg path');
   if (upSvgPath) {
-    // Se siamo all'ultimo checkpoint (1) e la freccia up è l'unica visibile, diventa arancione
+    // Se siamo all'ultimo checkpoint e la freccia up è l'unica visibile, diventa arancione (come su sketch.js)
     if (currentCheckpointIndex === 1 && !downVisible) {
       upSvgPath.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--orange').trim());
     } else {
@@ -263,7 +262,7 @@ function updateArrowsVisibility() {
   scrollArrowUp.classList.remove('bounce-active');
   scrollArrowUp.classList.add('allow-hover-movement');
   
-  // Centering del container (copiato da sketch.js)
+  // Centering del container
   if (upVisible && downVisible) {
     arrowsContainer.style.transform = 'translateX(-50%)';
   } else if (upVisible) {
@@ -273,19 +272,6 @@ function updateArrowsVisibility() {
   }
 }
 
-// ========================================
-// DRAW DEBUG INFO (p5.js text rendering)
-// ========================================
-
-function drawDebugInfo() {
-  push();
-  fill(236, 102, 19, 150);
-  textFont('Courier');
-  textSize(12);
-  textAlign(RIGHT, BOTTOM);
-  text('scrollY: ' + nf(scrollY, 0, 2), width - 10, height - 10);
-  pop();
-}
 
 // ========================================
 // WINDOW RESIZE
@@ -358,8 +344,7 @@ function setupKeyboardNavigation() {
   });
 }
 
-// ========HI SIAMO SECTION
-// ========================================
+// ========CHI SIAMO SECTION (1)========================
 
 function centerChiSiamoSection() {
   let chiSiamoLayout = document.querySelector('#chi-siamo .two-column-layout');
@@ -378,8 +363,7 @@ function centerChiSiamoSection() {
 }
 
 // ========================================
-// CENTER C================================
-// CENTER CREDITS SECTION
+// CREDITS/FOOTER SECTION
 // ========================================
 
 function centerCreditsSection() {
