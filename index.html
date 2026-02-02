@@ -63,8 +63,8 @@
       <div class="counter-info" id="counter-tooltip"></div>
 
       <div class="nav-right">
-        <a class="nav-button" href="pages/chi_siamo.html">Chi siamo</a> <!--una volta che abbiamo la pagina va cambiato da button ad <a href> -->
-        <a class="nav-button" href="pages/dati.html">I dati</a>
+        <a class="nav-external" href="pages/chi_siamo.html">Chi siamo</a>
+        <a class="nav-external" href="pages/dati.html">I dati</a>
       </div>
     </nav>
     
@@ -99,6 +99,14 @@
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+    </div>
+    
+    <!-- Info tooltip per descrizioni categorie -->
+    <div id="categoria-info-icon" class="categoria-info-icon" style="display: none;">
+      <span class="info-circle">i</span>
+      <div class="info-tooltip">
+        <p id="info-tooltip-text"></p>
+      </div>
     </div>
     
     <script src="sketch.js"></script>

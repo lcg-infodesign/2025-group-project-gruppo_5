@@ -1604,6 +1604,68 @@ function updateNavbarCategoria() {
     navCategoriaContainer.style.display = 'none';
     if (navSeparator) navSeparator.style.display = 'none';
   }
+  
+  // Aggiorna icona info
+  updateCategoriaInfoIcon();
+}
+
+// Aggiorna posizione e contenuto dell'icona info categoria
+function updateCategoriaInfoIcon() {
+  let infoIcon = document.getElementById('categoria-info-icon');
+  let infoText = document.getElementById('info-tooltip-text');
+  if (!infoIcon || !infoText) return;
+  
+  // Mostra icona solo in sezione 8 (dettaglio) o durante transizione
+  if (categoriaSelezionata !== null && (scrollY >= 6500 || (transizioneAttiva && transizioneFadeInUI > 5))) {
+    // Calcola posizione a destra del titolo
+    let margin = constrain(width * 0.052, 60, 100);
+    let titleSize = constrain(width * 0.021, 20, 48);
+    let arrowHeight = constrain(width * 0.035, 40, 50);
+    let titleYPos = 115 + arrowHeight / 2;
+    
+    // Ottieni larghezza del titolo
+    let titolo = categoriaSelezionata.replace(/-/g, ' ');
+    if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      titolo = 'cause esterne e concomitanti';
+    }
+    
+    // Calcola larghezza reale del testo usando p5.js
+    push();
+    textFont(lcdFont);
+    textSize(titleSize);
+    let titleWidth = textWidth(titolo.toUpperCase());
+    pop();
+    
+    // Posiziona icona a destra del titolo con spazio responsive
+    // Aggiungi un offset extra per compensare eventuali imprecisioni
+    let iconSpacing = constrain(width * 0.02, 30, 45); // Aumentato lo spazio
+    let iconX = margin + titleWidth + iconSpacing;
+    let iconY = titleYPos;
+    
+    console.log('Title:', titolo, 'Width:', titleWidth, 'IconX:', iconX); // Debug
+    
+    infoIcon.style.left = iconX + 'px';
+    infoIcon.style.top = iconY + 'px';
+    infoIcon.style.display = 'flex';
+    
+    // Applica fade in durante la transizione
+    if (transizioneAttiva && transizioneFadeInUI > 5) {
+      infoIcon.style.opacity = (transizioneFadeInUI / 255).toString();
+    } else {
+      infoIcon.style.opacity = '1';
+    }
+    
+    // Aggiorna testo tooltip
+    if (categoriaSelezionata === 'conducenti') {
+      infoText.textContent = 'Rientrano le cause legate ai comportamenti, agli errori o alle distrazioni dei guidatori.';
+    } else if (categoriaSelezionata === 'non-conducenti') {
+      infoText.textContent = 'Rientrano le cause attribuibili al comportamento di pedoni, passeggeri o altri utenti della strada non alla guida.';
+    } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      infoText.textContent = 'Rientrano le cause dovute a fattori esterni come ostacoli urtati o evitati, eventi concomitanti e circostanze imprecisate.';
+    }
+  } else {
+    infoIcon.style.display = 'none';
+  }
 }
 
 // NAVBAR COUNTER: Aggiorna i valori in tempo reale (senza animazione di conteggio)
@@ -3061,6 +3123,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       titolo = 'cause esterne e concomitanti';
     }
     text(titolo.toUpperCase(), margin, titleYPos);
+    
     let yPos = titleYPos + titleSize;
     
     // Disegna quadrati per ogni riga del dataset (escluso il totale)
