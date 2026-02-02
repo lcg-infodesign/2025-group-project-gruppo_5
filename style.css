@@ -35,6 +35,7 @@
   --grass: color-mix(in srgb, var(--txt) 40%, var(--orange));
 }
 
+
 /* ========================================
    STILE GENERALE
    ======================================== */
@@ -60,18 +61,36 @@ canvas {
 }
 
 p {
-  width: 60vw;
-  max-width: 50em;
-  padding: none;
-  margin: 1em 0 0.5em 2rem;
+  font-size: clamp(15px, 0.83vw, 16px);
+  /* 16px @ 1920px */
+  line-height: 1.65;
+  color: var(--txt);
+  margin-bottom: clamp(8px, 0.52vw, 10px);
+  /* 10px @ 1920px */
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: clamp(700px, 47.92vw, 920px);
+  /* 920px @ 1920px */
 }
 
 h1 {
   font-family: "LCD", monospace;
   color: var(--orange);
-  font-size: clamp(28px, 2.08vw, 40px);
-  /* 40px @ 1920px */
-  margin: 2rem;
+  font-size: clamp(36px, 2.5vw, 48px);
+  /* 48px @ 1920px */
+  font-weight: 400;
+  margin-top: clamp(60px, 4.17vw, 80px);
+  /* 80px @ 1920px */
+  margin-bottom: clamp(10px, 0.73vw, 14px);
+  /* 14px @ 1920px - ridotto per avvicinare al testo */
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: 0.2em;
+  text-align: center;
+  line-height: 3;
 }
 
 h2 {
@@ -92,14 +111,6 @@ b {
   color: var(--grass);
 }
 
-.main-title {
-  font-family: "LCD", monospace;
-  color: var(--orange);
-  font-size: clamp(28px, 2.08vw, 40px);
-  /* 40px @ 1920px */
-  margin: clamp(80px, 6.25vw, 120px) 2rem 2rem;
-  /* 120px @ 1920px */
-}
 
 /* ========================================
    NAVBAR - Stile barra di navigazione
@@ -111,8 +122,7 @@ b {
   width: 100%;
   height: clamp(60px, 4.17vw, 80px);
   /* 80px @ 1920px */
-  /*background: transparent;*/
-  background-color: #000;
+  background-color: var(--bg);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -259,7 +269,7 @@ b {
   background: var(--orange);
 }
 
-/*TENDINA CATEGORIE RESPONSABILITÀ*/
+/* --------- menù a tendina categorie responsabilità ------------ */
 .nav-item.active,
 .nav-item.active .dropdown-link {
   color: var(--orange) !important;
@@ -369,9 +379,8 @@ b {
 }
 
 
-
 /* ========================================
-   NAVBAR COUNTER - Counter centrale animato
+   COUNTER - Centrale alla Navbar
    ======================================== */
 .navbar-counter {
   position: absolute;
@@ -475,14 +484,33 @@ b {
   line-height: 1;
 }
 
-/* Rimuovi vecchi stili per counter-info e counter-countdown */
-.counter-info,
-.counter-countdown {
-  display: none;
+/* Flash Outline Animation per Counter */
+@keyframes flashOutline {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 1);
+    background-color: transparent;
+  }
+  25% {
+    border-color: var(--orange);
+    background-color: color-mix(in srgb, var(--orange) 15%, transparent);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 1);
+    background-color: transparent;
+  }
+  75% {
+    border-color: var(--orange);
+    background-color: color-mix(in srgb, var(--orange) 15%, transparent);
+  }
 }
 
+.navbar-counter.flash-outline {
+  animation: flashOutline 3s ease-out;
+}
+
+
 /* ========================================
-   SCROLL ARROW - Freccia fissa per navigazione
+   SCROLL ARROWS - Frecce per navigare su/giù
    ======================================== */
 .scroll-arrows-container {
   position: fixed;
@@ -498,6 +526,7 @@ b {
   transition: all 0.3s ease;
 }
 
+/*forma della freccia*/
 .scroll-arrow {
   width: clamp(28px, 1.67vw, 32px);
   /* 32px @ 1920px */
@@ -547,7 +576,6 @@ b {
 }
 
 @keyframes bounce {
-
   0%,
   20%,
   50%,
@@ -565,8 +593,9 @@ b {
   }
 }
 
+
 /* ========================================
-   BACK ARROW - Freccia per tornare indietro
+   BACK ARROW - Freccia per tornare indietro dal dettaglio
    ======================================== */
 .back-arrow {
   position: absolute;
@@ -598,14 +627,16 @@ b {
   width: clamp(24px, 1.4vw, 27px);
   height: clamp(24px, 1.4vw, 27px);
   stroke-width: 2.5;
-  /* Freccia più spessa */
 }
 
 .back-arrow:hover svg path {
   stroke: var(--orange);
 }
 
-/* Frecce navigazione tra categorie di dettaglio */
+
+/* ============================================
+ SIDE ARROWS - navigare tra categorie di dettaglio 
+ ============================================ */
 .detail-arrow {
   position: absolute;
   top: 66.67vh;
@@ -740,10 +771,330 @@ b {
 
 
 
-/* ========================================
-   PAGINA DEI DATI - tendine
+
+/* =========================================
+   PAGINE CON INFORMAZIONI - Layout generale di chi siamo e dati
    ======================================== */
 
+.two-column-layout {
+  display: flex;
+  gap: 2.5rem;
+  /* 80px @ 1920px */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: clamp(1200px, 80vw, 1600px);
+  /* 1600px @ 1920px */
+  margin: 0 auto;
+  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px);
+  /* 40px laterale, 80px sotto @ 1920px */
+}
+
+.column {
+  flex: 0 0 50%;
+  text-align: left;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.column h1 {
+  text-align: left;
+  margin-left: 0;
+  margin-bottom: clamp(10px, 0.73vw, 14px);
+  font-size: clamp(38px, 2.6vw, 50px);
+}
+
+.column p {
+  margin-left: 0;
+  font-size: clamp(16px, 0.94vw, 18px);
+  line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Fade In Animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* ---------------------------------------
+  CHI SIAMO - layout specifico
+  ---------------------------------------*/
+#chi-siamo {
+  opacity: 1;
+}
+
+/* Colonna immagini */
+.column-images {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10em;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Team Grid */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 0.83vw, 16px);
+  /* 16px @ 1920px */
+  width: 100%;
+  max-width: clamp(1000px, 72.92vw, 1400px);
+  /* 1400px @ 1920px */
+  padding: 0 clamp(16px, 1.04vw, 20px);
+  /* 20px @ 1920px */
+  margin: 0 auto;
+  justify-items: center;
+}
+
+.column-images .team-grid {
+  margin-left: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* ---- singole card ---- */
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 0.63vw, 12px);
+  /* 12px @ 1920px */
+}
+
+.team-photo {
+  width: 100%;
+  max-width: clamp(120px, 9.38vw, 180px);
+  /* 180px @ 1920px */
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.card-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.card-name span {
+  font-size: clamp(14px, 0.83vw, 16px);
+  /* 16px @ 1920px */
+  font-weight: 600;
+  color: var(--txt);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+/* --------------------- FOOTER -------------------------- */
+:root {
+  --radius: 0.25rem;
+
+  /* === CONTROLLI RAPIDI === */
+  --logo-polimi: 20rem;
+  --logo-right: 5rem;
+  --content-shift: 5rem;
+}
+
+.credits-page {
+  max-width: clamp(1200px, 80vw, 1600px);
+  display: flex;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px);
+  flex-direction: column;
+  font-size: clamp(24px, 2.5vw, 48px);
+  line-height: 1.4;
+}
+
+.credits-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-bottom: 1.6rem;
+  /* più spazio sotto i loghi */
+}
+
+.credits-brand-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-width: 12rem;
+}
+
+.credits-logo-polimi {
+  width: var(--logo-polimi);
+  height: auto;
+  display: block;
+  opacity: .95;
+  flex: 0 0 auto;
+  margin-left: -1.5rem;
+}
+
+.credits-brand-right {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.0rem;
+}
+
+.credits-logo-necst {
+  height: var(--logo-right);
+  width: auto;
+  display: block;
+  opacity: .98;
+  margin-top: 1.5rem;
+}
+
+.credits-logo-density {
+  height: var(--logo-right);
+  width: auto;
+  display: block;
+  opacity: .98;
+  margin-top: 1.5rem;
+}
+
+/* Wrapper per centrare meglio il contenuto nella pagina */
+.credits-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.credits-intro {
+  margin: 0 0 1.2rem 0;
+  font-size: 0.50em;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.credits-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2.2rem;
+  align-items: start;
+  margin-bottom: 1.1rem;
+}
+
+.credits-section-title {
+  margin: 0 0 0.55rem 0;
+  font-weight: bold;
+  font-size: 0.50em;
+}
+
+.credits-block {
+  display: flex;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+}
+
+.credits-bar {
+  width: 0.12rem;
+  background: var(--orange);
+  border-radius: var(--radius);
+  margin-top: 0.10rem;
+  flex: 0 0 auto;
+}
+
+ul.credits-clean {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.42em;
+  line-height: 1.35;
+}
+
+.credits-links {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.05rem;
+}
+
+.credits-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--txt);
+  text-decoration: none;
+  font-size: 0.42em;
+  line-height: 1.35;
+}
+
+.credits-links a:hover {
+  color: var(--txt);
+  text-decoration: underline;
+  text-decoration-thickness: 0.06rem;
+  text-underline-offset: 0.18rem;
+}
+
+.credits-ext {
+  width: 1rem;
+  height: 1rem;
+  opacity: .9;
+  flex: 0 0 auto;
+  transform: translateY(0.03rem);
+}
+
+.credits-footer {
+  margin-top: auto;
+  padding-top: 0.8rem;
+  color: var(--muted);
+  font-size: 0.34em;
+  line-height: 1.55;
+  opacity: .95;
+}
+
+.credits-footer .credits-copy {
+  margin-bottom: 0.35rem;
+}
+
+.credits-footer .credits-lang {
+  display: grid;
+  gap: 0.25rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 60rem) {
+  .credits-cols {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .credits-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .credits-brand-right {
+    margin-top: 0.7rem;
+  }
+
+  :root {
+    --content-shift: 1.2rem;
+    /* su mobile non abbassare troppo */
+    --logo-polimi: 3.0rem;
+    --logo-right: 2.6rem;
+  }
+}
+
+/* ---------------------------------------
+  DATI - layout specifico
+  ---------------------------------------*/
+
+/* ================ tendine ======================= */
 /* Sezioni sovrapposte per fade in/out */
 .sezione-dati {
   position: fixed;
@@ -759,26 +1110,10 @@ b {
   overflow-y: auto;
 }
 
-#chi-siamo {
-  opacity: 1;
-}
-
 .sezione-dati:nth-of-type(2) {
   opacity: 0;
   pointer-events: none;
   justify-content: center;
-}
-
-#sezione-testo {
-  z-index: 1;
-  opacity: 1;
-}
-
-#sezione-categorie {
-  z-index: 2;
-  transform: translateY(-5vh);
-  opacity: 0;
-  pointer-events: none;
 }
 
 .Listadati {
@@ -980,484 +1315,7 @@ b {
   }
 }
 
-/* ========================================
-   CHI SIAMO - Pagina team
-   ======================================== */
 
-/* Section container */
-.section {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  /* remove horizontal padding so inner containers center correctly */
-  padding: clamp(40px, 2.6vw, 50px) 0 clamp(48px, 3.13vw, 60px);
-  /* 50px 60px @ 1920px */
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-  transition: opacity 0.3s ease;
-}
-
-.section-team {
-  justify-content: center;
-  /* keep small horizontal padding inside section content, not on fixed section */
-  padding: clamp(8px, 0.52vw, 10px) clamp(16px, 1.04vw, 20px) clamp(60px, 4.17vw, 80px);
-  /* 10px 20px 80px @ 1920px */
-}
-
-
-.section-content {
-  max-width: clamp(700px, 47.92vw, 920px);
-  /* 920px @ 1920px */
-  text-align: center;
-  margin: 0 auto;
-  width: 100%;
-}
-
-/* Layout a due colonne per Chi Siamo */
-.two-column-layout {
-  display: flex;
-  gap: 2.5rem;
-  /* 80px @ 1920px */
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: clamp(1200px, 80vw, 1600px);
-  /* 1600px @ 1920px */
-  margin: 0 auto;
-  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px);
-  /* 40px laterale, 80px sotto @ 1920px */
-}
-
-.column {
-  flex: 0 0 50%;
-  text-align: left;
-  min-width: 0;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-.column-images {
-  flex: 0 0 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 10em;
-  min-width: 0;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-
-.column .team-title {
-  text-align: left;
-  margin-left: 0;
-  margin-bottom: clamp(10px, 0.73vw, 14px);
-  font-size: clamp(38px, 2.6vw, 50px);
-}
-
-.column .description {
-  text-align: left;
-  margin-left: 0;
-  font-size: clamp(16px, 0.94vw, 18px);
-  line-height: 1.6;
-  width: 100%;
-  max-width: 100%;
-}
-
-.column-images .team-title {
-  text-align: left;
-  margin-left: 0;
-  width: 100%;
-}
-
-.column-images .team-grid {
-  margin-left: 0;
-  padding: 0;
-  width: 100%;
-}
-
-/* Chi Siamo: 70/30 */
-#chi-siamo .left-column {
-  flex: 0 0 70%;
-}
-
-#chi-siamo .right-column {
-  flex: 0 0 30%;
-}
-
-/* Dati: 50/50 */
-#i-dati .left-column {
-  flex: 0 0 50%;
-}
-
-#i-dati .right-column {
-  flex: 0 0 50%;
-}
-
-
-.corso-info {
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px);
-  /* 16px @ 1920px */
-  line-height: 1.6;
-  color: var(--txt);
-  margin: clamp(4px, 0.26vw, 5px) 0;
-  /* 5px @ 1920px */
-}
-
-
-.copyright {
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(12px, 0.73vw, 14px);
-  /* 14px @ 1920px */
-  color: var(--orange);
-  margin-bottom: clamp(12px, 0.78vw, 15px);
-  /* 15px @ 1920px */
-  font-weight: 600;
-}
-
-
-
-/* Team Title (LCD font per "CHI SIAMO") */
-.team-title {
-  font-family: "LCD", monospace;
-  color: var(--orange);
-  font-size: clamp(36px, 2.5vw, 48px);
-  /* 48px @ 1920px */
-  font-weight: 400;
-  margin-top: clamp(60px, 4.17vw, 80px);
-  /* 80px @ 1920px */
-  margin-bottom: clamp(10px, 0.73vw, 14px);
-  /* 14px @ 1920px - ridotto per avvicinare al testo */
-  letter-spacing: 0.2em;
-  text-align: center;
-  line-height: 3;
-  margin-left: auto;
-  margin-right: auto;
-  text-shadow:
-    2px 0 0 var(--bg),
-    -2px 0 var(--bg),
-    0 2px 0 var(--bg),
-    0 -2px 0 var(--bg),
-    1px 1px 0 var(--bg),
-    -1px -1px 0 var(--bg),
-    1px -1px 0 var(--bg),
-    -1px 1px 0 var(--bg);
-}
-
-/* Description text */
-.description {
-  font-size: clamp(15px, 0.83vw, 16px);
-  /* 16px @ 1920px - ridotto */
-  line-height: 1.65;
-  color: var(--txt);
-  margin-bottom: clamp(8px, 0.52vw, 10px);
-  /* 10px @ 1920px */
-  font-weight: 400;
-  letter-spacing: 0.005em;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: clamp(700px, 47.92vw, 920px);
-  /* 920px @ 1920px */
-}
-
-.description-dati {
-  font-size: clamp(14px, 0.83vw, 16px);
-  /* 16px @ 1920px */
-  line-height: 1.65;
-  color: var(--txt);
-  margin-bottom: clamp(8px, 0.52vw, 10px);
-  /* 10px @ 1920px */
-  font-weight: 400;
-  letter-spacing: 0.005em;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: clamp(700px, 47.92vw, 920px);
-  /* 920px @ 1920px */
-}
-
-/* Team Grid */
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 0.83vw, 16px);
-  /* 16px @ 1920px */
-  width: 100%;
-  max-width: clamp(1000px, 72.92vw, 1400px);
-  /* 1400px @ 1920px */
-  padding: 0 clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
-  margin: 0 auto;
-  justify-items: center;
-}
-
-/* Team Card */
-.team-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(8px, 0.63vw, 12px);
-  /* 12px @ 1920px */
-}
-
-.team-photo {
-  width: 100%;
-  max-width: clamp(120px, 9.38vw, 180px);
-  /* 180px @ 1920px */
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
-
-.card-name {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 2px;
-}
-
-.card-name span {
-  font-size: clamp(14px, 0.83vw, 16px);
-  /* 16px @ 1920px */
-  font-weight: 600;
-  color: var(--txt);
-  line-height: 1.2;
-  letter-spacing: 0.01em;
-}
-
-/* Fade In Animation */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.6s ease forwards;
-}
-
-/* Flash Outline Animation per Counter */
-@keyframes flashOutline {
-  0%, 100% {
-    border-color: rgba(255, 255, 255, 1);
-    background-color: transparent;
-  }
-  25% {
-    border-color: var(--orange);
-    background-color: color-mix(in srgb, var(--orange) 15%, transparent);
-  }
-  50% {
-    border-color: rgba(255, 255, 255, 1);
-    background-color: transparent;
-  }
-  75% {
-    border-color: var(--orange);
-    background-color: color-mix(in srgb, var(--orange) 15%, transparent);
-  }
-}
-
-.navbar-counter.flash-outline {
-  animation: flashOutline 3s ease-out;
-}
-
-/* ========================================
-   FOOTER - Chi siamo
-   ======================================== */
-:root {
-  --radius: 0.25rem;
-
-  /* === CONTROLLI RAPIDI === */
-  --logo-polimi: 20rem;
-  --logo-right: 5rem;
-  --content-shift: 5rem;
-}
-
-.credits-page {
-  max-width: clamp(1200px, 80vw, 1600px);
-  display: flex;
-  margin: 0 auto;
-  padding: 0 clamp(20px, 2vw, 40px) clamp(40px, 4vw, 80px);
-  flex-direction: column;
-  font-size: clamp(24px, 2.5vw, 48px);
-  line-height: 1.4;
-}
-
-.credits-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1.2rem;
-  margin-bottom: 1.6rem;
-  /* più spazio sotto i loghi */
-}
-
-.credits-brand-left {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
-  min-width: 12rem;
-}
-
-.credits-logo-polimi {
-  width: var(--logo-polimi);
-  height: auto;
-  display: block;
-  opacity: .95;
-  flex: 0 0 auto;
-  margin-left: -1.5rem;
-}
-
-.credits-brand-right {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.0rem;
-}
-
-.credits-logo-necst {
-  height: var(--logo-right);
-  width: auto;
-  display: block;
-  opacity: .98;
-  margin-top: 1.5rem;
-}
-
-.credits-logo-density {
-  height: var(--logo-right);
-  width: auto;
-  display: block;
-  opacity: .98;
-  margin-top: 1.5rem;
-}
-
-/* Wrapper per centrare meglio il contenuto nella pagina */
-.credits-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.credits-intro {
-  margin: 0 0 1.2rem 0;
-  font-size: 0.50em;
-  line-height: 1.2;
-}
-
-.credits-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2.2rem;
-  align-items: start;
-  margin-bottom: 1.1rem;
-}
-
-.credits-section-title {
-  margin: 0 0 0.55rem 0;
-  font-weight: bold;
-  font-size: 0.50em;
-}
-
-.credits-block {
-  display: flex;
-  gap: 0.55rem;
-  margin-bottom: 0.75rem;
-}
-
-.credits-bar {
-  width: 0.12rem;
-  background: var(--orange);
-  border-radius: var(--radius);
-  margin-top: 0.10rem;
-  flex: 0 0 auto;
-}
-
-ul.credits-clean {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.42em;
-  line-height: 1.35;
-}
-
-.credits-links {
-  display: grid;
-  gap: 0.45rem;
-  margin-top: 0.05rem;
-}
-
-.credits-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--txt);
-  text-decoration: none;
-  font-size: 0.42em;
-  line-height: 1.35;
-}
-
-.credits-links a:hover {
-  color: var(--txt);
-  text-decoration: underline;
-  text-decoration-thickness: 0.06rem;
-  text-underline-offset: 0.18rem;
-}
-
-.credits-ext {
-  width: 1rem;
-  height: 1rem;
-  opacity: .9;
-  flex: 0 0 auto;
-  transform: translateY(0.03rem);
-}
-
-.credits-footer {
-  margin-top: auto;
-  padding-top: 0.8rem;
-  color: var(--muted);
-  font-size: 0.34em;
-  line-height: 1.55;
-  opacity: .95;
-}
-
-.credits-footer .credits-copy {
-  margin-bottom: 0.35rem;
-}
-
-.credits-footer .credits-lang {
-  display: grid;
-  gap: 0.25rem;
-}
-
-/* RESPONSIVE */
-@media (max-width: 60rem) {
-  .credits-cols {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-  }
-
-  .credits-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .credits-brand-right {
-    margin-top: 0.7rem;
-  }
-
-  :root {
-    --content-shift: 1.2rem;
-    /* su mobile non abbassare troppo */
-    --logo-polimi: 3.0rem;
-    --logo-right: 2.6rem;
-  }
-}
 
 /* ========================================
    MEDIA QUERIES
@@ -1472,13 +1330,11 @@ ul.credits-clean {
 
 /* Responsive - Chi Siamo */
 @media (min-width: 768px) {
-
-
-  .team-title {
+  h1 {
     font-size: 56px;
   }
 
-  .description {
+  p {
     font-size: 21px;
     line-height: 1.7;
   }
@@ -1507,13 +1363,11 @@ ul.credits-clean {
 }
 
 @media (max-width: 768px) {
-
-
-  .team-title {
+  h1 {
     font-size: 36px;
   }
 
-  .description {
+  p {
     font-size: 18px;
   }
 
