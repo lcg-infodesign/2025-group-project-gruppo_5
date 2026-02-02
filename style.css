@@ -69,7 +69,6 @@ p {
   margin: 1em 0 0.5em 2rem;
 }
 
-
 h1 {
   font-family: "LCD", monospace;
   color: var(--orange);
@@ -90,6 +89,10 @@ h3 {
   font-size: clamp(16px, 1.04vw, 20px);
   /* 20px @ 1920px */
   margin: 2em 0 0.5em 2rem;
+}
+
+b {
+  color: color-mix(in srgb, var(--txt) 40%, var(--orange));
 }
 
 .main-title {
@@ -768,8 +771,11 @@ h3 {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: flex-start;
   gap: 2em;
-  transform: translateY(-7vh);
+  /*per fare in modo che non ci sia overflow*/
+  transform: scale(0.82) translateY(-2vh);
+  max-height: 90vh;
 }
 
 .bigCategory {
@@ -778,6 +784,8 @@ h3 {
   /* h2 sopra .catList */
   gap: 0.6rem;
   align-items: flex-start;
+  max-width: 45vw;
+  height: 100vh;
 }
 
 .bigCategory h2 {
@@ -851,6 +859,11 @@ h3 {
 
 .oldCategory li {
   padding: 0.4rem 0;
+}
+
+.sottotitoloCat {
+  margin: -0.5rem 0 0.5em 2.5rem;
+
 }
 
 /* ========================================
