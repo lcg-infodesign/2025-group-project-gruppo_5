@@ -1007,12 +1007,6 @@ b {
   /* 10px 20px 80px @ 1920px */
 }
 
-.section-crediti {
-  justify-content: flex-start;
-  padding: clamp(80px, 5.21vw, 100px) clamp(30px, 2.08vw, 40px) clamp(160px, 10.42vw, 200px);
-  /* 100px 40px 200px @ 1920px */
-  min-height: 100vh;
-}
 
 .section-content {
   max-width: clamp(700px, 47.92vw, 920px);
@@ -1104,36 +1098,6 @@ b {
   flex: 0 0 50%;
 }
 
-/* Stili sezione crediti */
-.crediti-content {
-  max-width: clamp(700px, 47.92vw, 920px);
-  /* 920px @ 1920px */
-  margin: 0 auto;
-  width: 100%;
-  text-align: left;
-}
-
-.crediti-top {
-  display: flex;
-  gap: clamp(40px, 3.13vw, 60px);
-  /* 60px @ 1920px */
-  margin-bottom: clamp(30px, 2.08vw, 40px);
-  /* 40px @ 1920px */
-  padding-bottom: clamp(20px, 1.56vw, 30px);
-  /* 30px @ 1920px */
-  border-bottom: 1px solid color-mix(in srgb, var(--orange) 30%, transparent);
-  align-items: flex-start;
-}
-
-.crediti-header {
-  flex: 0 0 auto;
-  max-width: clamp(250px, 18.23vw, 350px);
-  /* 350px @ 1920px */
-  margin-top: clamp(40px, 3.13vw, 60px);
-  /* 60px @ 1920px */
-  margin-left: clamp(-250px, -18.23vw, -350px);
-  /* -350px @ 1920px */
-}
 
 .corso-info {
   font-family: "Transport", Arial, Helvetica, sans-serif;
@@ -1145,40 +1109,6 @@ b {
   /* 5px @ 1920px */
 }
 
-.crediti-autori {
-  flex: 1;
-}
-
-.crediti-title {
-  font-family: "LCD", monospace;
-  color: var(--orange);
-  font-size: clamp(18px, 1.25vw, 24px);
-  /* 24px @ 1920px */
-  font-weight: 400;
-  margin-bottom: clamp(12px, 0.78vw, 15px);
-  /* 15px @ 1920px */
-  margin-top: clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
-  letter-spacing: 0.05em;
-}
-
-.autori-list {
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px);
-  /* 16px @ 1920px */
-  line-height: 1.8;
-  color: var(--txt);
-}
-
-.crediti-license {
-  margin-bottom: clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
-  padding: clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
-  background: color-mix(in srgb, var(--orange) 5%, transparent);
-  border-left: clamp(2px, 0.16vw, 3px) solid var(--orange);
-  /* 3px @ 1920px */
-}
 
 .copyright {
   font-family: "Transport", Arial, Helvetica, sans-serif;
@@ -1190,61 +1120,7 @@ b {
   font-weight: 600;
 }
 
-.license-text p {
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(11px, 0.68vw, 13px);
-  /* 13px @ 1920px */
-  line-height: 1.6;
-  color: var(--txt);
-  margin: clamp(8px, 0.52vw, 10px) 0;
-  /* 10px @ 1920px */
-}
 
-.license-text strong {
-  color: var(--orange);
-}
-
-.crediti-docenti {
-  display: flex;
-  gap: clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
-  margin: 0 auto;
-  max-width: 100%;
-  padding: 0 clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
-  box-sizing: border-box;
-  /*margin-bottom: 40px;*/
-}
-
-.docenti-col {
-  flex: 1;
-  min-width: 0;
-}
-
-.docenti-col p {
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 0.83vw, 16px);
-  /* 16px @ 1920px */
-  line-height: 1.8;
-  color: var(--txt);
-  margin: 5px 0;
-}
-
-/* Orange Title (usato per titoli principali) */
-.orange-title {
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  color: var(--orange);
-  font-size: clamp(36px, 2.5vw, 48px);
-  /* 48px @ 1920px */
-  font-weight: 600;
-  margin-bottom: clamp(48px, 3.33vw, 64px);
-  /* 64px @ 1920px */
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 /* Team Title (LCD font per "CHI SIAMO") */
 .team-title {
@@ -1596,9 +1472,7 @@ ul.credits-clean {
 
 /* Responsive - Chi Siamo */
 @media (min-width: 768px) {
-  .orange-title {
-    font-size: 64px;
-  }
+
 
   .team-title {
     font-size: 56px;
@@ -1633,9 +1507,7 @@ ul.credits-clean {
 }
 
 @media (max-width: 768px) {
-  .orange-title {
-    font-size: 36px;
-  }
+
 
   .team-title {
     font-size: 36px;
