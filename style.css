@@ -992,7 +992,7 @@ b {
 /* Layout a due colonne per Chi Siamo */
 .two-column-layout {
   display: flex;
-  gap: clamp(40px, 4vw, 80px);
+  gap: 2.5rem;
   /* 80px @ 1920px */
   align-items: center;
   justify-content: center;
@@ -1007,6 +1007,9 @@ b {
 .left-column {
   flex: 0 0 30%;
   text-align: left;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .left-column .team-title {
@@ -1021,6 +1024,8 @@ b {
   margin-left: 0;
   font-size: clamp(16px, 0.94vw, 18px);
   line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
 }
 
 .right-column {
@@ -1030,6 +1035,9 @@ b {
   align-items: center;
   justify-content: center;
   padding-top: 10em;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .right-column .team-title {
