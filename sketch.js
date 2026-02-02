@@ -680,7 +680,6 @@ function draw() {
   
   // Disegna sezioni in ordine
   drawSezioneIntro();
-  // NAVBAR: aggiornata tramite HTML/CSS (vedi index.html e style.css)
   updateNavbarHTML(navbarOpacita, sezioneAttiva);
   drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita);
   drawSezioneTerza(terzaSezioneFadeOut);
@@ -693,7 +692,7 @@ function draw() {
   
   // Aggiorna animazioni
   updateAnimations();
-  updateHoverScales(); // Aggiorna animazione hover
+  updateHoverScales();
   updateCursor();
   
   // Debug
@@ -708,13 +707,13 @@ function handleAutoScroll() { //scroll automatico verso i checkpoint
   if (scrollTarget > -1) {
     isScrolling = true;
     
-    // Aumenta velocità quando si torna indietro nell'intervallo tra 5200 e 6500
+    // Aumenta velocità quando si torna indietro nell'intervallo tra 5200 e 6500 (perche mi si bloccava l'animazione sennò)
     let currentVelocita = scrollVelocita;
     if (scrollY > 5200 && scrollTarget <= 5200 && scrollY <= 6500) {
       currentVelocita = 100; // Molto più veloce quando si torna indietro da 6500 a 5200
     }
     
-    // Rallenta lo scroll tra 2900 e 3850 per passare attraverso 3100 e 3300
+    // Rallenta lo scroll tra 2900 e 3850 per passare attraverso 3100 e 3300 (che abbiamo aggiunto dopo)
     if ((scrollY >= 2900 && scrollY <= 3850) || (scrollTarget >= 3100 && scrollTarget <= 3300)) {
       currentVelocita = 4; // Scroll più lento per non saltare i checkpoint intermedi
     }
@@ -1651,7 +1650,7 @@ function updateGradienteInfoIcon() {
     let legendTop = SEZIONE_MARGIN + width * 0.07;
     
     // Posizione sotto il gradiente (seconda riga della legenda) - allineato a sinistra sotto il gradiente
-    let iconX = margin + 275; // Centrato sotto il gradiente (88px width / 2)
+    let iconX = margin + 115; // Centrato sotto il gradiente (88px width / 2)
     let iconY = legendTop + 190; // Offset per seconda riga + spazio sotto il gradiente
     
     infoIcon.style.left = iconX + 'px';
