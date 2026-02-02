@@ -318,7 +318,6 @@ function draw() {
   updateSectionVisibility();
   updateSectionOpacity();
   updateArrowsVisibility();
-  drawDebugInfo();
 }
 
 function handleAutoScroll() {
@@ -554,16 +553,6 @@ function updateArrowsVisibility() {
       arrowsContainer.style.transform = `translateX(calc(-50% - ${width * 0.0115}px))`;
     }
   }
-}
-
-function drawDebugInfo() {
-  push();
-  textFont('Courier');
-  textAlign(RIGHT, BOTTOM);
-  textSize(14);
-  fill(255, 165, 0, 150); // Colore arancione con opacità
-  text('scrollY: ' + floor(scrollY), width - 10, height - 10);
-  pop();
 }
 
 // ========================================
