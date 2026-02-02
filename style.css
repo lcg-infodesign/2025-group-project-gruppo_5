@@ -95,9 +95,11 @@ h1 {
 
 h2 {
   font-family: "LCD", monospace;
+  color: var(--txt);
   font-size: clamp(18px, 1.25vw, 24px);
   /* 24px @ 1920px */
-  margin: 2em 0 0.5em 2rem;
+  font-weight: 400;
+  margin: 2em 0 0.5em clamp(28px, 2.08vw, 40px); /*allineato con i bottoni*/
 }
 
 h3 {
@@ -107,7 +109,7 @@ h3 {
   margin: 2em 0 0.5em 2rem;
 }
 
-b {
+b { /*bold*/
   color: var(--grass);
 }
 
@@ -689,6 +691,134 @@ b {
   height: clamp(20px, 1.15vw, 22px);
 }
 
+/* ========================================
+   INFO ICON - Icona informazioni categorie
+   ======================================== */
+.categoria-info-icon {
+  position: fixed;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.info-circle {
+  width: clamp(20px, 1.25vw, 24px);
+  height: clamp(20px, 1.25vw, 24px);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(13px, 0.83vw, 16px);
+  font-style: normal;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.info-circle:hover {
+  background: var(--hover);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: clamp(10px, 0.63vw, 12px);
+  padding: clamp(12px, 0.83vw, 16px);
+  max-width: clamp(400px, 30vw, 600px);
+  min-width: clamp(300px, 22vw, 450px);
+  max-height: clamp(80px, 8vh, 120px);
+  overflow: hidden;
+  z-index: 1002;
+}
+
+.categoria-info-icon:hover .info-tooltip {
+  display: block;
+}
+
+.info-tooltip p {
+  margin: 0;
+  padding: 0;
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: clamp(13px, 0.83vw, 16px);
+  line-height: 1.5;
+  color: var(--txt);
+  width: 100%;
+}
+
+/* ========================================
+   INFO ICON GRADIENTE - Icona info sotto il gradiente
+   ======================================== */
+.gradiente-info-icon {
+  position: fixed;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gradiente-info-circle {
+  width: clamp(16px, 1vw, 18px);
+  height: clamp(16px, 1vw, 18px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(11px, 0.7vw, 13px);
+  font-style: normal;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.gradiente-info-circle:hover {
+  background: var(--hover);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.gradiente-info-tooltip {
+  display: none;
+  position: fixed;
+  top: auto;
+  left: auto;
+  transform: none;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: clamp(10px, 0.63vw, 12px);
+  padding: clamp(16px, 1.04vw, 20px) clamp(20px, 1.3vw, 25px);
+  box-sizing: border-box;
+  z-index: 1002;
+  white-space: normal;
+}
+
+.gradiente-info-icon:hover .gradiente-info-tooltip {
+  display: block;
+}
+
+.gradiente-info-tooltip p {
+  margin: 0;
+  padding: 0;
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: clamp(12px, 0.75vw, 14px);
+  line-height: 1.5;
+  color: var(--txt);
+  width: 100%;
+}
 
 /* =========================================
    PAGINE CON INFORMAZIONI - Layout generale di chi siamo e dati
@@ -823,6 +953,22 @@ b {
   --logo-polimi: 20rem;
   --logo-right: 5rem;
   --content-shift: 5rem;
+}
+
+.credits-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.1s ease-out;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .credits-page {
@@ -1011,10 +1157,9 @@ ul.credits-clean {
 /* ---------------------------------------
   DATI - layout specifico
   ---------------------------------------*/
-
-/* ================ tendine ======================= */
-/* Sezioni sovrapposte per fade in/out */
-.sezione-dati {
+/* Stili base */
+.sezione-dati,
+.sezione-dati-tendine {
   position: fixed;
   top: 0;
   left: 0;
@@ -1028,10 +1173,11 @@ ul.credits-clean {
   overflow-y: auto;
 }
 
-.sezione-dati:nth-of-type(2) {
+/* ================ pag. con tendine ======================= */
+/* Nasconde la sezione tendine di default */
+.sezione-dati-tendine {
   opacity: 0;
   pointer-events: none;
-  justify-content: center;
 }
 
 .Listadati {
@@ -1053,17 +1199,6 @@ ul.credits-clean {
   align-items: flex-start;
   max-width: 45vw;
   height: 100vh;
-}
-
-.bigCategory h2 {
-  font-family: "LCD", monospace;
-  color: var(--txt);
-  font-size: clamp(18px, 1.25vw, 24px);
-  /* 24px @ 1920px */
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  margin-left: clamp(28px, 2.08vw, 40px);
-  /* Allineato con i bottoni */
 }
 
 .newCategory {
@@ -1129,8 +1264,8 @@ ul.credits-clean {
 }
 
 .sottotitoloCat {
-  margin: -0.5rem 0 0.5em 2.5rem;
-
+  margin: -0.5rem 0 0.5em clamp(28px, 2.08vw, 40px);
+  font-size: clamp(14px, 0.83vw, 16px);
 }
 
 /* ========================================
@@ -1330,131 +1465,3 @@ ul.credits-clean {
   }
 }
 
-/* ========================================
-   INFO ICON - Icona informazioni categorie
-   ======================================== */
-.categoria-info-icon {
-  position: fixed;
-  z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(-50%);
-}
-
-.info-circle {
-  width: clamp(20px, 1.25vw, 24px);
-  height: clamp(20px, 1.25vw, 24px);
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(13px, 0.83vw, 16px);
-  font-style: normal;
-  font-weight: bold;
-  color: rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.info-circle:hover {
-  background: var(--hover);
-  border-color: var(--orange);
-  color: var(--orange);
-}
-
-.info-tooltip {
-  display: none;
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.95);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: clamp(10px, 0.63vw, 12px);
-  padding: clamp(12px, 0.83vw, 16px);
-  max-width: clamp(400px, 30vw, 600px);
-  min-width: clamp(300px, 22vw, 450px);
-  max-height: clamp(80px, 8vh, 120px);
-  overflow: hidden;
-  z-index: 1002;
-}
-
-.categoria-info-icon:hover .info-tooltip {
-  display: block;
-}
-
-.info-tooltip p {
-  margin: 0;
-  padding: 0;
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(13px, 0.83vw, 16px);
-  line-height: 1.5;
-  color: var(--txt);
-  width: 100%;
-}
-
-/* ========================================
-   GRADIENTE INFO ICON - Icona info sotto il gradiente
-   ======================================== */
-.gradiente-info-icon {
-  position: fixed;
-  z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gradiente-info-circle {
-  width: clamp(16px, 1vw, 18px);
-  height: clamp(16px, 1vw, 18px);
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(11px, 0.7vw, 13px);
-  font-style: normal;
-  font-weight: bold;
-  color: rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.gradiente-info-circle:hover {
-  background: var(--hover);
-  border-color: var(--orange);
-  color: var(--orange);
-}
-
-.gradiente-info-tooltip {
-  display: none;
-  position: fixed;
-  top: auto;
-  left: auto;
-  transform: none;
-  background: rgba(0, 0, 0, 0.95);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: clamp(10px, 0.63vw, 12px);
-  padding: clamp(16px, 1.04vw, 20px) clamp(20px, 1.3vw, 25px);
-  box-sizing: border-box;
-  z-index: 1002;
-  white-space: normal;
-}
-
-.gradiente-info-icon:hover .gradiente-info-tooltip {
-  display: block;
-}
-
-.gradiente-info-tooltip p {
-  margin: 0;
-  padding: 0;
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(12px, 0.75vw, 14px);
-  line-height: 1.5;
-  color: var(--txt);
-  width: 100%;
-}
