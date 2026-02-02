@@ -319,6 +319,36 @@ h3 {
   background: var(--hover);
   color: var(--orange);
   opacity: 0.9;
+  border-radius: clamp(10px, 0.63vw, 12px);
+}
+
+/* Tendina categoria dettaglio - appare sotto il nome della categoria */
+#nav-categoria-container {
+  position: relative;
+}
+
+#nav-categoria-container::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 1rem;
+}
+
+#nav-categoria-container .dropdown-menu {
+  top: calc(100% - 0.1rem);
+  left: calc(-1 * clamp(12px, 0.83vw, 16px));
+}
+
+#nav-categoria-container:hover .dropdown-menu {
+  display: block;
+}
+
+/* Nascondi gli elementi del menu categoria che corrispondono alla categoria corrente */
+#dropdown-categoria-menu .dropdown-item.current-category {
+  display: none;
 }
 
 
@@ -340,8 +370,8 @@ h3 {
   /* 8px 20px @ 1920px */
   background: transparent;
   border: 1.5px solid var(--txt);
-  border-radius: clamp(12px, 0.78vw, 15px);
-  /* 15px @ 1920px */
+  border-radius: clamp(10px, 0.63vw, 12px);
+  /* 12px @ 1920px */
   opacity: 0;
   transition: all 0.45s ease;
   pointer-events: none;
@@ -381,7 +411,7 @@ h3 {
 .counter-info {
   position: absolute;
   top: 50%;
-  left: calc(50% + clamp(95px, 5.9vw, 113px)); /* Appoggiata al margine destro del counter */
+  left: calc(50% + clamp(85px, 5.3vw, 102px)); /* Appoggiata al margine destro del counter */
   transform: translateY(calc(-50% + 5px)); /* Abbassata leggermente per allineamento ottimale */
   color: var(--txt);
   font-size: clamp(8px, 0.52vw, 10px);
@@ -398,7 +428,7 @@ h3 {
 .counter-countdown {
   position: absolute;
   top: 50%;
-  right: calc(50% + clamp(95px, 5.9vw, 113px)); /* Appoggiata al margine sinistro del counter */
+  right: calc(50% + clamp(85px, 5.3vw, 102px)); /* Appoggiata al margine sinistro del counter */
   transform: translateY(calc(-50% + 5px)); /* Abbassata leggermente per allineamento ottimale */
   color: var(--txt);
   font-size: clamp(8px, 0.52vw, 10px);

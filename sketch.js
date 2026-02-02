@@ -419,8 +419,8 @@ document.addEventListener('keydown', function(event) {
   navItems.forEach(function(item) {
     item.addEventListener('click', function(e) {
       if (e.target.closest && e.target.closest('.dropdown-item')) return;
-      // Se il link è `#dettaglio` e siamo già nella vista dettaglio, ignora il click
-      if (item.id === 'nav-categoria' && categoriaSelezionata !== null && scrollY >= 6500) {
+      // Se il link appartiene al container della categoria dettaglio e siamo già nella vista dettaglio, ignora il click sul link
+      if ((item.id === 'nav-categoria-container' || item.id === 'nav-categoria') && categoriaSelezionata !== null && scrollY >= 6500) {
         e.preventDefault();
         return;
       }
@@ -465,6 +465,48 @@ document.addEventListener('keydown', function(event) {
         if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
       });
     });
+  }
+
+  // Tendina Categoria dettaglio: click su altre categorie nella tendina sotto nav-categoria
+  let dropCategoriaMenu = document.getElementById('dropdown-categoria-menu');
+  if (dropCategoriaMenu) {
+    dropCategoriaMenu.querySelectorAll('.dropdown-item').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let cat = link.getAttribute('data-categoria');
+        if (cat && typeof window.selezionaDaNavbar === 'function') window.selezionaDaNavbar(cat);
+      });
+    });
+  }
+
+  // Hover su Responsabilità o categoria nella sezione dettaglio: mostra dropdown categorie
+  let navItemResponsabilita = document.querySelector('.nav-item.dropdown[data-section="2"]');
+  let navCategoriaContainer = document.getElementById('nav-categoria-container');
+  let dropdownCategoriaMenu = document.getElementById('dropdown-categoria-menu');
+  
+  if (navItemResponsabilita && navCategoriaContainer && dropdownCategoriaMenu) {
+    // Funzione per mostrare il dropdown
+    function showCategoriaDropdown() {
+      if (scrollY >= 6500 && categoriaSelezionata !== null) {
+        dropdownCategoriaMenu.style.display = 'block';
+      }
+    }
+    
+    // Funzione per nascondere il dropdown
+    function hideCategoriaDropdown() {
+      if (!navItemResponsabilita.matches(':hover') && !navCategoriaContainer.matches(':hover')) {
+        dropdownCategoriaMenu.style.display = 'none';
+      }
+    }
+    
+    // Hover su Responsabilità
+    navItemResponsabilita.addEventListener('mouseenter', showCategoriaDropdown);
+    navItemResponsabilita.addEventListener('mouseleave', hideCategoriaDropdown);
+    
+    // Hover su categoria container
+    navCategoriaContainer.addEventListener('mouseenter', showCategoriaDropdown);
+    navCategoriaContainer.addEventListener('mouseleave', hideCategoriaDropdown);
   }
 }
 
@@ -1340,7 +1382,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
   let inDettaglio = scrollY >= 6500 && categoriaSelezionata !== null;
   if (inDettaglio) {
     navItems.forEach((item) => {
-      if (item.dataset.section === '2' || item.id === 'nav-categoria') {
+      if (item.dataset.section === '2' || item.id === 'nav-categoria' || item.id === 'nav-categoria-container') {
         item.classList.add('active');
       } else {
         item.classList.remove('active');
@@ -1527,13 +1569,14 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
 
 // NAVBAR CATEGORIA: Aggiorna il link dinamico della categoria di dettaglio e evidencia voce dropdown attiva
 function updateNavbarCategoria() {
+  let navCategoriaContainer = document.getElementById('nav-categoria-container');
   let navCategoria = document.getElementById('nav-categoria');
   let navSeparator = document.getElementById('nav-separator');
-  if (!navCategoria) return;
+  if (!navCategoria || !navCategoriaContainer) return;
   
   // Mostra/nascondi in base a se siamo nella sezione dettaglio
   if (categoriaSelezionata !== null && scrollY >= 6500) {
-    navCategoria.style.display = 'block';
+    navCategoriaContainer.style.display = 'block';
     if (navSeparator) navSeparator.style.display = 'inline';
     
     // Aggiorna il testo in base alla categoria
@@ -1544,8 +1587,21 @@ function updateNavbarCategoria() {
     } else if (categoriaSelezionata === 'non-conducenti') {
       navCategoria.textContent = 'Non conducenti';
     }
+    
+    // Nascondi la categoria corrente dal menu a tendina
+    let dropCategoriaMenu = document.getElementById('dropdown-categoria-menu');
+    if (dropCategoriaMenu) {
+      dropCategoriaMenu.querySelectorAll('.dropdown-item').forEach(function(item) {
+        let itemCat = item.getAttribute('data-categoria');
+        if (itemCat === categoriaSelezionata) {
+          item.classList.add('current-category');
+        } else {
+          item.classList.remove('current-category');
+        }
+      });
+    }
   } else {
-    navCategoria.style.display = 'none';
+    navCategoriaContainer.style.display = 'none';
     if (navSeparator) navSeparator.style.display = 'none';
   }
 }
