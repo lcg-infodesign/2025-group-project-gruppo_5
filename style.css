@@ -479,10 +479,10 @@ b { /*bold*/
 /* Numeri LCD (countdown e datetime) */
 .counter-countdown-number {
   font-family: "LCD", monospace;
-  font-size: clamp(14px, 1.04vw, 20px);
+  font-size: clamp(10px, 0.7vw, 14px);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   color: var(--orange);
 }
 
@@ -885,14 +885,14 @@ b { /*bold*/
   text-align: left;
   width: 100%;
   max-width: clamp(1200px, 80vw, 1600px);
-  margin: 0 auto clamp(20px, 1.46vw, 28px);
+  margin: clamp(80px, 5vw, 120px) auto clamp(20px, 1.46vw, 28px);
   padding: 0 clamp(20px, 2vw, 40px);
   font-size: clamp(38px, 2.6vw, 50px);
 }
 
 .two-column-layout {
   display: flex;
-  gap: 2.5rem;
+  gap: 5rem;
   /* 80px @ 1920px */
   align-items: flex-start;
   justify-content: center;
@@ -912,6 +912,14 @@ b { /*bold*/
   word-wrap: break-word;
 }
 
+/* Allinea il testo della prima colonna al bordo sinistro del container
+   così che l'H1 e il primo paragrafo appaiano allineati */
+.two-column-layout .column p {
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 100%;
+}
+
 .column h1 {
   text-align: left;
   margin-left: 0;
@@ -926,6 +934,11 @@ b { /*bold*/
   width: 100%;
   max-width: 100%;
 }
+
+/* Allinea verticalmente la seconda colonna alla prima riga di testo
+   della prima colonna (somma approssimata di H1 height + margin-bottom) */
+/* Rimuoviamo il padding-top calcolato; la seconda colonna usa ora
+  la classe .column-images (che in `chi_siamo` ha `padding-top: 10em`) */
 
 /* Fade In Animation */
 .fade-in {
@@ -952,6 +965,13 @@ b { /*bold*/
   min-width: 0;
   overflow-wrap: break-word;
   word-wrap: break-word;
+}
+
+/* Specifico per .two-column-layout nella pagina dati: mantenere lo
+   stesso padding-top di .column-images ma preservando il comportamento
+   tipografico di .column */
+.two-column-layout .column.column-right {
+  padding-top: 12.5em;
 }
 
 /* Team Grid */
@@ -1444,6 +1464,10 @@ ul.credits-clean {
 
 .formula-denominator {
   padding: 0.2em 0.3em 0;
+}
+
+.formula-dati {
+  padding: 1em 0 1em 0;
 }
 
 /* ========================================
