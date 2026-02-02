@@ -695,8 +695,7 @@ function draw() {
   updateHoverScales();
   updateCursor();
   
-  // Debug
-  drawDebugInfo();
+
 }
 
 // ========================================
@@ -885,8 +884,36 @@ function createLegends() {
   }
 
   // Contenitore per le informazioni di categoria 
-  placeCatCausaContainer();
+  if (!document.getElementById('catCausaContainer')) {
+    let cat = document.createElement('div');
+    cat.id = 'catCausaContainer';
+    cat.style.display = 'none';
+    cat.style.position = 'fixed';
+    cat.style.backgroundColor = 'transparent';
+    cat.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+    cat.style.borderRadius = (width * 0.0104) + 'px'; 
+    cat.style.width = (width * 0.22) + 'px'; 
+    cat.style.padding = '1.5em';
+    cat.style.display = 'flex';
+    cat.style.flexDirection = 'column';
+    cat.style.justifyContent = 'left';
+    cat.style.gap = '1em';
+    cat.style.left = (SEZIONE_MARGIN + width * 0.24) + 'px'; // Allineato a destra della leggenda
+    cat.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // allineato in altezza con la legenda 
+    cat.style.color = 'white';
+    cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
+    cat.style.fontSize = (width * 0.0072) + 'px'; 
+    cat.style.lineHeight = '1.2';
+    cat.style.maxWidth = (width * 0.25) + 'px';
+    cat.style.pointerEvents = 'none';
+    cat.style.boxSizing = 'border-box';
+    cat.style.zIndex = '999';
+    cat.style.transition = 'background-color 0.3s ease';
+    document.body.appendChild(cat);
+  }
 }
+
+// contentiore per le info categoria dettaglio (doppione ma se lo tolgo si bugga il layout della legenda)
 function placeCatCausaContainer() {
   let container = document.getElementById('catCausaContainer');
   if (!container) {
@@ -1366,31 +1393,113 @@ function updateCursor() { // cursore a forma di mano sugli elementi cliccabili (
   cursor(ARROW);
 }
 
-// ========================================
-// FUNZIONI DI DISEGNO SEZIONI
-// ========================================
 
-function drawSezioneIntro() {
-  // Testo intro
-  let orangeColor = getCSSColor('--orange');
-  fill(red(orangeColor), green(orangeColor), blue(orangeColor), introOpacita);
-  let testoMostrato = introTestoCompleto.substring(0, introCaratteriVisibili);
-  let txtSize = width * 0.025;
-  txtSize = constrain(txtSize, 12, 60);
-  textSize(txtSize);
-  textLeading(txtSize * 1.4);
-  text(testoMostrato, width / 2, height / 2);
+
+
+// ========================================
+// FUNZIONI ICONE INFO
+// ======================================== 
+
+// Aggiorna posizione e contenuto dell'icona info del gradiente vis dettaglio
+function updateGradienteInfoIcon() {
+  let infoIcon = document.getElementById('gradiente-info-icon');
+  let tooltip = document.getElementById('gradiente-info-tooltip');
+  let legend = document.getElementById('legend');
+  if (!infoIcon || !tooltip) return;
   
-  // Sottotitolo
-  if (sottotitoloOpacita > 0) {
-    push();
-    textFont(transportFont);
-    textSize(16);
-    fill(255, 255, 255, min(sottotitoloOpacita, introOpacita));
-    text('Scoprila analizzando i dati ISTAT del 2024', width / 2, height - 100);
-    pop();
+  // Mostra icona solo in sezione 8 (dettaglio) o durante transizione quando showBars è true
+  if (categoriaSelezionata !== null && showBars && (scrollY >= 6500 || (transizioneAttiva && transizioneFadeInUI > 5))) {
+    // Calcola posizione sotto il gradiente nella legenda
+    let margin = constrain(width * 0.052, 60, 100);
+    let legendTop = SEZIONE_MARGIN + width * 0.07;
+    
+    // Posizione sotto il gradiente (seconda riga della legenda) - allineato a destra sotto il gradiente
+    let iconX = margin + 115; // Centrato sotto il gradiente (88px width / 2)
+    let iconY = legendTop + 190; // Offset per seconda riga + spazio sotto il gradiente
+    
+    infoIcon.style.left = iconX + 'px';
+    infoIcon.style.top = iconY + 'px';
+    infoIcon.style.display = 'flex';
+    
+    // Posiziona la tooltip sotto la legenda con stessa larghezza e allineamento
+    let legendWidth = width * 0.22; // Stessa larghezza della legenda
+    let tooltipX = SEZIONE_MARGIN; // Stesso margine sinistro della legenda (usa SEZIONE_MARGIN)
+    let tooltipY = legendTop + 250; // Sotto la legenda con gap (altezza legenda completa + spazio)
+    
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+    tooltip.style.width = legendWidth + 'px';
+    
+    // Applica fade in durante la transizione
+    if (transizioneAttiva && transizioneFadeInUI > 5) {
+      infoIcon.style.opacity = (transizioneFadeInUI / 255).toString();
+    } else {
+      infoIcon.style.opacity = '1';
+    }
+  } else {
+    infoIcon.style.display = 'none';
   }
 }
+
+// Aggiorna posizione e contenuto dell'icona info macro categoria attiva
+function updateCategoriaInfoIcon() {
+  let infoIcon = document.getElementById('categoria-info-icon');
+  let infoText = document.getElementById('info-tooltip-text');
+  if (!infoIcon || !infoText) return;
+  
+  // Mostra icona solo in sezione 8 (dettaglio) o durante transizione
+  if (categoriaSelezionata !== null && (scrollY >= 6500 || (transizioneAttiva && transizioneFadeInUI > 5))) {
+    // Calcola posizione a destra del titolo
+    let margin = constrain(width * 0.052, 60, 100);
+    let titleSize = constrain(width * 0.021, 20, 48);
+    let arrowHeight = constrain(width * 0.035, 40, 50);
+    let titleYPos = 115 + arrowHeight / 2;
+    
+    // Ottieni larghezza del titolo
+    let titolo = categoriaSelezionata.replace(/-/g, ' ');
+    if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      titolo = 'cause esterne e concomitanti';
+    }
+    
+    // Calcola larghezza reale del testo usando p5.js
+    push();
+    textFont(lcdFont);
+    textSize(titleSize);
+    let titleWidth = textWidth(titolo.toUpperCase());
+    pop();
+    
+    // Posiziona icona a destra del titolo con spazio responsive
+    // Aggiungi un offset extra per compensare eventuali imprecisioni
+    let iconSpacing = constrain(width * 0.02, 30, 45); // Aumentato lo spazio
+    let iconX = margin + titleWidth + iconSpacing;
+    let iconY = titleYPos;
+    
+    console.log('Title:', titolo, 'Width:', titleWidth, 'IconX:', iconX); // Debug
+    
+    infoIcon.style.left = iconX + 'px';
+    infoIcon.style.top = iconY + 'px';
+    infoIcon.style.display = 'flex';
+    
+    // Applica fade in durante la transizione
+    if (transizioneAttiva && transizioneFadeInUI > 5) {
+      infoIcon.style.opacity = (transizioneFadeInUI / 255).toString();
+    } else {
+      infoIcon.style.opacity = '1';
+    }
+    
+    // Aggiorna testo tooltip
+    if (categoriaSelezionata === 'conducenti') {
+      infoText.textContent = 'Rientrano le cause legate ai comportamenti, agli errori o alle distrazioni dei guidatori.';
+    } else if (categoriaSelezionata === 'non-conducenti') {
+      infoText.textContent = 'Rientrano le cause attribuibili al comportamento di pedoni, passeggeri o altri utenti della strada non alla guida.';
+    } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
+      infoText.textContent = 'Rientrano le cause dovute a fattori esterni come ostacoli urtati o evitati, eventi concomitanti e circostanze imprecisate.';
+    }
+  } else {
+    infoIcon.style.display = 'none';
+  }
+}
+
 
 // ========================================
 // NAVBAR HTML - Aggiorna visibilità e sezione attiva
@@ -1438,7 +1547,7 @@ function updateNavbarHTML(navbarOpacita, sezioneAttiva) {
     });
   }
   
-  // COUNTER NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
+  // COUNTER nella NAVBAR: Attiva solo quando si procede OLTRE la sezione 6 (dopo scrollY 4100)
   let navbarCounter = document.getElementById('navbar-counter');
   if (navbarCounter && scrollY >= 4100 && !navbarCounterAttivato) {
     navbarCounterAttivato = true;
@@ -1645,105 +1754,6 @@ function updateNavbarCategoria() {
   updateGradienteInfoIcon();
 }
 
-// Aggiorna posizione e contenuto dell'icona info del gradiente
-function updateGradienteInfoIcon() {
-  let infoIcon = document.getElementById('gradiente-info-icon');
-  let tooltip = document.getElementById('gradiente-info-tooltip');
-  let legend = document.getElementById('legend');
-  if (!infoIcon || !tooltip) return;
-  
-  // Mostra icona solo in sezione 8 (dettaglio) o durante transizione quando showBars è true
-  if (categoriaSelezionata !== null && showBars && (scrollY >= 6500 || (transizioneAttiva && transizioneFadeInUI > 5))) {
-    // Calcola posizione sotto il gradiente nella legenda
-    let margin = constrain(width * 0.052, 60, 100);
-    let legendTop = SEZIONE_MARGIN + width * 0.07;
-    
-    // Posizione sotto il gradiente (seconda riga della legenda) - allineato a sinistra sotto il gradiente
-    let iconX = margin + 115; // Centrato sotto il gradiente (88px width / 2)
-    let iconY = legendTop + 190; // Offset per seconda riga + spazio sotto il gradiente
-    
-    infoIcon.style.left = iconX + 'px';
-    infoIcon.style.top = iconY + 'px';
-    infoIcon.style.display = 'flex';
-    
-    // Posiziona la tooltip sotto la legenda con stessa larghezza e allineamento
-    let legendWidth = width * 0.22; // Stessa larghezza della legenda
-    let tooltipX = SEZIONE_MARGIN; // Stesso margine sinistro della legenda (usa SEZIONE_MARGIN)
-    let tooltipY = legendTop + 250; // Sotto la legenda con gap (altezza legenda completa + spazio)
-    
-    tooltip.style.left = tooltipX + 'px';
-    tooltip.style.top = tooltipY + 'px';
-    tooltip.style.width = legendWidth + 'px';
-    
-    // Applica fade in durante la transizione
-    if (transizioneAttiva && transizioneFadeInUI > 5) {
-      infoIcon.style.opacity = (transizioneFadeInUI / 255).toString();
-    } else {
-      infoIcon.style.opacity = '1';
-    }
-  } else {
-    infoIcon.style.display = 'none';
-  }
-}
-
-// Aggiorna posizione e contenuto dell'icona info categoria
-function updateCategoriaInfoIcon() {
-  let infoIcon = document.getElementById('categoria-info-icon');
-  let infoText = document.getElementById('info-tooltip-text');
-  if (!infoIcon || !infoText) return;
-  
-  // Mostra icona solo in sezione 8 (dettaglio) o durante transizione
-  if (categoriaSelezionata !== null && (scrollY >= 6500 || (transizioneAttiva && transizioneFadeInUI > 5))) {
-    // Calcola posizione a destra del titolo
-    let margin = constrain(width * 0.052, 60, 100);
-    let titleSize = constrain(width * 0.021, 20, 48);
-    let arrowHeight = constrain(width * 0.035, 40, 50);
-    let titleYPos = 115 + arrowHeight / 2;
-    
-    // Ottieni larghezza del titolo
-    let titolo = categoriaSelezionata.replace(/-/g, ' ');
-    if (categoriaSelezionata === 'cause-esterne-concomitanti') {
-      titolo = 'cause esterne e concomitanti';
-    }
-    
-    // Calcola larghezza reale del testo usando p5.js
-    push();
-    textFont(lcdFont);
-    textSize(titleSize);
-    let titleWidth = textWidth(titolo.toUpperCase());
-    pop();
-    
-    // Posiziona icona a destra del titolo con spazio responsive
-    // Aggiungi un offset extra per compensare eventuali imprecisioni
-    let iconSpacing = constrain(width * 0.02, 30, 45); // Aumentato lo spazio
-    let iconX = margin + titleWidth + iconSpacing;
-    let iconY = titleYPos;
-    
-    console.log('Title:', titolo, 'Width:', titleWidth, 'IconX:', iconX); // Debug
-    
-    infoIcon.style.left = iconX + 'px';
-    infoIcon.style.top = iconY + 'px';
-    infoIcon.style.display = 'flex';
-    
-    // Applica fade in durante la transizione
-    if (transizioneAttiva && transizioneFadeInUI > 5) {
-      infoIcon.style.opacity = (transizioneFadeInUI / 255).toString();
-    } else {
-      infoIcon.style.opacity = '1';
-    }
-    
-    // Aggiorna testo tooltip
-    if (categoriaSelezionata === 'conducenti') {
-      infoText.textContent = 'Rientrano le cause legate ai comportamenti, agli errori o alle distrazioni dei guidatori.';
-    } else if (categoriaSelezionata === 'non-conducenti') {
-      infoText.textContent = 'Rientrano le cause attribuibili al comportamento di pedoni, passeggeri o altri utenti della strada non alla guida.';
-    } else if (categoriaSelezionata === 'cause-esterne-concomitanti') {
-      infoText.textContent = 'Rientrano le cause dovute a fattori esterni come ostacoli urtati o evitati, eventi concomitanti e circostanze imprecisate.';
-    }
-  } else {
-    infoIcon.style.display = 'none';
-  }
-}
 
 // NAVBAR COUNTER: Aggiorna i valori in tempo reale (senza animazione di conteggio)
 function updateNavbarCounterValues() {
@@ -1755,21 +1765,23 @@ function updateNavbarCounterValues() {
   updateCounterTooltip();
 }
 
-// NAVBAR COUNTER: Aggiorna countdown e data/ora
+// NAVBAR COUNTER
 function updateCounterTooltip() {
   // Aggiorna il countdown e la data/ora
   updateCounterCountdown();
 }
 
-// NAVBAR COUNTER COUNTDOWN: Calcola secondi al prossimo cambiamento
+// vaiabili per NAVBAR COUNTER COUNTDOWN
 let previousSecondsDisplay = -1; // Per tracciare quando ricomincia il countdown
-let maxSecondsForColor = 60; // Valore massimo dinamico per interpolazione colore
+let maxSecondsForColor = 60; // Valore massimo dinamico per interpolazione colore (viene aggiornato in updateCounterCountdown)
 
-// Variabili globali per data e ora correnti (aggiornate in updateCounterCountdown)
+// Variabili per data e ora correnti (aggiornate in updateCounterCountdown)
 let currentDay = 1;
 let currentMonth = 1;
 let currentHours = '00';
 let currentMinutes = '00';
+
+// NAVBAR COUNTER COUNTDOWN: Aggiorna il countdown in secondi al prossimo incremento
 
 function updateCounterCountdown() {
   let countdownNumber = document.getElementById('counter-countdown-number');
@@ -1862,10 +1874,32 @@ function updateCounterCountdown() {
   counterDatetime.textContent = `${currentDay}/${currentMonth}/2024 ${currentHours}:${currentMinutes}`;
 }
 
-// Navbar click: gestito solo in setup() (vedi handler su .nav-item).
-// Il blocco DOMContentLoaded qui sotto è stato rimosso: duplicava i listener e,
-// sui dropdown-item (Conducenti / Non conducenti / Cause esterne e concomitanti), impostava
-// scrollTarget=4300 sovrascrivendo il salto a 6500 da selezionaDaNavbar.
+// ========================================
+// FUNZIONI DI DISEGNO SEZIONI
+// ========================================
+
+function drawSezioneIntro() {
+  // Testo intro
+  let orangeColor = getCSSColor('--orange');
+  fill(red(orangeColor), green(orangeColor), blue(orangeColor), introOpacita);
+  let testoMostrato = introTestoCompleto.substring(0, introCaratteriVisibili);
+  let txtSize = width * 0.025;
+  txtSize = constrain(txtSize, 12, 60);
+  textSize(txtSize);
+  textLeading(txtSize * 1.4);
+  text(testoMostrato, width / 2, height / 2);
+  
+  // Sottotitolo
+  if (sottotitoloOpacita > 0) {
+    push();
+    textFont(transportFont);
+    textSize(16);
+    fill(255, 255, 255, min(sottotitoloOpacita, introOpacita));
+    text('Scoprila analizzando i dati ISTAT del 2024', width / 2, height - 100);
+    pop();
+  }
+}
+
 
 function drawSezioneQuadrato(quadratoFadeOut, quadratoTestoOpacita) {
   let centerY = height * 0.45; // Posizione responsive (45% dell'altezza dello schermo)
@@ -1952,7 +1986,7 @@ function drawSezioneGrigliaIncidenti() {
     grigliaIncidentiLeggendaOpacita = 0;
   }
   
-  // Layout griglia: usa la variabile globale per coerenza (evita valori non inizializzati)
+  // Layout griglia
   dimensioneQuadratino = width * 0.008;
   dimensioneQuadratino = constrain(dimensioneQuadratino, 8, 18);
   let spaziatura = dimensioneQuadratino * 0.5;
@@ -2150,7 +2184,7 @@ function drawCubo(fadeOut) {
   let puntoBassoDestro = applicaRotazioneESchiacciamento(puntiBaseQuadrato[2]);
   let puntoBassoSinistra = applicaRotazioneESchiacciamento(puntiBaseQuadrato[3]);
   
-  // Facce arancioni (mostra solo se hanno un'altezza significativa)
+  // Facce arancioni
   if (altezzaLatiVerticali > 5) {
     let orangeColor = getCSSColor('--orange');
     fill(red(orangeColor), green(orangeColor), blue(orangeColor), fadeOut);
@@ -2170,19 +2204,17 @@ function drawCubo(fadeOut) {
       puntoAltoDestra.x, puntoAltoDestra.y + altezzaLatiVerticali,
       puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali
     );
-    // Linea sottile nera lungo la giunzione tra le due facce (replica dell'effetto)
+    // Linea sottile nera lungo la giunzione tra le due facce
     push();
-    stroke(0); // nero semi-trasparente
+    stroke(0); 
     strokeWeight(2);
     strokeJoin(ROUND);
-    // linea verticale che segue l'edge tra le due facce
     line(puntoBassoDestro.x, puntoBassoDestro.y, puntoBassoDestro.x, puntoBassoDestro.y + altezzaLatiVerticali);
     pop();
   }
   
   // Top bianco (con stesso fadeOut delle facce laterali)
   fill(255, 255, 255, fadeOut);
-  // Aggiungi un bordo sottile al top per coerenza con la giunzione
   stroke(0, fadeOut);
   strokeWeight(2);
   strokeJoin(ROUND);
@@ -2197,7 +2229,7 @@ function drawCubo(fadeOut) {
   pop();
 }
 
-// Crea un cubo nello stile di sezionequinta per la legenda
+
 function createLegendCubeCanvasStyled(size) {
   // Crea il canvas con risoluzione alta per display Retina
   const canvas = document.createElement('canvas');
@@ -2300,7 +2332,7 @@ function createLegendCubeCanvasStyled(size) {
   return canvas;
 }
 
-// Funzione per disegnare i cubi nell'istogramma (simile a drawCubo, senza troncamento alla base)
+// Funzione per disegnare i cubi nell'istogramma (simile a drawCubo)
 function drawCuboIstogramma(half, H, trans, categoryColor, isFilled, lesionati, incidenti, nome, morti, cubeOpacity, minMortPercent, maxMortPercent) {
   function easeOutCubic(t) {
     return 1 - pow(1 - t, 3);
@@ -2438,7 +2470,7 @@ function drawSezioneSesta() {
     sestaSezioneOpacita = 0;
   }
   
-  // Fade out counter
+  // Fade out counter 
   let counterFadeOut = 255;
   if (scrollY > 3850 && scrollY < 4100) {
     counterFadeOut = map(scrollY, 3850, 4100, 255, 0);
@@ -2488,7 +2520,7 @@ function drawSezioneSesta() {
     pop();
   }
   
-  // Fade in "MA DI CHI È LA COLPA?"
+  // Fade in "MA DI CHI È LA COLPA?" ----------
   let colpaFadeIn = 0;
   if (scrollY >= 4100 && scrollY < 4300) {
     colpaFadeIn = map(scrollY, 4100, 4300, 0, 255);
@@ -2503,7 +2535,7 @@ function drawSezioneSesta() {
   let colpaPosY = height / 2;
   
   if (scrollY > 4300 && scrollY < 4600) {
-    // Durante la transizione: rimpicciolisce e si sposta in alto (anticipata)
+    // Durante la transizione: rimpicciolisce e si sposta in alto 
     let transitionProgress = map(scrollY, 4300, 4600, 0, 1);
     transitionProgress = constrain(transitionProgress, 0, 1);
     
@@ -2532,7 +2564,7 @@ function drawSezioneSettima() {
   if (scrollY >= 6500) return;
   if (transizioneAttiva && scrollY > 5200) return;
   
-  // Fade in griglia più veloce (100px invece di 150px)
+  // Fade in griglia 
   let grigliaFadeIn = 0;
   if (scrollY > 4500 && scrollY < 4600) {
     grigliaFadeIn = map(scrollY, 4500, 4600, 0, 255);
@@ -2546,7 +2578,7 @@ function drawSezioneSettima() {
     animRegroupActive = false;
   }
   
-  // Transizione colore da bianco a colori originali (200px di scroll dopo fade in, totale 300px)
+  // Transizione colore da bianco a colori originali
   let colorTransition = 0;
   if (scrollY > 4700 && scrollY < 4900) {
     colorTransition = map(scrollY, 4700, 4900, 0, 1);
@@ -2557,7 +2589,7 @@ function drawSezioneSettima() {
   
   if (grigliaFadeIn <= 0) return;
   
-  push(); // Isolamento stile per sezione 7
+  push(); 
   
   // Estrai dati dal CSV
   let quadConducenti = 0, quadCauseEsterne = 0, quadNonConducenti = 0;
@@ -2594,7 +2626,7 @@ function drawSezioneSettima() {
   const quadSize = dimensioneQuadratino;
   const quadSpacing = spaziatura;
   
-  // Crea array colori mischiati (solo una volta)
+  // Crea array colori mischiati 
   if (typeof window.coloriQuadratiniMischiati === 'undefined') {
     let arr = [];
     for (let i = 0; i < quadConducenti; i++) arr.push(coloreBlu);
@@ -2836,28 +2868,28 @@ function drawSezioneSettima() {
       push();
       textAlign(CENTER, TOP);
       textFont(transportFont);
-      textSize(txtSize * 0.42); // 2 punti più grande (era 0.4)
+      textSize(txtSize * 0.42); 
       fill(255, 255, 255, ctaFadeOpacity);
       
-      // Posiziona sotto "MA DI CHI È LA COLPA?" - responsive
+      // Posizione sotto "MA DI CHI È LA COLPA?" 
       // colpaPosY è in height * 0.2 quando la griglia è visibile
-      let bottomY = height * 0.2 + txtSize * 0.9; // Spazio proporzionale alla dimensione del testo (ridotto da 1.2 a 0.9)
+      let bottomY = height * 0.2 + txtSize * 0.9; 
       
-      // Aggiungi bounce effect leggero e smooth
-      let bounceTime = (elapsed - delayMs - fadeDuration) / 1000; // tempo in secondi dopo fade in
+      // bounce effect leggero 
+      let bounceTime = (elapsed - delayMs - fadeDuration) / 1000; 
       let bounceOffset = 0;
       if (bounceTime > 0) {
-        // Ciclo bounce di 2 secondi con easing smooth
+        // Ciclo bounce di 2 secondi
         let cycle = (bounceTime % 2) / 2; // 0 a 1 ogni 2 secondi
         if (cycle < 0.4) {
           // 0% a 40%: sale a -3px con ease out
           let t = cycle / 0.4;
-          t = 1 - pow(1 - t, 2); // ease out quadratic
+          t = 1 - pow(1 - t, 2); // ease out 
           bounceOffset = -3 * t;
         } else if (cycle < 0.5) {
           // 40% a 50%: scende a 0 con ease in
           let t = (cycle - 0.4) / 0.1;
-          t = pow(t, 2); // ease in quadratic
+          t = pow(t, 2); // ease in 
           bounceOffset = -3 * (1 - t);
         } else if (cycle < 0.6) {
           // 50% a 60%: sale a -1.5px con ease out
@@ -2889,12 +2921,12 @@ function drawSezioneSettima() {
     legendFadeOpacity = 0;
   }
   
-  // Leggenda: piccolo quadrato con "300 incidenti" (appare con fade in dopo il testo CTA)
+  // Leggenda: piccolo quadrato con "300 incidenti" 
   if (legendFadeOpacity > 0 && scrollY < 6500) {
     push();
-    let legendX = width - 150; // Posizione a destra
-    let legendY = height - 100; // In basso a destra
-    let legendSquareSize = quadSize; // Stessa dimensione dei quadrati della griglia
+    let legendX = width - 150; //  a destra
+    let legendY = height - 100; // In basso 
+    let legendSquareSize = quadSize; 
     
     // Disegna il quadrato della leggenda
     fill(255, 255, 255, legendFadeOpacity);
@@ -2910,7 +2942,7 @@ function drawSezioneSettima() {
     pop();
   }
   
-  pop(); // Fine isolamento stile sezione 7
+  pop(); 
 }
 
 function drawTransizioneSezioneOttava() {
@@ -3053,7 +3085,7 @@ function drawTransizioneSezioneOttava() {
     textAlign(LEFT, CENTER);
     let margin = SEZIONE_MARGIN;
     
-    // Allinea il centro del titolo al centro della freccia back-arrow (come in sezione 8)
+    // centro del titolo allinato al centro della freccia back-arrow (come in sezione 8)
     let arrowHeight = constrain(width * 0.035, 40, 50); // clamp(40px, 3.5vw, 50px)
     let titleYPos = 115 + arrowHeight / 2;
     
@@ -3164,7 +3196,8 @@ function drawTransizioneSezioneOttava() {
   pop();
 }
 
-function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione normale
+function drawSezioneOttava() { //visualizzazione di dettaglio 
+
   // Fade in sezione - inizia dopo il posizionamento
   if (scrollY > 6400 && scrollY < 6600) {
     sezioneOttavaFadeIn = map(scrollY, 6400, 6600, 0, 255);
@@ -3179,7 +3212,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   
   push();
 
-  // Dati dalla categoria scelta: navbar dropdown → selezionaDaNavbar(id) → categoriaSelezionata → qui
+  // Dati dalla categoria scelta
   let categoryData = getCategoriaData(categoriaSelezionata);
   if (categoryData) {
     // Reset opacità animate quando il dataset cambia
@@ -3205,9 +3238,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     textSize(titleSize);
     textAlign(LEFT, CENTER);
     // Allinea il centro del titolo al centro della freccia back-arrow
-    // La freccia è a top: calc(100px + 15px) = 115px
-    // L'altezza della freccia è clamp(40px, 3.5vw, 50px)
-    let arrowHeight = constrain(width * 0.035, 40, 50); // clamp(40px, 3.5vw, 50px)
+    let arrowHeight = constrain(width * 0.035, 40, 50); 
     let titleYPos = 115 + arrowHeight / 2;
     let titolo = categoriaSelezionata.replace(/-/g, ' ');
     if (categoriaSelezionata === 'cause-esterne-concomitanti') {
@@ -3222,7 +3253,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     let numRows = categoryData.getRowCount();
     let baseQuadSize = dimensioneQuadratino || 30; // Usa la variabile calcolata nella sezione 7, fallback a 30 se non definita
 
-    // Desired spacing between squares; responsive based on viewport and base quad size
+    // spaziatura fra i quadrati responsive
     const DESIRED_SPACING = max(baseQuadSize * 2.2, constrain(width * 0.0417, 40, 160));
 
     // Pre-calcola le dimensioni dei cubi (diagonale del quadrato) e la somma delle larghezze
@@ -3321,15 +3352,14 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       baselineOpacity = transizioneFadeInUI;
     }
     
-    // Disegna la linea orizzontale bianca PRIMA dei parallelepipedi (così stanno sopra)
+    // Disegna la linea orizzontale bianca di base del grafico
     push();
     stroke(255, baselineOpacity);
     strokeWeight(1);
     line(SEZIONE_MARGIN, height - 100, width - SEZIONE_MARGIN, height - 100);
     pop();
     
-    // Seconda passata: disegna tutti i cubi/barre (una per sottocausa). categoryData = getCategoriaData(categoriaSelezionata);
-    // categoriaSelezionata impostata da navbar (sezione Responsabilità) via selezionaDaNavbar(id) o da click in sez. 7.
+    // disegna tutti i cubi/quadrati
     for (let i = 0; i < numRows - 1; i++) {
       let i300 = int(categoryData.getString(i, 'I/300'));
       let nome = categoryData.getString(i, 0); // Prima colonna: nome categoria
@@ -3349,7 +3379,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       let cx = xPos + cubeWidth / 2; // Centro del cubo
       
       // Determina target opacità: 100% se hovato, 30% se altri sono hovati, 100% se nessuno è hovato
-      let targetOpacity = 1.0; // Opacità piena
+      let targetOpacity = 1.0; 
       if (hoveredSezioneOttavaItem !== null && hoveredSezioneOttavaItem !== nome) {
         targetOpacity = 0.3;
       }
@@ -3405,7 +3435,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
       xPos += cubeWidth + quadSpacing;
     }
     
-    // If nothing is hovered this frame, show a helpful default message
+    // Se non c'è nulla di hovato mostra il testo di spiegazioneIf nothing is hovered this frame, show a helpful default message
     const catContainer = placeCatCausaContainer();
     if (catContainer) {
       if (hoveredSezioneOttavaItem === null) {
@@ -3441,7 +3471,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
   // Linea verticale sul lato destro: appare con easing legato a `sezioneOttavaTrans`
   {
     // Abbassata di 20px rispetto alla linea orizzontale
-    let bottomY = height - 80; // prima era -80
+    let bottomY = height - 80; 
     let topY = bottomY - (bottomY - SEZIONE_MARGIN) * sezioneOttavaTrans; // si estende verso l'alto
     let alpha = 255 * sezioneOttavaTrans;
     if (alpha > 2) {
@@ -3464,7 +3494,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
     }
   }
 
-  // Label 'Incidenti' riferita alla linea (70px sotto la linea)
+  // Label 'Incidenti' linea di base (70px sotto la linea)
   // Calcola opacità per fade in durante transizione (sincronizzata con baseline)
   let incidentiTextOpacity = 255;
   if (transizioneAttiva && scrollY >= 5200 && scrollY < 6500) {
@@ -3483,21 +3513,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
 }
 
 
-
-function drawDebugInfo() {
-  push();
-  textFont('Courier');
-  textAlign(RIGHT, BOTTOM);
-  textSize(14);
-  let orangeColor = getCSSColor('--orange');
-  fill(red(orangeColor), green(orangeColor), blue(orangeColor), 150);
-  text('scrollY: ' + floor(scrollY), width - 10, height - 10);
-  pop();
-}
-
-// ========================================
-// EVENT HANDLERS
-// ========================================
+//-----------------------
 
 function mouseClicked() {
   // Gestione click nella sezione 8
