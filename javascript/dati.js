@@ -1,6 +1,4 @@
-//========= 
-// VARIABILI GLOBALI
-//==========
+//========= creare una tendina che si apre al click con p5.js ==========
 
 // Variabili per scroll con checkpoint
 let scrollY = 0;
@@ -16,7 +14,7 @@ let isScrolling = false;
 let scrollAccumulator = 0;
 let scrollThreshold = 100;
 
-// Valori counter 
+// Valori counter - calcolati dai dati ISTAT
 let incidentiOggi = 0;
 let mortiOggi = 0;
 let feritiOggi = 0;
@@ -26,6 +24,7 @@ let previousSecondsDisplay = -1;
 let maxSecondsForColor = 60;
 
 function setup() {
+  // Crea un canvas per il sistema di scroll
   let canvas = createCanvas(windowWidth, windowHeight);
   canvas.style('position', 'fixed');
   canvas.style('top', '0');
@@ -34,7 +33,7 @@ function setup() {
   canvas.style('pointer-events', 'none');
   background(0, 0);
   
-  
+  // (removed explicit body height/overflow to match chi_siamo behavior)
   
   // Carica i dati e aggiorna il counter
   loadCSVData();
@@ -52,16 +51,16 @@ function setup() {
   centerDatiSection();
   centerCategorieSection();
   
-  // Seleziona tutti i bottoni delle categorie 
+  // Seleziona tutti i bottoni delle categorie usando p5
   let buttons = selectAll('.newCategory');
   
-  // Per ogni bottone ha l'event listener 
+  // Per ogni bottone, aggiungi l'event listener con p5
   buttons.forEach(button => {
     button.mousePressed(() => {
       // Accedi all'elemento HTML nativo
       let buttonElement = button.elt;
 
-      // utile per aprire le tendine associate
+      // Cerca il prossimo sibling con classe 'oldCategory' (salta nodi intermedi)
       function findOldCategory(el) {
         let sib = el.nextElementSibling;
         while (sib) {
@@ -74,12 +73,12 @@ function setup() {
       let oldCategory = findOldCategory(buttonElement);
       if (!oldCategory) return;
 
-      // chiudi tutte le altre tendine per evitare spostamenti multipli
+      // Accordion behaviour: chiudi tutte le altre tendine per evitare spostamenti multipli
       const allOld = document.querySelectorAll('.oldCategory');
       allOld.forEach(oc => {
         if (oc !== oldCategory) {
           oc.style.display = 'none';
-          // rimuovi eventuali stili inline 
+          // rimuovi eventuali stili inline impostati in precedenza
           oc.style.marginLeft = '';
           oc.style.width = '';
           oc.style.maxWidth = '';
@@ -109,7 +108,7 @@ function setup() {
           oldCategory.style.paddingLeft = cs.paddingLeft;
           oldCategory.style.boxSizing = 'border-box';
         } catch (e) {
-          
+          // se qualcosa va storto, non interrompere l'apertura
         }
         oldCategory.style.display = 'block';
         buttonElement.classList.add('active');
