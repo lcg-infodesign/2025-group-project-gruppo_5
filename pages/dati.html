@@ -67,15 +67,6 @@
     </div>
   </nav>
 
-  <!-- Freccia indietro per tornare a Responsabilità -->
-  <a href="../index.html#responsabilita" id="back-arrow" class="back-arrow visible"
-    onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="white" stroke-width="2" stroke-linecap="round"
-        stroke-linejoin="round" />
-    </svg>
-  </a>
-
   <!-- Frecce fisse per navigazione checkpoint -->
   <div class="scroll-arrows-container">
     <div id="scroll-arrow-up" class="scroll-arrow scroll-arrow-up">
@@ -95,7 +86,7 @@
   <!-- SEZIONE 1: Testo descrittivo -->
   <section id="i-dati" class="sezione-dati">
     <div class="two-column-layout">
-      <div class="left-column">
+      <div class="column">
         <h1 class="team-title">I DATI</h1>
         <p class="description">
           L'<b><i>ISTAT</i></b> ogni anno raccoglie i dati riguardanti l'insieme degli <b>incidenti
@@ -114,12 +105,22 @@
           non tenendo conto della suddivisione per tipo di strada.
         </p>
       </div>
-      <div class="right-column">
+      <div class="column">
         <p class="description">Oltre ai dati ufficiali dell’<i>ISTAT</i>,
           abbiamo calcolato una <b><i>percentuale di incidenti mortali</i></b>, ottenuta dal
           rapporto tra il numero di morti e il totale degli incidenti moltiplicato per 100
-          (dove entrambi i dati non sono relativi alla categoria analizzata).
+          (dove entrambi i dati sono relativi alla categoria analizzata).
         </p>
+        <div class="formula">
+          <div class="formula-container">
+            <span>Mortalità =</span>
+            <div class="formula-fraction">
+              <span class="formula-numerator">numero morti</span>
+              <span class="formula-denominator">numero incidenti</span>
+            </div>
+            <span>x 100</span>
+          </div>
+        </div>
         <p class="description">
           Di seguito la rielaborazione delle differenti categorie per tipo di
           responsabilità, <br> segnando le categorie in ordine decrescente di incidenti:

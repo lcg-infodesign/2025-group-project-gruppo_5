@@ -876,6 +876,38 @@ b {
 }
 
 /* ========================================
+   FORMULA MORTALITÀ
+   ======================================== */
+
+.formula{
+    padding: 1em 0;
+}
+
+.formula-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: 'Transport', Arial, Helvetica, sans-serif;
+  color: var(--txt);
+  justify-content: center;
+}
+
+.formula-fraction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formula-numerator {
+  border-bottom: 1.5px solid var(--txt);
+  padding: 0 0.3em 0.2em;
+}
+
+.formula-denominator {
+  padding: 0.2em 0.3em 0;
+}
+
+/* ========================================
    RESPONSIVE - Adattamento per schermi piccoli
    ======================================== */
 @media (max-width: 768px) {
@@ -1004,32 +1036,16 @@ b {
   /* 40px laterale, 80px sotto @ 1920px */
 }
 
-.left-column {
-  flex: 0 0 30%;
+.column {
+  flex: 0 0 50%;
   text-align: left;
   min-width: 0;
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
 
-.left-column .team-title {
-  text-align: left;
-  margin-left: 0;
-  margin-bottom: clamp(10px, 0.73vw, 14px);
-  font-size: clamp(38px, 2.6vw, 50px);
-}
-
-.left-column .description {
-  text-align: left;
-  margin-left: 0;
-  font-size: clamp(16px, 0.94vw, 18px);
-  line-height: 1.6;
-  width: 100%;
-  max-width: 100%;
-}
-
-.right-column {
-  flex: 1;
+.column-images {
+  flex: 0 0 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1040,16 +1056,51 @@ b {
   word-wrap: break-word;
 }
 
-.right-column .team-title {
+
+.column .team-title {
+  text-align: left;
+  margin-left: 0;
+  margin-bottom: clamp(10px, 0.73vw, 14px);
+  font-size: clamp(38px, 2.6vw, 50px);
+}
+
+.column .description {
+  text-align: left;
+  margin-left: 0;
+  font-size: clamp(16px, 0.94vw, 18px);
+  line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
+}
+
+.column-images .team-title {
   text-align: left;
   margin-left: 0;
   width: 100%;
 }
 
-.right-column .team-grid {
+.column-images .team-grid {
   margin-left: 0;
   padding: 0;
   width: 100%;
+}
+
+/* Chi Siamo: 70/30 */
+#chi-siamo .left-column {
+  flex: 0 0 70%;
+}
+
+#chi-siamo .right-column {
+  flex: 0 0 30%;
+}
+
+/* Dati: 50/50 */
+#i-dati .left-column {
+  flex: 0 0 50%;
+}
+
+#i-dati .right-column {
+  flex: 0 0 50%;
 }
 
 /* Stili sezione crediti */
@@ -1284,7 +1335,7 @@ b {
   /* 180px @ 1920px */
   height: auto;
   aspect-ratio: 1;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   display: block;
 }
