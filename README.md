@@ -67,10 +67,6 @@ Laurea Triennale in Design della Comunicazione
 
 
 
-
-
-
-
 </p>
 
 
@@ -215,17 +211,24 @@ Questa scelta progettuale rende visibile come anche circostanze apparentemente m
 
 ### Strumenti utilizzati
 
-- **ChatGPT**  
-  Supporto all’organizzazione e analisi dei dati, brainstorming progettuale e definizione della narrazione.
+- **ChatGPT** 
 
-- **GitHub Copilot (Visual Studio Code)**  
-  Supporto alla scrittura del codice, correzione di errori sintattici e ottimizzazione.
+  Utilizzato come supporto alla fase di organizzazione e analisi dei dati, al brainstorming progettuale e alla definizione della narrazione e della struttura informativa del progetto.  
+
+- **Copilot**  
+
+  Utilizzato come supporto alla scrittura del codice, alla correzione di errori sintattici e all’ottimizzazione di porzioni di codice, in particolare per il miglioramento dell’efficienza di alcune funzioni.
 
 ### Ambiti di utilizzo
-
+- Supporto allo sviluppo e all’ottimizzazione di alcune funzioni complesse.  
 - Animazioni di transizione dal quadrato bidimensionale al parallelepipedo tridimensionale.  
-- Transizione dalla visualizzazione d’insieme a quella di dettaglio tramite scomposizione e ricomposizione geometrica.
+- Transizione dalla visualizzazione d’insieme a quella di dettaglio tramite scomposizione e ricomposizione geometrica.  
+- Supporto al debugging e alla verifica del corretto funzionamento delle interazioni.
+- Realizzazione e supporto tecnico per il raffinamento del cubo utilizzato nella legenda della visualizzazione di dettaglio, con particolare attenzione alla qualità visiva e alla coerenza grafica.
 
-In tutti i casi, l’uso dell’intelligenza artificiale è stato integrativo e supervisionato.
+
+
+In tutti i casi, l’utilizzo dell’intelligenza artificiale è stato **integrativo e subordinato a una progettazione manuale preliminare**.
+
 
 </details>
