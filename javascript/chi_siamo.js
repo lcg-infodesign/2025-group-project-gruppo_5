@@ -152,7 +152,7 @@ function handleAutoScroll() {
 
 function updateSectionVisibility() {
   let chiSiamoSection = document.getElementById('chi-siamo');
-  let footerSection = document.querySelectorAll('.sezione-dati')[1];
+  let footerSection = document.querySelector('.credits-section');
   
   if (!chiSiamoSection || !footerSection) return;
   
@@ -167,7 +167,7 @@ function updateSectionVisibility() {
 
 function updateSectionOpacity() {
   let chiSiamoSection = document.getElementById('chi-siamo');
-  let footerSection = document.querySelectorAll('.sezione-dati')[1];
+  let footerSection = document.querySelector('.credits-section');
   
   if (chiSiamoSection && footerSection) {
     let opacitaSez1 = 1;
