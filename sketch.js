@@ -1720,20 +1720,9 @@ function updateNavbarCounterValues() {
   updateCounterTooltip();
 }
 
-// NAVBAR COUNTER TOOLTIP: Aggiorna con data e ora attuali
+// NAVBAR COUNTER: Aggiorna countdown e data/ora
 function updateCounterTooltip() {
-  let tooltip = document.getElementById('counter-tooltip');
-  if (!tooltip) return;
-  
-  let now = new Date();
-  let giorno = String(now.getDate()).padStart(2, '0');
-  let mese = String(now.getMonth() + 1).padStart(2, '0');
-  let ore = String(now.getHours()).padStart(2, '0');
-  let minuti = String(now.getMinutes()).padStart(2, '0');
-  
-  tooltip.innerHTML = `Statistiche medie<br>del ${giorno}/${mese}/2024<br>alle ore ${ore}:${minuti}`;
-  
-  // Aggiorna anche il countdown
+  // Aggiorna il countdown e la data/ora
   updateCounterCountdown();
 }
 
@@ -1742,8 +1731,10 @@ let previousSecondsDisplay = -1; // Per tracciare quando ricomincia il countdown
 let maxSecondsForColor = 60; // Valore massimo dinamico per interpolazione colore
 
 function updateCounterCountdown() {
-  let countdown = document.getElementById('counter-countdown');
-  if (!countdown) return;
+  let countdownNumber = document.getElementById('counter-countdown-number');
+  let counterDatetime = document.getElementById('counter-datetime');
+  
+  if (!countdownNumber || !counterDatetime) return;
   
   let now = new Date();
   let secondiOggi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -1812,12 +1803,22 @@ function updateCounterCountdown() {
   let g = Math.round(255 * colorProgress + 102 * (1 - colorProgress));
   let b = Math.round(255 * colorProgress + 19 * (1 - colorProgress));
   
-  // Aggiorna il testo con colore dinamico solo sul numero
+  // Aggiorna il countdown number con colore dinamico
   if (secondsDisplay > 0 && secondsDisplay < Infinity) {
-    countdown.innerHTML = `Prossimo<br>aggiornamento<br>tra <span style="color: rgb(${r}, ${g}, ${b})">${secondsDisplay}</span> secondi`;
+    countdownNumber.textContent = secondsDisplay;
+    countdownNumber.style.color = `rgb(${r}, ${g}, ${b})`;
   } else {
-    countdown.innerHTML = `Aggiornamento<br>in corso...`;
+    countdownNumber.textContent = '0';
+    countdownNumber.style.color = `rgb(236, 102, 19)`;
   }
+  
+  // Aggiorna data e ora correnti (formato: giorno/mese/anno ora)
+  let day = now.getDate();
+  let month = now.getMonth() + 1; // I mesi partono da 0
+  let hours = String(now.getHours()).padStart(2, '0');
+  let minutes = String(now.getMinutes()).padStart(2, '0');
+  
+  counterDatetime.textContent = `${day}/${month}/2024 ${hours}:${minutes}`;
 }
 
 // Navbar click: gestito solo in setup() (vedi handler su .nav-item).
