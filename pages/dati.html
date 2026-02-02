@@ -95,10 +95,10 @@
 
   <!-- SEZIONE 1: Testo descrittivo -->
   <section id="i-dati" class="sezione-dati">
-    <h1>I DATI</h1>
     <div class="two-column-layout">
       <div class="column">
-        <p>
+        <h1>I DATI</h1>
+        <p class="description">
           L'<b><i>ISTAT</i></b> ogni anno raccoglie i dati riguardanti l'insieme degli <b>incidenti
             stradali verbalizzati</b> da un'autorità di polizia, avvenuti su strade aperte
           alla pubblica circolazione, che hanno causato <b>lesioni alle persone</b>. Questa
@@ -106,7 +106,7 @@
           organi nazionali e locali per comprendere <b>come predisporre</b> al meglio dei
           <b>piani di prevenzione</b> e sicurezza stradale.
         </p>
-        <p>
+        <p class="description">
           Il nostro lavoro riguarda esclusivamente <b>l'anno solare 2024</b>, con specifico
           interesse verso le circostanze scatenanti, accertate o presunte, degli
           incidenti. Le condizioni dei soggetti trattati si distinguono in <b>morti</b>,
@@ -116,12 +116,12 @@
         </p>
       </div>
       <div class="column">
-        <p>Oltre ai dati ufficiali dell'<i>ISTAT</i>,
+        <p class="description">Oltre ai dati ufficiali dell’<i>ISTAT</i>,
           abbiamo calcolato una <b><i>percentuale di incidenti mortali</i></b>, ottenuta dal
           rapporto tra il numero di morti e il totale degli incidenti moltiplicato per 100
           (dove entrambi i dati sono relativi alla categoria analizzata).
         </p>
-        <div>
+        <div class="description">
           <div class="formula-container">
             <span>Mortalità =</span>
             <div class="formula-fraction">
@@ -131,7 +131,7 @@
             <span>x 100</span>
           </div>
         </div>
-        <p>
+        <p class="description">
           Di seguito la rielaborazione delle differenti categorie per tipo di
           responsabilità, <br> segnando le categorie in ordine decrescente di incidenti:
         </p>
@@ -141,14 +141,14 @@
 
   <!-- SEZIONE 2: Liste categorie con menu a tendina -->
   <section id="categorie" class="sezione-dati-tendine">
-    <div>
+    <div class="categorie-layout">
       <!--CONDUCENTI-->
       <div class="Listadati">
         <div class="bigCategory">
           <h2>CONDUCENTI</h2>
           <p class="sottotitoloCat">Rientrano le cause legate ai comportamenti, agli errori o alle distrazioni dei
             guidatori.</p>
-          <div>
+          <div class="catList">
             <button class="newCategory">
               Mancata precedenza/semaforo<span>▼</span>
             </button>
@@ -225,7 +225,7 @@
           <h2>CAUSE ESTERNE E CONCOMITANTI</h2>
           <p class="sottotitoloCat">Rientrano le cause dovute a fattori esterni come ostacoli urtati o evitati,
             eventi concomitanti o imprecisati</p>
-          <div>
+          <div class="catList">
             <button class="newCategory">Veicolo fermo<span>▼</span>
             </button>
             <div class="oldCategory">
@@ -258,7 +258,7 @@
             <h2>NON CONDUCENTI</h2>
             <p class="sottotitoloCat">Rientrano le cause attribuibili al comportamento di pedoni,
               passeggeri o altri utenti della strada non alla guida.</p>
-            <div>
+            <div class="catList">
               <button class="newCategory">Discesa da veicolo con imprudenza<span>▼</span>
               </button>
               <div class="oldCategory">

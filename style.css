@@ -865,36 +865,11 @@ b { /*bold*/
    PAGINE CON INFORMAZIONI - Layout generale di CHI SIAMO e DATI
    ======================================== */
 
-/* Contenitore generale pagine informative */
-.sezione-dati {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.1s ease-out;
-  overflow-y: auto;
-}
-
-/* H1 nelle pagine informative (contenuto nello stesso spazio) */
-.sezione-dati > h1 {
-  text-align: left;
-  width: 100%;
-  max-width: clamp(1200px, 80vw, 1600px);
-  margin: 0 auto clamp(20px, 1.46vw, 28px);
-  padding: 0 clamp(20px, 2vw, 40px);
-  font-size: clamp(38px, 2.6vw, 50px);
-}
-
 .two-column-layout {
   display: flex;
   gap: 2.5rem;
   /* 80px @ 1920px */
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   width: 100%;
   max-width: clamp(1200px, 80vw, 1600px);
