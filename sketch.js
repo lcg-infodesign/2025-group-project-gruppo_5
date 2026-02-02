@@ -2,7 +2,7 @@
 // VARIABILI GLOBALI
 // ========================================
 
-let csvData;
+let csvData; // Datatest "totale"
 let csvConducenti;
 let csvCauseEsterne;
 let csvNonConducenti;
@@ -10,36 +10,34 @@ let csvNonConducenti;
 // Scroll
 let scrollY = 0;
 let scrollTarget = -1;
-let scrollVelocita = 8; // Ridotto da 15 a 8 per scroll più lento e fluido
+let scrollVelocita = 8;
 
-// Scroll Snap - Checkpoint per sezioni
-let scrollSnapEnabled = true;
+// Scroll - Checkpoint per sezioni
 let scrollCheckpoints = [
   0,      // Sezione 1: Intro
   800,    // Sezione 2: Quadrato
-  1400,   // Sezione 3: "Ma sai quanti sono"
+  1400,   // Sezione 3: "Ma sai quanti sono ogni anno?"
   2900,   // Sezione 4: Griglia incidenti
   3100,   // Sezione 5a: Quadrato 2D fermo
   3300,   // Sezione 5b: Animazione cubo 3D
   3850,   // Sezione 6: Counter giornaliero (500px dopo sez 5)
-  4300,   // Dopo counter - "Ma di chi è la colpa?"
+  4300,   // Sezione: "Ma di chi è la colpa?"
   5200,   // Sezione 7: divisione per responsabilità
   6500,   // Sezione 8: Dettaglio categoria selezionata (dopo animazione completa)
 ];
 let currentCheckpointIndex = 0;
 let isScrolling = false;
-let scrollAccumulator = 0;
+let scrollAccumulator = 0; // Calcola l'accumulo di scroll per capire se si raggiunge lo scrollThreshold
 let scrollThreshold = 100; // Quantità di scroll necessaria per cambiare checkpoint
 
 // Sezione 1: Intro
 let introCaratteriVisibili = 0;
-//testo nelle variabili perchè deve avere l'animazione di comparsa lettera per lettera
 let introTestoCompleto = 'LA REALTÀ DEGLI INCIDENTI STRADALI\nIN ITALIA È PIÚ GRAVE DI QUANTO IMMAGINI';
-let sottotitoloOpacita = 0;
-let introOpacita = 255;
+let sottotitoloOpacita = 0; // il sottotitolo parte invisibile poi appare in fade in
+let introOpacita = 255; // il titolo parte già visibile
 
 // Sezione 2: Quadrato
-let quadratoDimensione = 0;
+let quadratoDimensione = 0; // parte da 0 e cresce fino a dimensione finale
 let quadratoCaratteriVisibili = 0;
 let quadratoTestoCompleto = 'QUESTO QUADRATO RAPPRESENTA\n300 INCIDENTI';
 
@@ -84,19 +82,28 @@ let counterAnimazioneCompletata = false; // Traccia se l'animazione iniziale è 
 
 // Sezione 7: Griglia responsabilità
 let animRegroupActive = false;
-let animRegroupProgress = 0;
+let animRegroupProgress = 0; //queste tre animRegroup servono per l'animazione di divisione in 3 griglie colorate
 let animRegroupTarget = 0;
 let dimensioneQuadratino = 0; // Dimensione dei quadratini, calcolata in sezione 7
 let ctaFadeStartTime = -1; // Timestamp inizio fade in del testo CTA
 let ctaFadeOpacity = 0; // Opacità corrente del testo CTA
 let legendFadeOpacity = 0; // Opacità corrente della leggenda "300 incidenti"
 
-// Sezione 8: visualizzazione di dettaglio (NON più overlay)
+// Sezione 8: visualizzazione di dettaglio
 let sezioneOttavaHitboxes = [];
 let hoveredGridIndex = -1; // Traccia quale griglia è in hover (-1 = nessuna, 0 = blu, 1 = verde, 2 = rosa)
 let hoverScales = [1, 1, 1]; // Scale per ogni griglia (animato con lerp)
 let hoverScaleTarget = [1, 1, 1]; // Target scale per smooth animation
-// Vista corrente dettaglio (équivalent "vistaCorrente"): navbar → selezionaDaNavbar → qui → drawSezioneOttava
+
+// Vista corrente dettaglio: navbar → selezionaDaNavbar → qui → drawSezioneOttava
+// --- NOTE: stato e interazioni della Sezione 8 (vista dettaglio) ---
+// Qui vengono memorizzati i flag e le hitbox usati da `drawSezioneOttava()`
+// e dai gestori di hover/click. In pratica questo gruppo tiene traccia di:
+// - quale categoria è selezionata dall'utente
+// - quali elementi sono in hover e le loro scale/opacità per l'animazione
+// - se mostrare i quadrati (vista a griglia) o le barre (istogramma)
+// Non rimuovere queste variabili: sono letture/scritture condivise
+// tra il renderer della sezione e gli handler di input (mouse/DOM).
 let categoriaSelezionata = null; // 'conducenti' | 'cause-esterne-concomitanti' | 'non-conducenti'
 let hasClickedCategory = false; // Traccia se l'utente ha cliccato su una categoria
 const categorie = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
@@ -113,11 +120,6 @@ let sezioneOttavaItemOpacityTargets = {}; // Target opacità per l'animazione
 let SEZIONE_MARGIN = 100;
 const SEZIONE_OTTAVA_OPACITY_EASING = 0.06; // Velocità dell'easing per l'opacità (più basso = più lento)
 
-// Frecce navigazione sezione 8
-let frecceSezioneOttava = {
-  sinistra: { x: 50, y: 0, size: 40, hover: false },
-  destra: { x: 0, y: 0, size: 40, hover: false }
-};
 let categorieArray = ['conducenti', 'cause-esterne-concomitanti', 'non-conducenti'];
 
 // Animazione transizione sezione 7 -> 8 (tra scroll 5200 e 6500)
