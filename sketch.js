@@ -844,15 +844,15 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   let feritiMortiHTML = '';
   if (showBars) {
     feritiMortiHTML = `
-      <p style="margin: 0.5em 0 0 0;"><span style="color: var(--orange);">Feriti:</span> <span style="color: white;">${lesionati.toLocaleString('it-IT')}</span></p>
-      <p style="margin: 0.5em 0 0 0;"><span style="color: var(--orange);">Morti:</span> <span style="color: white;">${morti.toLocaleString('it-IT')}</span></p>
+      <p style="margin: 0.5em 0 0 0; font-size: 1.2em;"><span style="color: var(--orange);">Feriti:</span> <span style="color: white;">${lesionati.toLocaleString('it-IT')}</span></p>
+      <p style="margin: 0.5em 0 0 0; font-size: 1.2em;"><span style="color: var(--orange);">Morti:</span> <span style="color: white;">${morti.toLocaleString('it-IT')}</span></p>
     `;
   }
   
   // Crea l'HTML dinamicamente - ogni dato va a capo con spaziatura uniforme
   container.innerHTML = `
-    <h3 style="color: white; margin: 0 0 0.5em 0; font-size: 1.4em;">${nome}</h3>
-    <p style="margin: 0.5em 0 0 0;"><span style="color: ${categoryHex};">Incidenti:</span> <span style="color: white;">${incidenti.toLocaleString('it-IT')}</span></p>
+    <h3 style="color: white; margin: 0 0 0.5em 0; font-size: 1.8em;">${nome}</h3>
+    <p style="margin: 0.5em 0 0 0; font-size: 1.2em;"><span style="color: ${categoryHex};">Incidenti:</span> <span style="color: white;">${incidenti.toLocaleString('it-IT')}</span></p>
     ${feritiMortiHTML}
   `;
 }
@@ -901,7 +901,7 @@ function createLegends() {
     cat.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso, allineata con legenda
     cat.style.color = 'white';
     cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    cat.style.fontSize = (width * 0.0084) + 'px'; 
+    cat.style.fontSize = (width * 0.0072) + 'px'; 
     cat.style.lineHeight = '1.2';
     cat.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
     cat.style.pointerEvents = 'none';
@@ -934,7 +934,7 @@ function placeCatCausaContainer() {
     container.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso
     container.style.color = 'white';
     container.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    container.style.fontSize = (width * 0.0094) + 'px'; // 18px @ 1920px
+    container.style.fontSize = (width * 0.0072) + 'px'; // 18px @ 1920px
     container.style.lineHeight = '1.2';
     container.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
     container.style.pointerEvents = 'none';
