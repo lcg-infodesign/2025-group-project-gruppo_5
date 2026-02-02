@@ -27,13 +27,13 @@
   --hover: rgba(255, 255, 255, 0.1);
 
   /*visualizzazione di dettaglio*/
+  --grid: #2c2c2c;
   --muted: #bdbdbd;
-  --white-30: rgba(255, 255, 255, 0.3);
+  --ovGray: #d9d9d920;
 
   /*grassetto nei dati*/
-  --grass: color-mix(in srgb, var(--txt) 40%, var(--orange));  
+  --grass: color-mix(in srgb, var(--txt) 40%, var(--orange));
 }
-
 
 
 /* ========================================
@@ -195,6 +195,16 @@ b { /*bold*/
   background: var(--orange);
 }
 
+.nav-item.dropdown.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--orange);
+}
+
 /* Lato destro: bottoni */
 .nav-right {
   display: flex;
@@ -218,6 +228,7 @@ b { /*bold*/
 .nav-external:hover {
   color: var(--orange);
   opacity: 0.5;
+  transition: color 0.3s ease;
 }
 
 .nav-external:hover::after {
@@ -250,23 +261,7 @@ b { /*bold*/
   transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
-.nav-item:hover:not(.dropdown)::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--orange);
-}
-
-/* Hover per dropdown (Responsabilità) */
-.nav-item.dropdown:hover .dropdown-link {
-  color: var(--orange);
-  opacity: 0.5;
-}
-
-.nav-item.dropdown:hover::after {
+.nav-item:hover::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -280,6 +275,11 @@ b { /*bold*/
 .nav-item.active,
 .nav-item.active .dropdown-link {
   color: var(--orange) !important;
+}
+
+/*Contenitore tendina categorie responsabilità*/
+.nav-item.dropdown {
+  position: relative;
 }
 
 /* Bridge invisibile per facilitare il passaggio al menu */
@@ -300,6 +300,11 @@ b { /*bold*/
   transition: color 0.3s ease;
 }
 
+/* Cambia colore al passaggio del mouse sul link principale */
+.dropdown-link:hover {
+  color: var(--orange);
+}
+
 /* Stile per il menu della tendina */
 .dropdown-menu {
   display: none;
@@ -307,7 +312,7 @@ b { /*bold*/
   position: absolute;
   top: -0.9rem;
   left: calc(100% + 0.7rem);
-  background-color: var(--bg);
+  background-color: #000;
   border: none;
   border-radius: clamp(6px, 0.42vw, 8px);
   /* 8px @ 1920px */
@@ -373,46 +378,6 @@ b { /*bold*/
 /* Nascondi gli elementi del menu categoria che corrispondono alla categoria corrente */
 #dropdown-categoria-menu .dropdown-item.current-category {
   display: none;
-}
-
-/* Responsive NAVBAR */
-@media (max-width: 768px) {
-  #navbar {
-    padding: 0 30px;
-    height: 70px;
-  }
-
-  .nav-left {
-    gap: 20px;
-  }
-
-  .nav-item {
-    font-size: 13px;
-    padding-bottom: 6px;
-  }
-
-  .nav-right {
-    gap: 12px;
-  }
-}
-
-@media (max-width: 600px) {
-  #navbar {
-    padding: 0 20px;
-    height: 60px;
-  }
-
-  .nav-left {
-    gap: 15px;
-  }
-
-  .nav-item {
-    font-size: 12px;
-  }
-
-  .nav-right {
-    gap: 10px;
-  }
 }
 
 
@@ -524,7 +489,7 @@ b { /*bold*/
 /* Flash Outline Animation per Counter */
 @keyframes flashOutline {
   0%, 100% {
-    border-color: var(--txt);
+    border-color: rgba(255, 255, 255, 1);
     background-color: transparent;
   }
   25% {
@@ -532,7 +497,7 @@ b { /*bold*/
     background-color: color-mix(in srgb, var(--orange) 15%, transparent);
   }
   50% {
-    border-color: var(--txt);
+    border-color: rgba(255, 255, 255, 1);
     background-color: transparent;
   }
   75% {
@@ -545,48 +510,10 @@ b { /*bold*/
   animation: flashOutline 3s ease-out;
 }
 
-/* Responsive COUNTER */
-@media (max-width: 768px) {
-  .navbar-counter {
-    gap: clamp(15px, 1.56vw, 20px);
-    padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 18px);
-  }
-
-  .counter-number {
-    font-size: clamp(12px, 1.04vw, 14px);
-  }
-
-  .counter-label {
-    font-size: clamp(8px, 0.57vw, 9px);
-  }
-}
-
-@media (max-width: 600px) {
-  .navbar-counter {
-    gap: clamp(12px, 1.56vw, 15px);
-    padding: clamp(5px, 0.42vw, 6px) clamp(12px, 1.04vw, 15px);
-  }
-
-  .counter-number {
-    font-size: clamp(11px, 1.04vw, 12px);
-  }
-
-  .counter-label {
-    font-size: clamp(7px, 0.57vw, 8px);
-  }
-}
-
 
 /* ========================================
    SCROLL ARROWS - Frecce per navigare su/giù
    ======================================== */
-
-/* Stile comune SVG hover per tutte le frecce */
-.scroll-arrow:hover svg path,
-.back-arrow:hover svg path {
-  stroke: var(--orange);
-}
-
 .scroll-arrows-container {
   position: fixed;
   bottom: clamp(20px, 1.56vw, 30px);
@@ -609,7 +536,7 @@ b { /*bold*/
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--hover);
+  background: rgba(255, 255, 255, 0.1);
   border: 1.5px solid var(--txt);
   border-radius: 50%;
   cursor: pointer;
@@ -644,6 +571,10 @@ b { /*bold*/
   width: clamp(14px, 0.83vw, 16px);
   /* 16px @ 1920px */
   height: clamp(14px, 0.83vw, 16px);
+}
+
+.scroll-arrow:hover svg path {
+  stroke: var(--orange);
 }
 
 @keyframes bounce {
@@ -700,6 +631,10 @@ b { /*bold*/
   stroke-width: 2.5;
 }
 
+.back-arrow:hover svg path {
+  stroke: var(--orange);
+}
+
 
 /* ============================================
  SIDE ARROWS - navigare tra categorie di dettaglio 
@@ -713,7 +648,7 @@ b { /*bold*/
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--hover);
+  background: rgba(255, 255, 255, 0.1);
   border: 1.5px solid var(--txt);
   border-radius: 50%;
   cursor: pointer;
@@ -738,6 +673,10 @@ b { /*bold*/
   pointer-events: all;
 }
 
+.detail-arrow:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .detail-arrow-left:hover {
   transform: translateX(-3px);
 }
@@ -753,11 +692,74 @@ b { /*bold*/
 }
 
 /* ========================================
-   INFO ICON - Icone informazioni (categorie e gradiente)
+   INFO ICON - Icona informazioni categorie
    ======================================== */
+.categoria-info-icon {
+  position: fixed;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
 
-/* -------- STILI GENERALI (comuni a entrambe le icone) -------- */
-.categoria-info-icon,
+.info-circle {
+  width: clamp(20px, 1.25vw, 24px);
+  height: clamp(20px, 1.25vw, 24px);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(13px, 0.83vw, 16px);
+  font-style: normal;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.info-circle:hover {
+  background: var(--hover);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: clamp(10px, 0.63vw, 12px);
+  padding: clamp(12px, 0.83vw, 16px);
+  max-width: clamp(400px, 30vw, 600px);
+  min-width: clamp(300px, 22vw, 450px);
+  max-height: clamp(80px, 8vh, 120px);
+  overflow: hidden;
+  z-index: 1002;
+}
+
+.categoria-info-icon:hover .info-tooltip {
+  display: block;
+}
+
+.info-tooltip p {
+  margin: 0;
+  padding: 0;
+  font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: clamp(13px, 0.83vw, 16px);
+  line-height: 1.5;
+  color: var(--txt);
+  width: 100%;
+}
+
+/* ========================================
+   INFO ICON GRADIENTE - Icona info sotto il gradiente
+   ======================================== */
 .gradiente-info-icon {
   position: fixed;
   z-index: 1001;
@@ -766,103 +768,60 @@ b { /*bold*/
   justify-content: center;
 }
 
-.info-circle,
 .gradiente-info-circle {
+  width: clamp(16px, 1vw, 18px);
+  height: clamp(16px, 1vw, 18px);
   border-radius: 50%;
-  border: 2px solid var(--white-30);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(11px, 0.7vw, 13px);
   font-style: normal;
   font-weight: bold;
-  color: var(--white-30);
+  color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.info-circle:hover,
 .gradiente-info-circle:hover {
   background: var(--hover);
   border-color: var(--orange);
   color: var(--orange);
 }
 
-.info-tooltip,
 .gradiente-info-tooltip {
   display: none;
-  background: var(--bg);
-  border: 2px solid var(--white-30);
+  position: fixed;
+  top: auto;
+  left: auto;
+  transform: none;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: clamp(10px, 0.63vw, 12px);
+  padding: clamp(16px, 1.04vw, 20px) clamp(20px, 1.3vw, 25px);
+  box-sizing: border-box;
   z-index: 1002;
+  white-space: normal;
 }
 
-.categoria-info-icon:hover .info-tooltip,
 .gradiente-info-icon:hover .gradiente-info-tooltip {
   display: block;
 }
 
-.info-tooltip p,
 .gradiente-info-tooltip p {
   margin: 0;
   padding: 0;
   font-family: "Transport", Arial, Helvetica, sans-serif;
+  font-size: clamp(12px, 0.75vw, 14px);
   line-height: 1.5;
   color: var(--txt);
   width: 100%;
 }
 
-/* -------- ICONA CATEGORI -------- */
-.categoria-info-icon {
-  transform: translateY(-50%);
-}
-
-.info-circle {
-  width: clamp(20px, 1.25vw, 24px);
-  height: clamp(20px, 1.25vw, 24px);
-  font-size: clamp(13px, 0.83vw, 16px);
-}
-
-.info-tooltip {
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  padding: clamp(12px, 0.83vw, 16px);
-  max-width: clamp(400px, 30vw, 600px);
-  min-width: clamp(300px, 22vw, 450px);
-  max-height: clamp(80px, 8vh, 120px);
-  overflow: hidden;
-}
-
-.info-tooltip p {
-  font-size: clamp(13px, 0.83vw, 16px);
-}
-
-/* -------- ICONA GRADIENTE -------- */
-.gradiente-info-circle {
-  width: clamp(16px, 1vw, 18px);
-  height: clamp(16px, 1vw, 18px);
-  border-width: 1.5px;
-  font-size: clamp(11px, 0.7vw, 13px);
-}
-
-.gradiente-info-tooltip {
-  position: fixed;
-  top: auto;
-  left: auto;
-  transform: none;
-  padding: clamp(16px, 1.04vw, 20px) clamp(20px, 1.3vw, 25px);
-  box-sizing: border-box;
-  white-space: normal;
-}
-
-.gradiente-info-tooltip p {
-  font-size: clamp(12px, 0.75vw, 14px);
-}
-
 /* =========================================
-   PAGINE CON INFORMAZIONI - Layout generale di CHI SIAMO e DATI
+   PAGINE CON INFORMAZIONI - Layout generale di chi siamo e dati
    ======================================== */
 
 .two-column-layout {
@@ -984,90 +943,6 @@ b { /*bold*/
   color: var(--txt);
   line-height: 1.2;
   letter-spacing: 0.01em;
-}
-
-/* Responsive CHI SIAMO */
-@media (min-width: 768px) {
-  h1 {
-    font-size: 56px;
-  }
-
-  p {
-    font-size: 21px;
-    line-height: 1.7;
-  }
-}
-
-@media (max-width: 1200px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .team-photo {
-    max-width: 150px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .team-photo {
-    max-width: 140px;
-  }
-}
-
-@media (max-width: 768px) {
-  h1 {
-    font-size: 36px;
-  }
-
-  p {
-    font-size: 18px;
-  }
-
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .team-photo {
-    max-width: 120px;
-  }
-
-  .card-name span {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 640px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 0 24px;
-  }
-
-  .team-photo {
-    max-width: 100px;
-  }
-}
-
-@media (max-width: 480px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  .team-photo {
-    max-width: 80px;
-  }
-
-  .card-name span {
-    font-size: 12px;
-  }
 }
 
 /* --------------------- FOOTER -------------------------- */
@@ -1422,12 +1297,171 @@ ul.credits-clean {
 }
 
 /* ========================================
-   ANIMATIONS
+   RESPONSIVE - Adattamento per schermi piccoli
    ======================================== */
+@media (max-width: 768px) {
+  #navbar {
+    padding: 0 30px;
+    height: 70px;
+  }
+
+  .nav-left {
+    gap: 20px;
+  }
+
+  .nav-item {
+    font-size: 13px;
+    padding-bottom: 6px;
+  }
+
+  .nav-right {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-counter {
+    /* Mantiene il clamp responsive invece di valori fissi */
+    gap: clamp(15px, 1.56vw, 20px);
+    padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 18px);
+  }
+
+  .counter-number {
+    font-size: clamp(12px, 1.04vw, 14px);
+  }
+
+  .counter-label {
+    font-size: clamp(8px, 0.57vw, 9px);
+  }
+}
+
+@media (max-width: 600px) {
+  #navbar {
+    padding: 0 20px;
+    height: 60px;
+  }
+
+  .nav-left {
+    gap: 15px;
+  }
+
+  .nav-item {
+    font-size: 12px;
+  }
+
+  .nav-right {
+    gap: 10px;
+  }
+
+  .navbar-counter {
+    /* Mantiene il clamp responsive invece di valori fissi */
+    gap: clamp(12px, 1.56vw, 15px);
+    padding: clamp(5px, 0.42vw, 6px) clamp(12px, 1.04vw, 15px);
+  }
+
+  .counter-number {
+    font-size: clamp(11px, 1.04vw, 12px);
+  }
+
+  .counter-label {
+    font-size: clamp(7px, 0.57vw, 8px);
+  }
+}
+
+
+
+/* ========================================
+   MEDIA QUERIES
+   ======================================== */
+
 @keyframes fadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Responsive - Chi Siamo */
+@media (min-width: 768px) {
+  h1 {
+    font-size: 56px;
+  }
+
+  p {
+    font-size: 21px;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .team-photo {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .team-photo {
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 36px;
+  }
+
+  p {
+    font-size: 18px;
+  }
+
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .team-photo {
+    max-width: 120px;
+  }
+
+  .card-name span {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 24px;
+  }
+
+  .team-photo {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .team-photo {
+    max-width: 80px;
+  }
+
+  .card-name span {
+    font-size: 12px;
   }
 }
 
