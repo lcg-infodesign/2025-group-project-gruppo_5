@@ -703,6 +703,8 @@ function draw() {
 // FUNZIONI DI UTILITÀ
 // ========================================
 
+
+//FUNZIONE PER LO SCOLL 
 function handleAutoScroll() { //scroll automatico verso i checkpoint
   if (scrollTarget > -1) {
     isScrolling = true;
@@ -718,6 +720,7 @@ function handleAutoScroll() { //scroll automatico verso i checkpoint
       currentVelocita = 4; // Scroll più lento per non saltare i checkpoint intermedi
     }
     
+    // Esegui lo scroll verso il target
     if (abs(scrollY - scrollTarget) > currentVelocita) {
       if (scrollY < scrollTarget) {
         scrollY += currentVelocita;
@@ -743,17 +746,19 @@ function handleAutoScroll() { //scroll automatico verso i checkpoint
   }
 }
 
-function updateCharacterAnimations() { //animazione scritte che si scrivono
-  // Intro
+// FUNZIONE ANIMAZIONE SCRITTE CHE SI SCRIVONO
+function updateCharacterAnimations() { 
+  // Intro-------------
   if (frameCount % 2 == 0 && introCaratteriVisibili < introTestoCompleto.length) {
     introCaratteriVisibili++;
   }
   
+  // se il testo del titolo è completo, inizia a far apparire il sottotitolo
   if (introCaratteriVisibili >= introTestoCompleto.length && sottotitoloOpacita < 255) {
     sottotitoloOpacita += 1;
   }
   
-  // Quadrato
+  // Quadrato----------
   if (scrollY > 50) {
     introOpacita = map(scrollY, 50, 300, 255, 0);
     introOpacita = constrain(introOpacita, 0, 255);
@@ -769,7 +774,7 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
     quadratoCaratteriVisibili = 0;
   }
   
-  // Terza sezione
+  // Terza sezione-------------
   if (scrollY > 1100 && scrollY < 1400) {
     terzaSezioneTitoloOpacita = map(scrollY, 1100, 1400, 0, 255);
     terzaSezioneTitoloOpacita = constrain(terzaSezioneTitoloOpacita, 0, 255);
@@ -799,9 +804,7 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
     terzaSezioneSottotitoloOpacita = 0;
   }
   
-  // Quinta sezione testo - RIMOSSO (sostituito da sezione5a e sezione5b)
-  
-  // Sezione 5a (3100): Testo "MA VEDIAMO IL FENOMENO A 360 GRADI"
+  // Sezione 5a (3100) "MA VEDIAMO IL FENOMENO A 360 GRADI"--------
   if (scrollY > 3000 && scrollY < 3300) {
     if (frameCount % 2 === 0 && sezione5aCaratteriVisibili < sezione5aTestoCompleto.length) {
       sezione5aCaratteriVisibili++;
@@ -812,7 +815,7 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
     sezione5aCaratteriVisibili = 0;
   }
   
-  // Sezione 5b (3300): Testo "E OGNUNO DI QUESTI HA PROVOCATO MORTI E FERITI"
+  // Sezione 5b (3300) "E OGNUNO DI QUESTI HA PROVOCATO MORTI E FERITI" -------
   if (scrollY > 3200 && scrollY < 3600) {
     if (frameCount % 2 === 0 && sezione5bCaratteriVisibili < sezione5bTestoCompleto.length) {
       sezione5bCaratteriVisibili++;
@@ -826,10 +829,11 @@ function updateCharacterAnimations() { //animazione scritte che si scrivono
   }
 }
 
-function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i dati specidici per categoria
+// FUNZIONE PER AGGIORNARE LA VISUALIZZAZIONE DELLA LEGENDA CATEG SPECIF IN HOVER -----
+function updateCatCausaInfo(nome, incidenti, lesionati, morti) { 
   const container = placeCatCausaContainer();
   
-  // Determina il colore hex della categoria
+  // Determina il colore della categoria
   let categoryHex = '#ffffff';
   if (categoriaSelezionata === 'conducenti') {
     categoryHex = getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
@@ -848,7 +852,7 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
     `;
   }
   
-  // Crea l'HTML dinamicamente - ogni dato va a capo con spaziatura uniforme
+  // Crea l'HTML dinamico
   container.innerHTML = `
     <h3 style="color: white; margin: 0 0 0.5em 0; font-size: 1.8em;">${nome}</h3>
     <p style="margin: 0.5em 0 0 0; font-size: 1.2em;"><span style="color: ${categoryHex};">Incidenti:</span> <span style="color: white;">${incidenti.toLocaleString('it-IT')}</span></p>
@@ -856,86 +860,55 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   `;
 }
 
+// FUNZIONI PER CREARE LEGENDA E CONTENITORE CATEGORIA VISION DETTAGLIO-----
 function createLegends() {
   // Crea un singolo contenitore legenda che verrà aggiornato dinamicamente
   if (!document.getElementById('legend')) {
     let legend = document.createElement('div');
     legend.id = 'legend';
-    // Stili con solo bordo, senza background
     legend.style.display = 'none';
     legend.style.position = 'fixed';
     legend.style.backgroundColor = 'transparent';
     legend.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-    legend.style.width = (width * 0.22) + 'px'; // Allargata per contenere meglio gli elementi
+    legend.style.width = (width * 0.22) + 'px'; 
     legend.style.padding = '1.5em';
-    legend.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
+    legend.style.borderRadius = (width * 0.0104) + 'px'; 
     legend.style.display = 'flex';
     legend.style.flexDirection = 'column';
     legend.style.justifyContent = 'left';
     legend.style.gap = '1em';
     legend.style.left = SEZIONE_MARGIN + 'px';
-    legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso
+    legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; 
     legend.style.boxSizing = 'border-box';
     legend.style.zIndex = '999';
     document.body.appendChild(legend);
   }
 
-  // Crea anche il contenitore per le informazioni di categoria (catCausa) interamente via JS
-  if (!document.getElementById('catCausaContainer')) {
-    let cat = document.createElement('div');
-    cat.id = 'catCausaContainer';
-    // Stili con solo bordo, senza background (come legenda)
-    cat.style.display = 'none';
-    cat.style.position = 'fixed';
-    cat.style.backgroundColor = 'transparent';
-    cat.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-    cat.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
-    cat.style.width = (width * 0.22) + 'px'; // Ridotta per stringere la box
-    cat.style.padding = '1.5em';
-    cat.style.display = 'flex';
-    cat.style.flexDirection = 'column';
-    cat.style.justifyContent = 'left';
-    cat.style.gap = '1em';
-    cat.style.left = (SEZIONE_MARGIN + width * 0.24) + 'px'; // Allineato dopo legenda allargata
-    cat.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso, allineata con legenda
-    cat.style.color = 'white';
-    cat.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    cat.style.fontSize = (width * 0.0072) + 'px'; 
-    cat.style.lineHeight = '1.2';
-    cat.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
-    cat.style.pointerEvents = 'none';
-    cat.style.boxSizing = 'border-box';
-    cat.style.zIndex = '999';
-    cat.style.transition = 'background-color 0.3s ease';
-    document.body.appendChild(cat);
-  }
+  // Contenitore per le informazioni di categoria 
+  placeCatCausaContainer();
 }
-
-// Ensure the category detail container exists and return it.
 function placeCatCausaContainer() {
   let container = document.getElementById('catCausaContainer');
   if (!container) {
     container = document.createElement('div');
     container.id = 'catCausaContainer';
-    // Stili con solo bordo, senza background (come legenda)
     container.style.display = 'none';
     container.style.position = 'fixed';
     container.style.backgroundColor = 'transparent';
     container.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-    container.style.borderRadius = (width * 0.0104) + 'px'; // 20px @ 1920px
-    container.style.width = (width * 0.22) + 'px'; // Ridotta per stringere la box
-    container.style.padding = '1.5em';
+    container.style.borderRadius = (width * 0.0104) + 'px'; 
+    container.style.width = (width * 0.22) + 'px'; 
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
     container.style.justifyContent = 'left';
     container.style.gap = '1em';
-    container.style.left = (SEZIONE_MARGIN + width * 0.24) + 'px'; // Allineato dopo legenda allargata
-    container.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Spostata più in basso
+    container.style.left = (SEZIONE_MARGIN + width * 0.24) + 'px'; 
+    container.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; 
     container.style.color = 'white';
     container.style.fontFamily = 'Transport, Arial, Helvetica, sans-serif';
-    container.style.fontSize = (width * 0.0072) + 'px'; // 18px @ 1920px
+    container.style.fontSize = (width * 0.0072) + 'px'; 
     container.style.lineHeight = '1.2';
-    container.style.maxWidth = (width * 0.25) + 'px'; // 480px @ 1920px
+    container.style.maxWidth = (width * 0.25) + 'px'; 
     container.style.pointerEvents = 'none';
     container.style.boxSizing = 'border-box';
     container.style.zIndex = '999';
@@ -944,12 +917,11 @@ function placeCatCausaContainer() {
   }
   return container;
 }
-
 function updateLegendVisibility() {
   let legend = document.getElementById('legend');
   let catCausa = document.getElementById('catCausaContainer');
 
-  // Mostra la legenda solo quando l'opacity è significativa (> 0.01) per evitare flash
+//varuabili utili per il fadeIn delle legende
   let legendOpacity = 0;
   let shouldShow = false;
   
@@ -971,11 +943,14 @@ function updateLegendVisibility() {
       legend.style.display = 'flex';
       legend.style.opacity = legendOpacity;
       legend.style.left = SEZIONE_MARGIN + 'px';
-      legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; // Allineata con categoria selezionata
+      legend.style.top = (SEZIONE_MARGIN + width * 0.07) + 'px'; 
 
-      // Imposta il contenuto in base al tipo di visualizzazione
-      if (!showBars) {
-        // Contenuto per 'incidenti' creato interamente via JS con inline styles
+      // Imposta il contenuto in base al tipo di visualizzazione (quadrati o colonne(istogramma))
+      
+
+      if (!showBars) {       //se ci sono i quadrati
+    
+        // titolo legenda
         legend.innerHTML = '';
         let h = document.createElement('h3');
         h.style.color = 'white';
@@ -985,7 +960,7 @@ function updateLegendVisibility() {
         h.textContent = 'Legenda';
         legend.appendChild(h);
 
-        // riga 1: rect pieno + testo
+        // riga 1: quadrao pieno + testo
         let r1 = document.createElement('div');
         r1.style.display = 'flex';
         r1.style.flexDirection = 'row';
@@ -1010,7 +985,7 @@ function updateLegendVisibility() {
         r1.appendChild(t1);
         legend.appendChild(r1);
 
-        // riga 2: empty rect + testo
+        // riga 2: quadrato vuoto solo bordo + testo
         let r2 = document.createElement('div');
         r2.style.display = 'flex';
         r2.style.flexDirection = 'row';
@@ -1035,8 +1010,10 @@ function updateLegendVisibility() {
         t2.textContent = 'Numero di incidenti inferiore a 300';
         r2.appendChild(t2);
         legend.appendChild(r2);
-      } else {
-        // Contenuto per 'lesionati'
+
+      } else { // se c'è l'istogramma/colonne
+
+      //titolo legenda
         legend.innerHTML = '';
         let h = document.createElement('h3');
         h.style.color = 'white';
@@ -1046,12 +1023,13 @@ function updateLegendVisibility() {
         h.textContent = 'Legenda';
         legend.appendChild(h);
 
+        //riga 1: cubo + testo
         let r1 = document.createElement('div');
         r1.style.display = 'flex';
         r1.style.flexDirection = 'row';
         r1.style.alignItems = 'center';
         r1.style.gap = '1em';
-        // Container per il cubo con larghezza fissa per allineamento
+        
         let cubeWrapper = document.createElement('div');
         cubeWrapper.style.width = '88px';
         cubeWrapper.style.flexShrink = '0';
@@ -1068,12 +1046,13 @@ function updateLegendVisibility() {
         r1.appendChild(t1);
         legend.appendChild(r1);
 
+        // riga 2: gradiente + testo
         let r2 = document.createElement('div');
         r2.style.display = 'flex';
         r2.style.flexDirection = 'row';
         r2.style.alignItems = 'center';
         r2.style.gap = '1em';
-        // Container per il gradiente con stessa larghezza del cubo
+
         let gradWrapper = document.createElement('div');
         gradWrapper.style.width = '88px';
         gradWrapper.style.flexShrink = '0';
@@ -1107,18 +1086,19 @@ function updateLegendVisibility() {
 }
 
 
-
-function calcNavbarOpacity() { // effetto opacità navbar
+      // funzione per calcolare l'opacità della navbar in base allo scroll (la intro non la vede avere )
+function calcNavbarOpacity() { 
   let opacity = map(scrollY, 300, 600, 0, 255);
   return constrain(opacity, 0, 255);
 } 
-
-function calcActiveSection() { // calcola dove sono e lo segna per la navbar
+ 
+ // calcola dove sono e lo segna per la navbar
+function calcActiveSection() { 
   if (scrollY < 1600) return 0;
   else if (scrollY < 4300) return 1;
   else return 2;
 }
-
+ // calcola il fade out del quadrato
 function calcQuadratoFadeOut() {
   if (scrollY > 900) {
     let fade = map(scrollY, 900, 1000, 255, 0);
@@ -1127,6 +1107,7 @@ function calcQuadratoFadeOut() {
   return 255;
 }
 
+ // calcola l'opacità del testo sez quadrato
 function calcQuadratoTextOpacity() {
   if (quadratoDimensione >= 200) {
     let opacity = map(scrollY, 600, 800, 0, 255);
@@ -1135,6 +1116,7 @@ function calcQuadratoTextOpacity() {
   return 0;
 }
 
+  // calcola il fade out della terza sezione
 function calcTerzaSezioneFadeOut() {
   if (scrollY > 1500) {
     let fade = map(scrollY, 1500, 1600, 255, 0);
@@ -1143,8 +1125,15 @@ function calcTerzaSezioneFadeOut() {
   return 255;
 }
 
+
+//=========================================
+// FUNZIONE PER AGGIORNARE LE ANIMAZIONI 
+//=========================================
+
+
 function updateAnimations() {
-  // Animazione cubo
+
+  // Animazione cubo 3d morti e feriti sez 5b---------------
   if (scrollY >= 3300) {
     if (!cuboAnimazioneAutomatica || cuboAnimazioneReverse) {
       cuboAnimazioneAutomatica = true;
@@ -1185,8 +1174,10 @@ function updateAnimations() {
     // Tra 3100 e 3300: quadrato 2D fermo
     cuboRotazione = 0.02;
   }
-  
-  // Animazione counter giornaliero
+  // Fine animazione cubo 3D morti e feriti sez 5b---------------
+
+
+  // Animazione counter giornaliero sez 6-----------
   if (scrollY > 3700 && !counterAnimazioneCompletata) {
     if (!counterAnimazioneAutomatica) {
       counterAnimazioneAutomatica = true;
@@ -1205,7 +1196,7 @@ function updateAnimations() {
     let targetMorti = mortiOggi * progress;
     let targetFeriti = feritiOggi * progress;
 
-    // Controlla se si proviene da chi_siamo o dati
+    // Controlla se si proviene da chi_siamo o dati (in quel caso i numeri del counter non si devono animare )
     let skipAnimation = sessionStorage.getItem('skipCounterAnimation') === 'true';
     if (skipAnimation) {
       // Rimuovi il flag dopo averlo letto
@@ -1231,8 +1222,13 @@ function updateAnimations() {
       animFeriti = targetFeriti;
     }
   }
+    // FINE Animazione counter giornaliero sez 6-----------
   
-  // Animazione regroup
+
+
+
+  
+  // Animazione regroup dei quadratini da Ma di chi è la colp a sez 7 --------
   if (scrollY > 5100) {
     animRegroupTarget = 1;
   } else {
@@ -1241,17 +1237,26 @@ function updateAnimations() {
   let speed = 0.07;
   animRegroupProgress += (animRegroupTarget - animRegroupProgress) * speed;
   animRegroupProgress = constrain(animRegroupProgress, 0, 1);
+
+
+
+
   
-  // Animazione sezione 8 cubo
+  // Animazione sezione 8 da quadrato a colonne/istogramma -------- 
   sezioneOttavaTransTarget = showBars ? 1 : 0;
   sezioneOttavaTrans += (sezioneOttavaTransTarget - sezioneOttavaTrans) * 0.12;
   sezioneOttavaTrans = constrain(sezioneOttavaTrans, 0, 1);
 }
 
+// ========================================
+// FUNZIONI DI UTILITÀ GENERICHE
+// ========================================
+
 function isMouseOver(x, y, w, h) { // controllo hover generico
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 }
 
+//funzione per ottenere il colore di overlay in base alla categoria attiva nella vs di dettaglio
 function getOverlayColor(cat) {
   if (cat === 'conducenti') return getCSSColor('--blue');
   if (cat === 'cause-esterne-concomitanti') return getCSSColor('--green');
@@ -1259,12 +1264,13 @@ function getOverlayColor(cat) {
   return color(255);
 }
 
-// Helper per ottenere i colori dalle variabili CSS
+// Funzione per ottenere i colori dalle variabili CSS
 function getCSSColor(variableName) {
   const cssValue = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
   return color(cssValue);
 }
 
+// Funzione per ottenere i dati CSV in base alla categoria selezionata
 function getCategoriaData(cat) {
   if (cat === 'conducenti') return csvConducenti;
   if (cat === 'cause-esterne-concomitanti') return csvCauseEsterne;
@@ -1272,6 +1278,7 @@ function getCategoriaData(cat) {
   return null;
 }
 
+// Funzione per ottenere lo spacing dei cubi in base alla categoria selezionata
 function getCubeSpacingForCategoria(cat) {
   // Spacing responsive basato sulla larghezza della viewport
   let spacingConducenti = constrain(width * 0.012, 12, 20);
@@ -1279,15 +1286,15 @@ function getCubeSpacingForCategoria(cat) {
   return cat === 'conducenti' ? spacingConducenti : spacingAltre;
 }
 
+// Funzione per aggiornare le scale di hover delle griglie nella sezione 7
 function updateHoverScales() {
-  // Smooth interpolation per scale animation (chiamato ogni frame)
+
   for (let i = 0; i < 3; i++) {
     hoverScales[i] = lerp(hoverScales[i], hoverScaleTarget[i], 0.15);
   }
 }
 
-// Chiamata dalla navbar (dropdown Responsabilità). Imposta stato + salto a dettaglio.
-// draw() → drawSezioneOttava usa categoriaSelezionata (getCategoriaData) per disegnare.
+// Chiamata categoria dettaglio dalla navbar (da dropdown Responsabilità). Imposta stato + salto a dettaglio.
 window.selezionaDaNavbar = function(nomeCategoria) {
   categoriaSelezionata = nomeCategoria;
   hasClickedCategory = true;
@@ -1296,7 +1303,7 @@ window.selezionaDaNavbar = function(nomeCategoria) {
   sezioneOttavaTrans = 0; // Inizia sempre in modalità quadrato
   sezioneOttavaTransTarget = 0;
   transizioneAttiva = false;
-  transizioneProgress = 1;
+  transizioneProgress = 1; // Salta la transizione
 
   currentCheckpointIndex = 9;
   scrollY = 6500;
@@ -1311,13 +1318,15 @@ window.selezionaDaNavbar = function(nomeCategoria) {
 };
 
 
-function updateCursor() { // cursore mano sugli elementi cliccabili
+function updateCursor() { // cursore a forma di mano sugli elementi cliccabili (così capisco che sono cliccabili)
+  
   // Sezione 7: hover sulle categorie cliccabili
   hoveredGridIndex = -1; // Reset
   
   // Aggiorna target scale per tutte le griglie
   hoverScaleTarget = [1, 1, 1];
   
+  // Sezione 7: hover sulle griglie fa generare un piccolo zoom 
   if (scrollY >= 5100 && scrollY < 6500 && sezioneOttavaHitboxes.length > 0) {
     for (let i = 0; i < sezioneOttavaHitboxes.length; i++) {
       let hitbox = sezioneOttavaHitboxes[i];
