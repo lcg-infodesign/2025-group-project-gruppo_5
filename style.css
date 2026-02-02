@@ -580,6 +580,13 @@ b { /*bold*/
 /* ========================================
    SCROLL ARROWS - Frecce per navigare su/giù
    ======================================== */
+
+/* Stile comune SVG hover per tutte le frecce */
+.scroll-arrow:hover svg path,
+.back-arrow:hover svg path {
+  stroke: var(--orange);
+}
+
 .scroll-arrows-container {
   position: fixed;
   bottom: clamp(20px, 1.56vw, 30px);
@@ -639,10 +646,6 @@ b { /*bold*/
   height: clamp(14px, 0.83vw, 16px);
 }
 
-.scroll-arrow:hover svg path {
-  stroke: var(--orange);
-}
-
 @keyframes bounce {
   0%,
   20%,
@@ -697,10 +700,6 @@ b { /*bold*/
   stroke-width: 2.5;
 }
 
-.back-arrow:hover svg path {
-  stroke: var(--orange);
-}
-
 
 /* ============================================
  SIDE ARROWS - navigare tra categorie di dettaglio 
@@ -739,10 +738,6 @@ b { /*bold*/
   pointer-events: all;
 }
 
-.detail-arrow:hover {
-  background: var(--hover);
-}
-
 .detail-arrow-left:hover {
   transform: translateX(-3px);
 }
@@ -758,74 +753,11 @@ b { /*bold*/
 }
 
 /* ========================================
-   INFO ICON - Icona informazioni categorie
+   INFO ICON - Icone informazioni (categorie e gradiente)
    ======================================== */
-.categoria-info-icon {
-  position: fixed;
-  z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(-50%);
-}
 
-.info-circle {
-  width: clamp(20px, 1.25vw, 24px);
-  height: clamp(20px, 1.25vw, 24px);
-  border-radius: 50%;
-  border: 2px solid var(--white-30);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(13px, 0.83vw, 16px);
-  font-style: normal;
-  font-weight: bold;
-  color: var(--white-30);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.info-circle:hover {
-  background: var(--hover);
-  border-color: var(--orange);
-  color: var(--orange);
-}
-
-.info-tooltip {
-  display: none;
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--bg);
-  border: 2px solid var(--white-30);
-  border-radius: clamp(10px, 0.63vw, 12px);
-  padding: clamp(12px, 0.83vw, 16px);
-  max-width: clamp(400px, 30vw, 600px);
-  min-width: clamp(300px, 22vw, 450px);
-  max-height: clamp(80px, 8vh, 120px);
-  overflow: hidden;
-  z-index: 1002;
-}
-
-.categoria-info-icon:hover .info-tooltip {
-  display: block;
-}
-
-.info-tooltip p {
-  margin: 0;
-  padding: 0;
-  font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(13px, 0.83vw, 16px);
-  line-height: 1.5;
-  color: var(--txt);
-  width: 100%;
-}
-
-/* ========================================
-   INFO ICON GRADIENTE - Icona info sotto il gradiente
-   ======================================== */
+/* -------- STILI GENERALI (comuni a entrambe le icone) -------- */
+.categoria-info-icon,
 .gradiente-info-icon {
   position: fixed;
   z-index: 1001;
@@ -834,16 +766,14 @@ b { /*bold*/
   justify-content: center;
 }
 
+.info-circle,
 .gradiente-info-circle {
-  width: clamp(16px, 1vw, 18px);
-  height: clamp(16px, 1vw, 18px);
   border-radius: 50%;
-  border: 1.5px solid var(--white-30);
+  border: 2px solid var(--white-30);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(11px, 0.7vw, 13px);
   font-style: normal;
   font-weight: bold;
   color: var(--white-30);
@@ -851,43 +781,88 @@ b { /*bold*/
   transition: all 0.3s ease;
 }
 
+.info-circle:hover,
 .gradiente-info-circle:hover {
   background: var(--hover);
   border-color: var(--orange);
   color: var(--orange);
 }
 
+.info-tooltip,
 .gradiente-info-tooltip {
   display: none;
-  position: fixed;
-  top: auto;
-  left: auto;
-  transform: none;
   background: var(--bg);
   border: 2px solid var(--white-30);
   border-radius: clamp(10px, 0.63vw, 12px);
-  padding: clamp(16px, 1.04vw, 20px) clamp(20px, 1.3vw, 25px);
-  box-sizing: border-box;
   z-index: 1002;
-  white-space: normal;
 }
 
+.categoria-info-icon:hover .info-tooltip,
 .gradiente-info-icon:hover .gradiente-info-tooltip {
   display: block;
 }
 
+.info-tooltip p,
 .gradiente-info-tooltip p {
   margin: 0;
   padding: 0;
   font-family: "Transport", Arial, Helvetica, sans-serif;
-  font-size: clamp(12px, 0.75vw, 14px);
   line-height: 1.5;
   color: var(--txt);
   width: 100%;
 }
 
+/* -------- ICONA CATEGORI -------- */
+.categoria-info-icon {
+  transform: translateY(-50%);
+}
+
+.info-circle {
+  width: clamp(20px, 1.25vw, 24px);
+  height: clamp(20px, 1.25vw, 24px);
+  font-size: clamp(13px, 0.83vw, 16px);
+}
+
+.info-tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: clamp(12px, 0.83vw, 16px);
+  max-width: clamp(400px, 30vw, 600px);
+  min-width: clamp(300px, 22vw, 450px);
+  max-height: clamp(80px, 8vh, 120px);
+  overflow: hidden;
+}
+
+.info-tooltip p {
+  font-size: clamp(13px, 0.83vw, 16px);
+}
+
+/* -------- ICONA GRADIENTE -------- */
+.gradiente-info-circle {
+  width: clamp(16px, 1vw, 18px);
+  height: clamp(16px, 1vw, 18px);
+  border-width: 1.5px;
+  font-size: clamp(11px, 0.7vw, 13px);
+}
+
+.gradiente-info-tooltip {
+  position: fixed;
+  top: auto;
+  left: auto;
+  transform: none;
+  padding: clamp(16px, 1.04vw, 20px) clamp(20px, 1.3vw, 25px);
+  box-sizing: border-box;
+  white-space: normal;
+}
+
+.gradiente-info-tooltip p {
+  font-size: clamp(12px, 0.75vw, 14px);
+}
+
 /* =========================================
-   PAGINE CON INFORMAZIONI - Layout generale di chi siamo e dati
+   PAGINE CON INFORMAZIONI - Layout generale di CHI SIAMO e DATI
    ======================================== */
 
 .two-column-layout {
