@@ -30,6 +30,9 @@
   --grid: #2c2c2c;
   --muted: #bdbdbd;
   --ovGray: #d9d9d920;
+
+  /*grassetto nei dati*/
+  --grass: color-mix(in srgb, var(--txt) 40%, var(--orange));
 }
 
 /* ========================================
@@ -86,7 +89,7 @@ h3 {
 }
 
 b {
-  color: color-mix(in srgb, var(--txt) 40%, var(--orange));
+  color: var(--grass);
 }
 
 .main-title {
