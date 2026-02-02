@@ -2686,9 +2686,9 @@ function drawSezioneSettima() {
       textSize(txtSize * 0.42); // 2 punti più grande (era 0.4)
       fill(255, 255, 255, ctaFadeOpacity);
       
-      // Posiziona sotto "MA DI CHI È LA COLPA?"
+      // Posiziona sotto "MA DI CHI È LA COLPA?" - responsive
       // colpaPosY è in height * 0.2 quando la griglia è visibile
-      let bottomY = height * 0.2 + 50; // 50px sotto il titolo
+      let bottomY = height * 0.2 + txtSize * 0.9; // Spazio proporzionale alla dimensione del testo (ridotto da 1.2 a 0.9)
       
       // Aggiungi bounce effect leggero e smooth
       let bounceTime = (elapsed - delayMs - fadeDuration) / 1000; // tempo in secondi dopo fade in
