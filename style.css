@@ -379,15 +379,12 @@ b {
   top: 50%;
   transform: translate(-50%, calc(-50% + 3px));
   display: flex;
-  gap: clamp(20px, 1.56vw, 30px);
-  /* 30px @ 1920px */
-  align-items: center;
-  padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 20px);
-  /* 8px 20px @ 1920px */
+  gap: clamp(6px, 0.5vw, 10px);
+  align-items: stretch;
+  padding: clamp(6px, 0.5vw, 10px) clamp(12px, 1vw, 20px);
   background: transparent;
   border: 1.5px solid var(--txt);
   border-radius: clamp(10px, 0.63vw, 12px);
-  /* 12px @ 1920px */
   opacity: 0;
   transition: all 0.45s ease;
   pointer-events: none;
@@ -397,6 +394,62 @@ b {
   opacity: 1;
 }
 
+/* Sezioni del counter */
+.counter-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(4px, 0.3vw, 6px);
+}
+
+.counter-left,
+.counter-right {
+  min-width: clamp(120px, 9vw, 180px);
+}
+
+.counter-left {
+  align-items: flex-start;
+}
+
+.counter-right {
+  align-items: flex-end;
+}
+
+.counter-center {
+  flex-direction: row;
+  gap: clamp(20px, 1.56vw, 30px);
+  align-items: center;
+}
+
+/* Label superiori */
+.counter-label-top {
+  font-size: clamp(7px, 0.52vw, 10px);
+  font-weight: 400;
+  color: var(--txt);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Numeri LCD (countdown e datetime) */
+.counter-countdown-number {
+  font-family: "LCD", monospace;
+  font-size: clamp(14px, 1.04vw, 20px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: var(--orange);
+}
+
+.counter-datetime {
+  font-family: "LCD", monospace;
+  font-size: clamp(10px, 0.7vw, 14px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: var(--txt);
+}
+
+/* Items centrali (incidenti, morti, feriti) */
 .counter-item {
   display: flex;
   flex-direction: column;
@@ -408,7 +461,6 @@ b {
 .counter-number {
   font-family: "LCD", monospace;
   font-size: clamp(16px, 1.04vw, 20px);
-  /* 20px @ 1920px */
   font-weight: 400;
   color: var(--orange);
   line-height: 1;
@@ -417,63 +469,16 @@ b {
 
 .counter-label {
   font-size: clamp(9px, 0.57vw, 11px);
-  /* 11px @ 1920px */
   font-weight: 400;
   color: var(--txt);
   text-transform: capitalize;
   line-height: 1;
 }
 
-/* Testo informativo fisso accanto il counter */
-.counter-info {
-  position: absolute;
-  top: 50%;
-  /* Posizione = metà larghezza del counter + padding + margine fisso
-     Counter width ≈ 3 items con numeri/labels + 2 gap + 2 padding laterali
-     Approssimazione: clamp(85px, 5.3vw, 102px) copre metà counter + margine */
-  left: calc(50% + clamp(85px, 5.3vw, 102px) + 10px);
-  transform: translateY(calc(-50% + 2.5px));
-  color: var(--txt);
-  font-size: clamp(8px, 0.52vw, 10px);
-  /* 10px @ 1920px */
-  font-weight: 400;
-  line-height: 1.4;
-  text-align: left; /* Allineamento a bandiera */
-  max-width: 90px; /* Ridotta per forzare divisione su 3 righe */
-  white-space: normal; /* Permette il wrapping su più righe */
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
+/* Rimuovi vecchi stili per counter-info e counter-countdown */
+.counter-info,
 .counter-countdown {
-  position: absolute;
-  top: 50%;
-  /* Posizione = metà larghezza del counter + padding + margine fisso */
-  right: calc(50% + clamp(85px, 5.3vw, 102px) + 10px);
-  transform: translateY(calc(-50% + 2.5px));
-  color: var(--txt);
-  font-size: clamp(8px, 0.52vw, 10px);
-  /* 10px @ 1920px */
-  font-weight: 400;
-  line-height: 1.4;
-  text-align: right; /* Allineamento a bandiera a destra */
-  max-width: 90px;
-  white-space: normal;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.navbar-counter.visible~.counter-info,
-.navbar-counter.visible~.counter-countdown {
-  opacity: 1;
-}
-
-/* Schermi molto piccoli - nascondi i testi laterali */
-@media (max-width: 768px) {
-  .counter-info,
-  .counter-countdown {
-    display: none;
-  }
+  display: none;
 }
 
 /* ========================================

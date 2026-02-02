@@ -38,27 +38,36 @@
         style="display: none">Dettaglio</a>
     </div>
 
-    <!-- Counter centrale che appare dopo la sezione 6 -->
-    <div id="navbar-counter" class="navbar-counter">
-      <div class="counter-item">
-        <span class="counter-number" id="nav-incidenti">0</span>
-        <span class="counter-label">Incidenti</span>
+      <!-- Counter centrale che appare dopo la sezione 6 -->
+      <div id="navbar-counter" class="navbar-counter">
+        <!-- Sezione sinistra: Countdown -->
+        <div class="counter-section counter-left">
+          <div class="counter-label-top">Prossimo aggiornamento tra:</div>
+          <div class="counter-countdown-number" id="counter-countdown-number">0</div>
+        </div>
+        
+        <!-- Sezione centrale: Statistiche -->
+        <div class="counter-section counter-center">
+          <div class="counter-item">
+            <span class="counter-number" id="nav-incidenti">0</span>
+            <span class="counter-label">Incidenti</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-number" id="nav-morti">0</span>
+            <span class="counter-label">Morti</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-number" id="nav-feriti">0</span>
+            <span class="counter-label">Feriti</span>
+          </div>
+        </div>
+        
+        <!-- Sezione destra: Data e ora -->
+        <div class="counter-section counter-right">
+          <div class="counter-label-top">Statistiche medie giornaliere del:</div>
+          <div class="counter-datetime" id="counter-datetime">2/2/2024 12:08</div>
+        </div>
       </div>
-      <div class="counter-item">
-        <span class="counter-number" id="nav-morti">0</span>
-        <span class="counter-label">Morti</span>
-      </div>
-      <div class="counter-item">
-        <span class="counter-number" id="nav-feriti">0</span>
-        <span class="counter-label">Feriti</span>
-      </div>
-    </div>
-
-    <!-- Countdown a sinistra del counter -->
-    <div class="counter-countdown" id="counter-countdown"></div>
-
-    <!-- Testo informativo a destra del counter -->
-    <div class="counter-info" id="counter-tooltip"></div>
 
     <div class="nav-right">
       <a class="nav-external active" href="chi_siamo.html">Chi siamo</a>
