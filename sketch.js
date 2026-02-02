@@ -1730,6 +1730,12 @@ function updateCounterTooltip() {
 let previousSecondsDisplay = -1; // Per tracciare quando ricomincia il countdown
 let maxSecondsForColor = 60; // Valore massimo dinamico per interpolazione colore
 
+// Variabili globali per data e ora correnti (aggiornate in updateCounterCountdown)
+let currentDay = 1;
+let currentMonth = 1;
+let currentHours = '00';
+let currentMinutes = '00';
+
 function updateCounterCountdown() {
   let countdownNumber = document.getElementById('counter-countdown-number');
   let counterDatetime = document.getElementById('counter-datetime');
@@ -1812,13 +1818,13 @@ function updateCounterCountdown() {
     countdownNumber.style.color = `rgb(236, 102, 19)`;
   }
   
-  // Aggiorna data e ora correnti (formato: giorno/mese/anno ora)
-  let day = now.getDate();
-  let month = now.getMonth() + 1; // I mesi partono da 0
-  let hours = String(now.getHours()).padStart(2, '0');
-  let minutes = String(now.getMinutes()).padStart(2, '0');
+  // Aggiorna variabili globali data e ora correnti
+  currentDay = now.getDate();
+  currentMonth = now.getMonth() + 1; // I mesi partono da 0
+  currentHours = String(now.getHours()).padStart(2, '0');
+  currentMinutes = String(now.getMinutes()).padStart(2, '0');
   
-  counterDatetime.textContent = `${day}/${month}/2024 ${hours}:${minutes}`;
+  counterDatetime.textContent = `${currentDay}/${currentMonth}/2024 ${currentHours}:${currentMinutes}`;
 }
 
 // Navbar click: gestito solo in setup() (vedi handler su .nav-item).
@@ -2410,13 +2416,20 @@ function drawSezioneSesta() {
   
   // Disegna counter
   if (counterFadeOut > 0) {
+    // Aggiorna variabili globali data e ora per questa sezione
+    let now = new Date();
+    currentDay = now.getDate();
+    currentMonth = now.getMonth() + 1;
+    currentHours = String(now.getHours()).padStart(2, '0');
+    currentMinutes = String(now.getMinutes()).padStart(2, '0');
+    
     push();
     textAlign(CENTER, CENTER);
     textFont(lcdFont);
 
     fill(255, 255, 255, counterFadeOut);
     textSize(width * 0.02);
-    text("SOLO OGGI, NEL 2024, A QUEST’ORA:", width / 2, height * 0.3);
+    text(`PENSA CHE SOLO IL ${currentDay}/${currentMonth}/2024, ALLE ${currentHours}:${currentMinutes},\nSI ERANO GIÀ VERIFICATI:`, width / 2, height * 0.3);
 
     let orangeColor = getCSSColor('--orange');
     fill(red(orangeColor), green(orangeColor), blue(orangeColor), counterFadeOut);
@@ -2435,7 +2448,7 @@ function drawSezioneSesta() {
     textFont(transportFont);
     textSize(width * 0.012);
     fill(255, 255, 255, counterFadeOut);
-    text("[si aggiorna in tempo reale]", width / 2, height * 0.35);
+    text("(si aggiorna in tempo reale)", width / 2, height * 0.80);
     
     pop();
   }
