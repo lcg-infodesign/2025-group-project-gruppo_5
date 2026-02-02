@@ -1008,7 +1008,7 @@ function updateLegendVisibility() {
         r1.appendChild(rectWrapper);
         let t1 = document.createElement('div');
         t1.style.color = 'white';
-        t1.textContent = 'Area proporzionale al numero di incidenti';
+        t1.textContent = 'Area proporzionale alla percentuale di incidenti mortali';
         r1.appendChild(t1);
         legend.appendChild(r1);
 
