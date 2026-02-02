@@ -33,9 +33,7 @@ function setup() {
   canvas.style('pointer-events', 'none');
   background(0, 0);
   
-  // Imposta l'altezza del body per permettere lo scroll
-  document.body.style.height = '1600px';
-  document.body.style.overflow = 'auto';
+  // (removed explicit body height/overflow to match chi_siamo behavior)
   
   // Carica i dati e aggiorna il counter
   loadCSVData();
@@ -124,7 +122,7 @@ function setup() {
 // ========================================
 
 function centerDatiSection() {
-  let datiLayout = document.querySelector('#i-dati .dati-layout');
+  let datiLayout = document.querySelector('#i-dati .two-column-layout');
   if (datiLayout) {
     let layoutHeight = datiLayout.offsetHeight;
     let windowHeight = window.innerHeight;

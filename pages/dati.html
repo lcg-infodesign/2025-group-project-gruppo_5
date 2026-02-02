@@ -1,242 +1,264 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <!--collego css-->
-    <link rel="stylesheet" href="../style.css" />
-    <!--collego js - p5 PRIMA del file dati.js-->
-    <script src="../libraries/p5.min.js"></script>
-    <script src="../libraries/p5.sound.min.js"></script>
-    <script src="../javascript/dati.js"></script>
 
-  </head>
-  <body>
-    <!-- Navbar -->
-    <nav id="navbar" class="visible">
-      <div class="nav-left">
-        <a href="../index.html" class="nav-item" data-section="0" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Intro</a>
-        <a href="../index.html#incidenti" class="nav-item" data-section="1" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Incidenti</a>
-        <div class="nav-item dropdown" data-section="2">
-          <a href="../index.html#responsabilita" class="dropdown-link nav-item" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
-          <div class="dropdown-menu" id="dropdown-responsabilita-menu">
-            <a href="../index.html#conducenti" class="dropdown-item" data-categoria="conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Conducenti</a>
-            <a href="../index.html#cause-esterne-concomitanti" class="dropdown-item" data-categoria="cause-esterne-concomitanti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Cause esterne e concomitanti</a>
-            <a href="../index.html#non-conducenti" class="dropdown-item" data-categoria="non-conducenti" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Non conducenti</a>
-          </div>
-        </div>
-        <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
-        <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3" style="display: none;">Dettaglio</a>
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--collego css-->
+  <link rel="stylesheet" href="../style.css" />
+  <!--collego js - p5 PRIMA del file dati.js-->
+  <script src="../libraries/p5.min.js"></script>
+  <script src="../libraries/p5.sound.min.js"></script>
+  <script src="../javascript/dati.js"></script>
 
-      <!-- Counter centrale che appare dopo la sezione 6 -->
-      <div id="navbar-counter" class="navbar-counter">
-        <div class="counter-item">
-          <span class="counter-number" id="nav-incidenti">0</span>
-          <span class="counter-label">Incidenti</span>
-        </div>
-        <div class="counter-item">
-          <span class="counter-number" id="nav-morti">0</span>
-          <span class="counter-label">Morti</span>
-        </div>
-        <div class="counter-item">
-          <span class="counter-number" id="nav-feriti">0</span>
-          <span class="counter-label">Feriti</span>
-        </div>
-      </div>
-      
-      <!-- Countdown a sinistra del counter -->
-      <div class="counter-countdown" id="counter-countdown"></div>
-      
-      <!-- Testo informativo a destra del counter -->
-      <div class="counter-info" id="counter-tooltip"></div>
+</head>
 
-      <div class="nav-right">
-        <a class="nav-external" href="chi_siamo.html">Chi siamo</a>
-        <a class="nav-external active" href="dati.html">I dati</a>
+<body>
+  <!-- Navbar -->
+  <nav id="navbar" class="visible">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-item" data-section="0"
+        onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Intro</a>
+      <a href="../index.html#incidenti" class="nav-item" data-section="1"
+        onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Incidenti</a>
+      <div class="nav-item dropdown" data-section="2">
+        <a href="../index.html#responsabilita" class="dropdown-link nav-item"
+          onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Responsabilità</a>
+        <div class="dropdown-menu" id="dropdown-responsabilita-menu">
+          <a href="../index.html#conducenti" class="dropdown-item" data-categoria="conducenti"
+            onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Conducenti</a>
+          <a href="../index.html#cause-esterne-concomitanti" class="dropdown-item"
+            data-categoria="cause-esterne-concomitanti"
+            onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Cause esterne e concomitanti</a>
+          <a href="../index.html#non-conducenti" class="dropdown-item" data-categoria="non-conducenti"
+            onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">Non conducenti</a>
+        </div>
       </div>
-    </nav>
-    
-    <!-- Freccia indietro per tornare a Responsabilità -->
-    <a href="../index.html#responsabilita" id="back-arrow" class="back-arrow visible" onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-    
-    <!-- Frecce fisse per navigazione checkpoint -->
-    <div class="scroll-arrows-container">
-      <div id="scroll-arrow-up" class="scroll-arrow scroll-arrow-up">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 19L12 5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <span class="nav-separator" id="nav-separator" style="display: none;">/</span>
+      <a href="#dettaglio" class="nav-item nav-item-sub" id="nav-categoria" data-section="3"
+        style="display: none;">Dettaglio</a>
+    </div>
+
+    <!-- Counter centrale che appare dopo la sezione 6 -->
+    <div id="navbar-counter" class="navbar-counter">
+      <div class="counter-item">
+        <span class="counter-number" id="nav-incidenti">0</span>
+        <span class="counter-label">Incidenti</span>
       </div>
-      <div id="scroll-arrow-down" class="scroll-arrow scroll-arrow-down">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <div class="counter-item">
+        <span class="counter-number" id="nav-morti">0</span>
+        <span class="counter-label">Morti</span>
+      </div>
+      <div class="counter-item">
+        <span class="counter-number" id="nav-feriti">0</span>
+        <span class="counter-label">Feriti</span>
       </div>
     </div>
-    
-    <!-- SEZIONE 1: Testo descrittivo -->
-    <section id="i-dati" class="sezione-dati">
-      <div class="dati-layout">
-        <h1 class="team-title">I DATI</h1>
-        <p class="description-dati">
-        L'<b><i>ISTAT</i></b> ogni anno raccoglie i dati riguardanti l'insieme degli <b>incidenti
-        stradali verbalizzati</b> da un'autorità di polizia, avvenuti su strade aperte
-        alla pubblica circolazione, che hanno causato <b>lesioni alle persone</b>. Questa
-        è una rilevazione statistica di interesse pubblico volta a informare gli
-        organi nazionali e locali per comprendere <b>come predisporre</b> al meglio dei
-        <b>piani di prevenzione</b> e sicurezza stradale.
-      </p>
-      <p class="description-dati">
-        Il nostro lavoro riguarda esclusivamente <b>l'anno solare 2024</b>, con specifico
-        interesse verso le circostanze scatenanti, accertate o presunte, degli
-        incidenti. Le condizioni dei soggetti trattati si distinguono in <b>morti</b>,
-        sia al momento dell'incidente che entro e non oltre i 30 giorni dall'avvenimento, e <b>feriti</b>.
-        Per la realizzazione del sito è stata presa in esame la <b><i>tavola 2.13</i></b>, 
-        non tenendo conto della suddivisione per tipo di strada.
-      </p>
-      <p class="description-dati">Oltre ai dati ufficiali dell’<i>ISTAT</i>, 
-      abbiamo calcolato una <b><i>percentuale di incidenti mortali</i></b>, ottenuta dal
-      rapporto tra il numero di morti e il totale degli incidenti moltiplicato per 100 
-      (dove entrambi i dati non sono relativi alla categoria analizzata).
-      </p>
-      <p class="description-dati">
-        Di seguito la rielaborazione delle differenti categorie per tipo di
-        responsabilità, <br> segnando le categorie in ordine decrescente di incidenti:
-      </p>
-      </div>
-    </section>
 
-    <!-- SEZIONE 2: Liste categorie con menu a tendina -->
-    <section id="categorie" class="sezione-dati">
-      <div class="categorie-layout">
-        <!--CONDUCENTI-->  
+    <!-- Countdown a sinistra del counter -->
+    <div class="counter-countdown" id="counter-countdown"></div>
+
+    <!-- Testo informativo a destra del counter -->
+    <div class="counter-info" id="counter-tooltip"></div>
+
+    <div class="nav-right">
+      <a class="nav-external" href="chi_siamo.html">Chi siamo</a>
+      <a class="nav-external active" href="dati.html">I dati</a>
+    </div>
+  </nav>
+
+  <!-- Freccia indietro per tornare a Responsabilità -->
+  <a href="../index.html#responsabilita" id="back-arrow" class="back-arrow visible"
+    onclick="sessionStorage.setItem('skipCounterAnimation', 'true')">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="white" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </svg>
+  </a>
+
+  <!-- Frecce fisse per navigazione checkpoint -->
+  <div class="scroll-arrows-container">
+    <div id="scroll-arrow-up" class="scroll-arrow scroll-arrow-up">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 19L12 5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </div>
+    <div id="scroll-arrow-down" class="scroll-arrow scroll-arrow-down">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- SEZIONE 1: Testo descrittivo -->
+  <section id="i-dati" class="sezione-dati">
+    <div class="two-column-layout">
+      <div class="left-column">
+        <h1 class="team-title">I DATI</h1>
+        <p class="description">
+          L'<b><i>ISTAT</i></b> ogni anno raccoglie i dati riguardanti l'insieme degli <b>incidenti
+            stradali verbalizzati</b> da un'autorità di polizia, avvenuti su strade aperte
+          alla pubblica circolazione, che hanno causato <b>lesioni alle persone</b>. Questa
+          è una rilevazione statistica di interesse pubblico volta a informare gli
+          organi nazionali e locali per comprendere <b>come predisporre</b> al meglio dei
+          <b>piani di prevenzione</b> e sicurezza stradale.
+        </p>
+        <p class="description">
+          Il nostro lavoro riguarda esclusivamente <b>l'anno solare 2024</b>, con specifico
+          interesse verso le circostanze scatenanti, accertate o presunte, degli
+          incidenti. Le condizioni dei soggetti trattati si distinguono in <b>morti</b>,
+          sia al momento dell'incidente che entro e non oltre i 30 giorni dall'avvenimento, e <b>feriti</b>.
+          Per la realizzazione del sito è stata presa in esame la <b><i>tavola 2.13</i></b>,
+          non tenendo conto della suddivisione per tipo di strada.
+        </p>
+      </div>
+      <div class="right-column">
+        <p class="description">Oltre ai dati ufficiali dell’<i>ISTAT</i>,
+          abbiamo calcolato una <b><i>percentuale di incidenti mortali</i></b>, ottenuta dal
+          rapporto tra il numero di morti e il totale degli incidenti moltiplicato per 100
+          (dove entrambi i dati non sono relativi alla categoria analizzata).
+        </p>
+        <p class="description">
+          Di seguito la rielaborazione delle differenti categorie per tipo di
+          responsabilità, <br> segnando le categorie in ordine decrescente di incidenti:
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEZIONE 2: Liste categorie con menu a tendina -->
+  <section id="categorie" class="sezione-dati">
+    <div class="categorie-layout">
+      <!--CONDUCENTI-->
       <div class="Listadati">
         <div class="bigCategory">
-        <h2>CONDUCENTI</h2>
-        <p class="sottotitoloCat">Rientrano le cause legate ai comportamenti, agli errori o alle distrazioni dei guidatori.</p>
-        <div class="catList">
-        <button class="newCategory">
-          Mancata precedenza/semaforo<span>▼</span>
-        </button>
-        <div class="oldCategory">
-          <ul>
-            <li>Procedeva senza rispettare lo stop</li>
-            <li>Procedeva senza rispettare il segnale di dare precedenza</li>
-            <li>
-              Procedeva senza dare precedenza al veicolo proveniente da destra
-            </li>
-            <li>
-              Procedeva senza rispettare le segnalazioni semaforiche o dell'agente
-            </li>
-            <li>Attraversava imprudentemente il passaggio a livello</li>
-          </ul>
-        </div>
-        <button class="newCategory">In manovra<span>▼</span></button>
-        <div class="oldCategory">
-          <ul>
-            <li>Manovrava per immettersi nel flusso della circolazione</li>
-            <li>
-              Manovrava per svoltare a sinistra (passaggio privato, distributore)
-            </li>
-            <li>Manovrava in retrocessione o conversione</li>
-            <li>Manovrava irregolarmente per fermarsi o sostare</li>
-          </ul>
-        </div>
-        <button class="newCategory">
-          Mancata distanza di sicurezza<span>▼</span>
-        </button>
-        <div class="oldCategory">
-          <ul>
-            <li>Procedeva senza mantenere la distanza di sicurezza</li>
-            <li>Si affiancava ad altri veicoli a due ruote irregolarmente</li>
-          </ul>
-        </div>
-        <button class="newCategory">Eccesso di velocità<span>▼</span></button>
-        <div class="oldCategory">
-          <ul>
-            <li>Procedeva con eccesso di velocità</li>
-            <li>Procedeva senza rispettare i limiti di velocità</li>
-          </ul>
-        </div>
-        <button class="newCategory">Svolta irregolare<span>▼</span></button>
-        <div class="oldCategory">
-          <ul>
-            <li>Svolta a sinistra irregolarmente</li>
-            <li>Svolta a destra irregolarmente</li>
-          </ul>
-        </div>
-        <button class="newCategory">Sorpasso regolare<span>▼</span></button>
-        <div class="oldCategory">
-          <ul>
-            <li>Sorpassava all'incrocio</li>
-            <li>Sorpassava veicolo in marcia</li>
-          </ul>
-        </div>
-        <button class="newCategory">Sorpasso irregolare<span>▼</span></button>
-        <div class="oldCategory">
-          <ul>
-            <li>Sorpassava in curva, su dosso o con insufficiente visibilità</li>
-            <li>Sorpassava irregolarmente a destra</li>
-            <li>Sorpassava senza osservare l'apposito segnale di divieto</li>
-            <li>Sorpassava un veicolo che ne stava sorpassando un altro</li>
-            <li>Sorpassava un veicolo fermatosi per consentire l'attraversamento del pedone</li>
-            <li>Superava irregolarmente un tram alla fermata</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    
-    <!--CAUSE ESTERNE E CONCOMITANTI-->  
-    <div class="bigCategory">
-      <h2>CAUSE ESTERNE E CONCOMITANTI</h2>
-      <p class="sottotitoloCat">Rientrano le cause dovute a fattori esterni come ostacoli urtati o evitati, 
-        eventi concomitanti o imprecisati</p>
-      <div class="catList">
-        <button class="newCategory">Veicolo fermo<span>▼</span>
-        </button>
-        <div class="oldCategory">
-          <ul>
-            <li>Veicolo fermo in posizione irregolare (Circostanze riferibili ad ostacoli urtati)</li>
-            <li>Veicolo (Circostanze riferibili ad ostacoli evitati)</li>
-            <li>Veicolo fermo senza che sia stato collocato il prescritto apposito segnale (Circostanze riferibili ad ostacoli urtati)</li>
-          </ul>
-        </div>
-        <button class="newCategory">Ostacolo accidentale<span>▼</span></button>
-        <div class="oldCategory">
-          <ul>
-            <li>Ostacolo accidentale (Circostanze riferibili ad ostacoli urtati)</li>
-            <li>Ostacolo accidentale (Circostanze riferibili ad ostacoli evitati)</li>
-          </ul>
-        </div>
-        <button class="newCategory"> Circostanze imprecisate<span>▼</span>
-        </button>
-        <div class="oldCategory">
-          <ul>
-            <li>Circostanze imprecisate</li>
-            <li>Altre circostanze</li>
-          </ul>
-        </div>
-    </div>
-
-    <!--NON CONDUCENTI-->  
-    <div class="bigCategory">
-      <h2>NON CONDUCENTI</h2>
-      <p class="sottotitoloCat">Rientrano le cause attribuibili al comportamento di pedoni, 
-        passeggeri o altri utenti della strada non alla guida.</p>
-      <div class="catList">
-          <button class="newCategory">Discesa da veicolo con imprudenza<span>▼</span>
-          </button>
-          <div class="oldCategory">
-            <ul>
-              <li>Discendeva dal veicolo in moto (circostanze riferibili alle persone trasportate)</li>
-              <li>Discendeva dal veicolo con imprudenza (circostanze riferibili a pedoni)</li>
-            </ul>
+          <h2>CONDUCENTI</h2>
+          <p class="sottotitoloCat">Rientrano le cause legate ai comportamenti, agli errori o alle distrazioni dei
+            guidatori.</p>
+          <div class="catList">
+            <button class="newCategory">
+              Mancata precedenza/semaforo<span>▼</span>
+            </button>
+            <div class="oldCategory">
+              <ul>
+                <li>Procedeva senza rispettare lo stop</li>
+                <li>Procedeva senza rispettare il segnale di dare precedenza</li>
+                <li>
+                  Procedeva senza dare precedenza al veicolo proveniente da destra
+                </li>
+                <li>
+                  Procedeva senza rispettare le segnalazioni semaforiche o dell'agente
+                </li>
+                <li>Attraversava imprudentemente il passaggio a livello</li>
+              </ul>
+            </div>
+            <button class="newCategory">In manovra<span>▼</span></button>
+            <div class="oldCategory">
+              <ul>
+                <li>Manovrava per immettersi nel flusso della circolazione</li>
+                <li>
+                  Manovrava per svoltare a sinistra (passaggio privato, distributore)
+                </li>
+                <li>Manovrava in retrocessione o conversione</li>
+                <li>Manovrava irregolarmente per fermarsi o sostare</li>
+              </ul>
+            </div>
+            <button class="newCategory">
+              Mancata distanza di sicurezza<span>▼</span>
+            </button>
+            <div class="oldCategory">
+              <ul>
+                <li>Procedeva senza mantenere la distanza di sicurezza</li>
+                <li>Si affiancava ad altri veicoli a due ruote irregolarmente</li>
+              </ul>
+            </div>
+            <button class="newCategory">Eccesso di velocità<span>▼</span></button>
+            <div class="oldCategory">
+              <ul>
+                <li>Procedeva con eccesso di velocità</li>
+                <li>Procedeva senza rispettare i limiti di velocità</li>
+              </ul>
+            </div>
+            <button class="newCategory">Svolta irregolare<span>▼</span></button>
+            <div class="oldCategory">
+              <ul>
+                <li>Svolta a sinistra irregolarmente</li>
+                <li>Svolta a destra irregolarmente</li>
+              </ul>
+            </div>
+            <button class="newCategory">Sorpasso regolare<span>▼</span></button>
+            <div class="oldCategory">
+              <ul>
+                <li>Sorpassava all'incrocio</li>
+                <li>Sorpassava veicolo in marcia</li>
+              </ul>
+            </div>
+            <button class="newCategory">Sorpasso irregolare<span>▼</span></button>
+            <div class="oldCategory">
+              <ul>
+                <li>Sorpassava in curva, su dosso o con insufficiente visibilità</li>
+                <li>Sorpassava irregolarmente a destra</li>
+                <li>Sorpassava senza osservare l'apposito segnale di divieto</li>
+                <li>Sorpassava un veicolo che ne stava sorpassando un altro</li>
+                <li>Sorpassava un veicolo fermatosi per consentire l'attraversamento del pedone</li>
+                <li>Superava irregolarmente un tram alla fermata</li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-    </body>
+
+        <!--CAUSE ESTERNE E CONCOMITANTI-->
+        <div class="bigCategory">
+          <h2>CAUSE ESTERNE E CONCOMITANTI</h2>
+          <p class="sottotitoloCat">Rientrano le cause dovute a fattori esterni come ostacoli urtati o evitati,
+            eventi concomitanti o imprecisati</p>
+          <div class="catList">
+            <button class="newCategory">Veicolo fermo<span>▼</span>
+            </button>
+            <div class="oldCategory">
+              <ul>
+                <li>Veicolo fermo in posizione irregolare (Circostanze riferibili ad ostacoli urtati)</li>
+                <li>Veicolo (Circostanze riferibili ad ostacoli evitati)</li>
+                <li>Veicolo fermo senza che sia stato collocato il prescritto apposito segnale (Circostanze riferibili
+                  ad ostacoli urtati)</li>
+              </ul>
+            </div>
+            <button class="newCategory">Ostacolo accidentale<span>▼</span></button>
+            <div class="oldCategory">
+              <ul>
+                <li>Ostacolo accidentale (Circostanze riferibili ad ostacoli urtati)</li>
+                <li>Ostacolo accidentale (Circostanze riferibili ad ostacoli evitati)</li>
+              </ul>
+            </div>
+            <button class="newCategory"> Circostanze imprecisate<span>▼</span>
+            </button>
+            <div class="oldCategory">
+              <ul>
+                <li>Circostanze imprecisate</li>
+                <li>Altre circostanze</li>
+              </ul>
+            </div>
+          </div>
+
+          <!--NON CONDUCENTI-->
+          <div class="bigCategory">
+            <h2>NON CONDUCENTI</h2>
+            <p class="sottotitoloCat">Rientrano le cause attribuibili al comportamento di pedoni,
+              passeggeri o altri utenti della strada non alla guida.</p>
+            <div class="catList">
+              <button class="newCategory">Discesa da veicolo con imprudenza<span>▼</span>
+              </button>
+              <div class="oldCategory">
+                <ul>
+                  <li>Discendeva dal veicolo in moto (circostanze riferibili alle persone trasportate)</li>
+                  <li>Discendeva dal veicolo con imprudenza (circostanze riferibili a pedoni)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+  </section>
+</body>
+
 </html>
