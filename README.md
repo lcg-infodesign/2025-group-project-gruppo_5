@@ -224,6 +224,7 @@ Questa scelta progettuale rende visibile come anche circostanze apparentemente m
 - Animazioni di transizione dal quadrato bidimensionale al parallelepipedo tridimensionale.  
 - Transizione dalla visualizzazione d’insieme a quella di dettaglio tramite scomposizione e ricomposizione geometrica.  
 - Supporto al debugging e alla verifica del corretto funzionamento delle interazioni.
+- Realizzazione e supporto tecnico per il raffinamento del cubo utilizzato nella legenda della visualizzazione di dettaglio, con particolare attenzione alla qualità visiva e alla coerenza grafica.
 
 
 

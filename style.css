@@ -1357,8 +1357,10 @@ ul.credits-clean {
   align-items: flex-start;
   gap: 2em;
   /*per fare in modo che non ci sia overflow*/
-  transform: scale(0.82) translateY(-2vh);
+  transform: scale(0.9) translateY(-2vh);
+  flex: 0 0 auto;
   max-height: 90vh;
+  padding-top: 5em;
 }
 
 .bigCategory {
