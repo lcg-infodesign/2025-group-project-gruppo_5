@@ -338,7 +338,7 @@ h3 {
 }
 
 #nav-categoria-container .dropdown-menu {
-  top: calc(100% - 0.1rem);
+  top: calc(100% + 0.3rem);
   left: calc(-1 * clamp(12px, 0.83vw, 16px));
 }
 
