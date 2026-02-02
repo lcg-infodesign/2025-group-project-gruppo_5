@@ -824,7 +824,7 @@ function updateCatCausaInfo(nome, incidenti, lesionati, morti) { //visualizza i 
   
   // Crea l'HTML dinamicamente - ogni dato va a capo con spaziatura uniforme
   container.innerHTML = `
-    <h3 style="color: white; margin: 0 0 0.5em 0;">${nome}</h3>
+    <h3 style="color: white; margin: 0 0 0.5em 0; font-size: 1.4em;">${nome}</h3>
     <p style="margin: 0.5em 0 0 0;"><span style="color: ${categoryHex};">Incidenti:</span> <span style="color: white;">${incidenti.toLocaleString('it-IT')}</span></p>
     ${feritiMortiHTML}
   `;
@@ -1607,6 +1607,48 @@ function updateNavbarCategoria() {
   
   // Aggiorna icona info
   updateCategoriaInfoIcon();
+  updateGradienteInfoIcon();
+}
+
+// Aggiorna posizione e contenuto dell'icona info del gradiente
+function updateGradienteInfoIcon() {
+  let infoIcon = document.getElementById('gradiente-info-icon');
+  let tooltip = document.getElementById('gradiente-info-tooltip');
+  let legend = document.getElementById('legend');
+  if (!infoIcon || !tooltip) return;
+  
+  // Mostra icona solo in sezione 8 (dettaglio) o durante transizione quando showBars è true
+  if (categoriaSelezionata !== null && showBars && (scrollY >= 6500 || (transizioneAttiva && transizioneFadeInUI > 5))) {
+    // Calcola posizione sotto il gradiente nella legenda
+    let margin = constrain(width * 0.052, 60, 100);
+    let legendTop = SEZIONE_MARGIN + width * 0.07;
+    
+    // Posizione sotto il gradiente (seconda riga della legenda) - allineato a sinistra sotto il gradiente
+    let iconX = margin + 275; // Centrato sotto il gradiente (88px width / 2)
+    let iconY = legendTop + 190; // Offset per seconda riga + spazio sotto il gradiente
+    
+    infoIcon.style.left = iconX + 'px';
+    infoIcon.style.top = iconY + 'px';
+    infoIcon.style.display = 'flex';
+    
+    // Posiziona la tooltip sotto la legenda con stessa larghezza e allineamento
+    let legendWidth = width * 0.22; // Stessa larghezza della legenda
+    let tooltipX = SEZIONE_MARGIN; // Stesso margine sinistro della legenda (usa SEZIONE_MARGIN)
+    let tooltipY = legendTop + 250; // Sotto la legenda con gap (altezza legenda completa + spazio)
+    
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+    tooltip.style.width = legendWidth + 'px';
+    
+    // Applica fade in durante la transizione
+    if (transizioneAttiva && transizioneFadeInUI > 5) {
+      infoIcon.style.opacity = (transizioneFadeInUI / 255).toString();
+    } else {
+      infoIcon.style.opacity = '1';
+    }
+  } else {
+    infoIcon.style.display = 'none';
+  }
 }
 
 // Aggiorna posizione e contenuto dell'icona info categoria
@@ -3066,7 +3108,7 @@ function drawTransizioneSezioneOttava() {
   if (catContainer && fadeInUI > 0) {
     catContainer.style.backgroundColor = 'transparent';
     catContainer.innerHTML = `
-      <h3 style="color: white; margin: 0;">Muoviti o clicca su un quadrato per visualizzare i dettagli</h3>
+      <h3 style="color: var(--grass); margin: 0; font-weight: var(--grass);">Muoviti o clicca su un quadrato per visualizzare i dettagli</h3>
     `;
   }
   
@@ -3335,7 +3377,7 @@ function drawSezioneOttava() { //visualizzazione di dettaglio - ora sezione norm
         }
         
         catContainer.innerHTML = `
-          <h3 style="color: white; margin: 0;">${testoIstruzione}</h3>
+          <h3 style="color: var(--grass); margin: 0; font-weight: var(--grass);">${testoIstruzione}</h3>
         `;
       } else {
         // Aggiungi background arancione opaco quando c'è hover
