@@ -425,7 +425,10 @@ b {
 .counter-info {
   position: absolute;
   top: 50%;
-  left: calc(50% + clamp(85px, 5.3vw, 102px)); /* Appoggiata al margine destro del counter */
+  /* Posizione = metà larghezza del counter + padding + margine fisso
+     Counter width ≈ 3 items con numeri/labels + 2 gap + 2 padding laterali
+     Approssimazione: clamp(85px, 5.3vw, 102px) copre metà counter + margine */
+  left: calc(50% + clamp(85px, 5.3vw, 102px) + 10px);
   transform: translateY(calc(-50% + 2.5px));
   color: var(--txt);
   font-size: clamp(8px, 0.52vw, 10px);
@@ -442,7 +445,8 @@ b {
 .counter-countdown {
   position: absolute;
   top: 50%;
-  right: calc(50% + clamp(85px, 5.3vw, 102px)); /* Appoggiata al margine sinistro del counter */
+  /* Posizione = metà larghezza del counter + padding + margine fisso */
+  right: calc(50% + clamp(85px, 5.3vw, 102px) + 10px);
   transform: translateY(calc(-50% + 2.5px));
   color: var(--txt);
   font-size: clamp(8px, 0.52vw, 10px);
@@ -459,6 +463,14 @@ b {
 .navbar-counter.visible~.counter-info,
 .navbar-counter.visible~.counter-countdown {
   opacity: 1;
+}
+
+/* Schermi molto piccoli - nascondi i testi laterali */
+@media (max-width: 768px) {
+  .counter-info,
+  .counter-countdown {
+    display: none;
+  }
 }
 
 /* ========================================
@@ -863,24 +875,6 @@ b {
 /* ========================================
    RESPONSIVE - Adattamento per schermi piccoli
    ======================================== */
-@media (max-width: 1024px) {
-  #navbar {
-    padding: 0 35px 0 40px;
-  }
-
-  .nav-left {
-    gap: 30px;
-  }
-
-  .nav-item {
-    font-size: 13px;
-  }
-
-  .nav-right {
-    gap: 15px;
-  }
-}
-
 @media (max-width: 768px) {
   #navbar {
     padding: 0 30px;
@@ -901,33 +895,19 @@ b {
   }
 }
 
-@media (max-width: 1024px) {
-  .navbar-counter {
-    gap: 20px;
-    padding: 10px 24px;
-  }
-
-  .counter-number {
-    font-size: 16px;
-  }
-
-  .counter-label {
-    font-size: 10px;
-  }
-}
-
 @media (max-width: 768px) {
   .navbar-counter {
-    gap: 15px;
-    padding: 8px 18px;
+    /* Mantiene il clamp responsive invece di valori fissi */
+    gap: clamp(15px, 1.56vw, 20px);
+    padding: clamp(6px, 0.42vw, 8px) clamp(16px, 1.04vw, 18px);
   }
 
   .counter-number {
-    font-size: 14px;
+    font-size: clamp(12px, 1.04vw, 14px);
   }
 
   .counter-label {
-    font-size: 9px;
+    font-size: clamp(8px, 0.57vw, 9px);
   }
 }
 
@@ -950,16 +930,17 @@ b {
   }
 
   .navbar-counter {
-    gap: 12px;
-    padding: 6px 15px;
+    /* Mantiene il clamp responsive invece di valori fissi */
+    gap: clamp(12px, 1.56vw, 15px);
+    padding: clamp(5px, 0.42vw, 6px) clamp(12px, 1.04vw, 15px);
   }
 
   .counter-number {
-    font-size: 12px;
+    font-size: clamp(11px, 1.04vw, 12px);
   }
 
   .counter-label {
-    font-size: 8px;
+    font-size: clamp(7px, 0.57vw, 8px);
   }
 }
 
