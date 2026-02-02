@@ -52,12 +52,6 @@ body {
   /* 16px @ 1920px */
 }
 
-.scroll {
-  /*pagina dei dati ha bisogno di scrollare*/
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
 canvas {
   display: block;
 }

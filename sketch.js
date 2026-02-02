@@ -975,7 +975,7 @@ function updateLegendVisibility() {
         rect.style.width = '2em';
         rect.style.height = '2em';
         rect.style.flexShrink = '0';
-        rect.style.backgroundColor = '#ffffff';
+        rect.style.backgroundColor = '#B0B0B0';
         rectWrapper.appendChild(rect);
         r1.appendChild(rectWrapper);
         let t1 = document.createElement('div');
@@ -1000,7 +1000,7 @@ function updateLegendVisibility() {
         empty.style.width = '0.7em';
         empty.style.height = '0.7em';
         empty.style.flexShrink = '0';
-        empty.style.border = (width * 0.001) + 'px solid #ffffff'; // 2px @ 1920px
+        empty.style.border = (width * 0.001) + 'px solid #B0B0B0'; // 2px @ 1920px
         empty.style.boxSizing = 'border-box';
         emptyWrapper.appendChild(empty);
         r2.appendChild(emptyWrapper);
