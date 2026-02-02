@@ -23,7 +23,7 @@ https://lcg-infodesign.github.io/2025-group-project-gruppo_5/index.html
 
 Laboratorio di Computer Grafica per l'Information Design  
 A.A. 2025/2026  
-Laurea Triennale in Design della Comunicazione  
+Laurea Triennale in Design della Comunicazione - Politecnico di Milano
 
 ### Progetto a cura di
 
@@ -139,7 +139,7 @@ Il progetto è stato sviluppato attraverso un lavoro collettivo e iterativo. Tut
 
 - **Fontana Marta**  
   Progettazione visiva e layout.  
-  Sviluppo del codice front-end.  
+  Sviluppo del codice.  
   Supporto alla definizione degli obiettivi di conoscenza.
 
 - **Golinelli Luca**  
@@ -155,7 +155,7 @@ Il progetto è stato sviluppato attraverso un lavoro collettivo e iterativo. Tut
 - **Sabbatini Viola**  
   Analisi, riordino e categorizzazione dei dataset.  
   Supporto alla rielaborazione dei dati.  
-  Integrazione dei dati nel codice.
+  Integrazione dei dati e sviluppo del codice. 
 
 </details>
 
@@ -164,7 +164,7 @@ Il progetto è stato sviluppato attraverso un lavoro collettivo e iterativo. Tut
 <details>
 <summary><strong>Scelte progettuali a supporto degli obiettivi di conoscenza</strong></summary>
 
-Le scelte progettuali sono state guidate dalla volontà di superare una semplice presentazione statistica, costruendo una narrazione visiva capace di rendere percepibile la reale ampiezza, complessità e gravità del fenomeno.
+Le scelte progettuali sono state guidate dalla volontà di superare una semplice presentazione statistica, costruendo una narrazione visiva guidata capace di rendere percepibile la reale ampiezza, complessità e gravità del fenomeno.
 
 ### Obiettivo 1 – COMPRENDERE LA RILEVANZA DEL PROBLEMA DEGLI INCIDENTI STRADALI IN ITALIA
 
@@ -197,7 +197,7 @@ Ogni circostanza viene rappresentata mantenendo la relazione con il numero di in
 
 Per evidenziare le conseguenze reali e spesso irreversibili di ogni comportamento pericoloso, la visualizzazione di dettaglio introduce una trasformazione visiva dal quadrato bidimensionale al parallelepipedo tridimensionale.
 
-La tridimensionalità consente di integrare una terza variabile informativa: l’impatto in termini di soggetti lesi, distinguendo tra feriti e vittime. L’altezza (proporzionale al numero dei soggetti lesi) e l’opacità (proporzionale al numero di incidenti mortali) degli elementi permettono di confrontare situazioni molto diverse tra loro, nonostante la forte asimmetria numerica tra morti e feriti.
+La tridimensionalità consente di integrare una terza variabile informativa: l’impatto in termini di soggetti lesi, distinguendo tra feriti e vittime. L’altezza (proporzionale al numero dei soggetti lesi) e il gradiente (proporzionale alla percentuale di incidenti mortali) degli elementi permettono di confrontare situazioni molto diverse tra loro, nonostante la forte asimmetria numerica tra morti e feriti.
 
 Questa scelta progettuale rende visibile come anche circostanze apparentemente meno frequenti possano generare conseguenze gravi sulla vita delle persone, rafforzando la consapevolezza dell’impatto umano del fenomeno.
 
